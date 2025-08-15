@@ -1,27 +1,48 @@
+/* Global Styles for DMX Website */
+/* This file contains Tailwind CSS imports and custom utility classes */
+
+/* Tailwind CSS base styles, components, and utilities */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+/* CSS Custom Properties (CSS Variables) for theming */
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Light mode colors (currently not used but ready for light mode toggle) */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+  }
+
+  .dark {
+    /* Dark mode colors (default theme) */
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
+/* Custom utility classes for DMX website */
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  /* Gradient text effect for headings and special text */
+  .text-gradient {
+    background: linear-gradient(to right, #8B5CF6, #3B82F6, #10B981);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Hover animation for interactive cards */
+  .card-hover {
+    transition: all 0.3s ease;
+  }
+  
+  .card-hover:hover {
+    transform: scale(1.05);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Purple glow effect for special elements */
+  .glow {
+    box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.5);
   }
 }
