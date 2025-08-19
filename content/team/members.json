@@ -1,0 +1,35 @@
+{
+  "year": 2025,
+  "members": [
+    {
+      "name": "Arjun Patel",
+      "position": "President & AI Research Lead",
+      "quote": "Leading with curiosity and building with purpose."
+    },
+    {
+      "name": "Sneha Reddy",
+      "position": "Vice President & ML Engineer",
+      "quote": "Turning data into decisions."
+    },
+    {
+      "name": "Rahul Sharma",
+      "position": "Technical Lead & Full Stack Developer"
+    },
+    {
+      "name": "Ananya Singh",
+      "position": "Data Science Head",
+      "quote": "Insights are the compass of innovation."
+    },
+    {
+      "name": "Karthik Reddy",
+      "position": "Blockchain Developer"
+    },
+    {
+      "name": "Priya Nair",
+      "position": "UI/UX Designer & Frontend Developer",
+      "quote": "Design is how it works and how it feels."
+    }
+  ]
+}
+
+

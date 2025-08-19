@@ -1,0 +1,29 @@
+[
+  { "name": "Harsh Tiwari", "position": "President" },
+  { "name": "Bhushan Naikwade", "position": "Vice President" },
+  { "name": "Aadish Gotekar", "position": "Vice President" },
+  { "name": "Yaksh Rajput", "position": "General Secretary" },
+  { "name": "Tejas Gawde", "position": "General Secretary" },
+  { "name": "Somnath Shanbaug", "position": "General Secretary" },
+
+  { "name": "Niraga Patil", "position": "Marketing Secretary" },
+  { "name": "Aditya Karu", "position": "Marketing Secretary" },
+  { "name": "Piyush Utkar", "position": "Publicity Secretary" },
+  { "name": "Bhagyashree Rawool", "position": "Publicity Secretary" },
+  { "name": "Tanmay Thatikonda", "position": "Event Management Secretary" },
+  { "name": "Kohaana Pikle", "position": "Event Management Secretary" },
+  { "name": "Aryan Parab", "position": "Project Secretary" },
+  { "name": "Ravi Ramanthan", "position": "Project Secretary" },
+  { "name": "Hinal Patel", "position": "Digital Creative Secretary" },
+  { "name": "Prachita Dhatrak", "position": "Digital Creative Secretary" },
+  { "name": "Parth Ugalmugale", "position": "Web Secretary" },
+  { "name": "Atharva Gholap", "position": "Web Secretary" },
+  { "name": "Vaibhav Mishra", "position": "Technical Secretary" },
+  { "name": "Yash Yadav", "position": "Technical Secretary" },
+  { "name": "Chhayangi Muzumdar", "position": "Content & Editorial Secretary" },
+  { "name": "Shantnu Ghabale", "position": "Photography Secretary" },
+
+  { "name": "Shardul Babhalgaonkar", "position": "SE Manager" },
+  { "name": "Shruti Lokhande", "position": "SE Manager" },
+  { "name": "Savari Gawad", "position": "SE Manager" }
+]
