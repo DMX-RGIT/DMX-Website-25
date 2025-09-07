@@ -10,12 +10,14 @@ import { getAuth } from 'firebase/auth';
 // Firebase configuration object - uses environment variables for security
 // TODO: Replace with actual Firebase project credentials
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  apiKey: "AIzaSyB-u2JNaS_ghb1TUwqzwh7n75Q4hFwSje0",
+  authDomain: "dmx-website-2025.firebaseapp.com",
+  databaseURL: "https://dmx-website-2025-default-rtdb.firebaseio.com",
+  projectId: "dmx-website-2025",
+  storageBucket: "dmx-website-2025.firebasestorage.app",
+  messagingSenderId: "463170932849",
+  appId: "1:463170932849:web:733c3de416f7deeb394bd0",
+  measurementId: "G-969SXPMVT4"
 };
 
 // Initialize Firebase app (only once to avoid multiple instances)
