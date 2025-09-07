@@ -38,9 +38,6 @@ export function Navbar() {
               <Link href="/team" className="text-gray-300 hover:text-white transition">
                 Team
               </Link>
-              <Link href="/speakers" className="text-gray-300 hover:text-white transition">
-                Speakers
-              </Link>
             </div>
           </div>
           
