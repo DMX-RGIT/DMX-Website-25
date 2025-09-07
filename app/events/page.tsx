@@ -1,72 +1,50 @@
 // Events Page - Server Component
-// Displays all events from Firestore database
+// Displays all events from markdown files
 // This page fetches data at build time for static generation
 
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import fs from 'fs/promises';
+import path from 'path';
+import matter from 'gray-matter';
 import { EventCard } from '@/components/events/event-card';
 import { Event } from '@/types';
 
-// Server-side function to fetch all events from Firestore
-// This runs at build time for static generation
+// Server-side function to fetch all events from markdown files
 async function getEvents(): Promise<Event[]> {
-  // For development/preview - use mock data directly
-  if (process.env.NODE_ENV === 'development') {
-    return getMockEvents();
-  }
+  const eventsDir = path.join(process.cwd(), 'public', 'images', 'event-files');
   
   try {
-    const eventsCol = collection(db, 'events');  // Reference to 'events' collection
-    const snapshot = await getDocs(eventsCol);   // Get all documents
-    
-    // Transform Firestore documents to Event objects
-    return snapshot.docs.map(doc => ({ 
-      id: doc.id, 
-      ...doc.data() 
-    } as Event));
-  } catch (error) {
-    console.error('Error fetching events:', error);
-    // Return mock data for development/preview
-    return getMockEvents();
-  }
-}
+    const files = await fs.readdir(eventsDir);
+    const events: Event[] = [];
 
-// Mock data for development and preview
-function getMockEvents(): Event[] {
-  return [
-    {
-      id: "ai-workshop-2024",
-      title: "AI/ML Workshop 2024",
-      date: new Date("2024-03-15T09:00:00"),
-      description: "Join us for an intensive hands-on workshop covering the fundamentals of machine learning and artificial intelligence. Learn Python, TensorFlow, and real-world applications.",
-      coverImage: "https://images.unsplash.com/photo-1555255707-c07966088b7b?w=800&h=400&fit=crop",
-      speakers: ["Dr. Sarah Wilson", "Prof. Mark Thompson"],
-      venue: "Tech Lab, RGIT Main Campus",
-      mdxSlug: "ai-workshop-2024",
-      registrationLink: "https://forms.google.com/ai-workshop"
-    },
-    {
-      id: "web-dev-bootcamp",
-      title: "Full Stack Web Development Bootcamp",
-      date: new Date("2024-04-20T10:00:00"),
-      description: "3-day intensive bootcamp covering React, Node.js, MongoDB, and deployment strategies. Build a complete web application from scratch.",
-      coverImage: "https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=800&h=400&fit=crop",
-      speakers: ["Alex Rivera", "Priya Sharma"],
-      venue: "Innovation Lab, 2nd Floor",
-      mdxSlug: "web-dev-bootcamp",
-      registrationLink: "https://forms.google.com/web-bootcamp"
-    },
-    {
-      id: "hackathon-2024",
-      title: "DMX Hackathon 2024",
-      date: new Date("2024-05-10T18:00:00"),
-      description: "48-hour hackathon focused on solving real-world problems using AI and emerging technologies. Prizes worth ₹50,000!",
-      coverImage: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&h=400&fit=crop",
-      speakers: ["Industry Mentors", "Tech Leaders"],
-      venue: "Main Auditorium & Labs",
-      mdxSlug: "hackathon-2024"
+    for (const file of files) {
+      if (path.extname(file) === '.mdx' || path.extname(file) === '.md') {
+        const filePath = path.join(eventsDir, file);
+        const content = await fs.readFile(filePath, 'utf8');
+        const { data, content: body } = matter(content);
+        
+        // Find first image in body as cardImage
+        const imageMatch = body.match(/!\[.*?\]\((.*?)\)/);
+        const cardImage = data.image || (imageMatch ? `/images/event-files/${path.basename(file, path.extname(file))}/${imageMatch[1]}` : '');
+        
+        events.push({
+          id: path.basename(file, path.extname(file)),
+          title: data.title || 'Untitled Event',
+          date: new Date(data.date || Date.now()),
+          description: data.description || '',
+          coverImage: cardImage,
+          speakers: data.speakers || [],
+          venue: data.venue || '',
+          mdxSlug: '', // Not used anymore
+          registrationLink: data.registrationLink || '',
+        });
+      }
     }
-  ];
+    
+    return events.sort((a, b) => b.date.getTime() - a.date.getTime());
+  } catch (error) {
+    console.error('Error reading events:', error);
+    return [];
+  }
 }
 
 // Events page component - displays all events in a grid layout

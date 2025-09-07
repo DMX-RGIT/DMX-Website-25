@@ -2,22 +2,41 @@ import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { ProjectCard } from '@/components/projects/project-card';
 import { Project } from '@/types';
+import path from 'path';
+import fs from 'fs/promises';
+import matter from 'gray-matter';
 
-// Server-side function to fetch all projects from Firestore
+// Server-side function to fetch all projects from markdown files
 async function getProjects(): Promise<Project[]> {
-  // For development/preview - use mock data directly
-  if (process.env.NODE_ENV === 'development') {
-    return getMockProjects();
-  }
+  const projectsDir = path.join(process.cwd(), 'public', 'images', 'project-files');
   
   try {
-    const projectsCol = collection(db, 'projects');
-    const snapshot = await getDocs(projectsCol);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Project));
+    const files = await fs.readdir(projectsDir);
+    const projects: Project[] = [];
+
+    for (const file of files) {
+      if (path.extname(file) === '.mdx' || path.extname(file) === '.md') {
+        const filePath = path.join(projectsDir, file);
+        const content = await fs.readFile(filePath, 'utf8');
+        const { data } = matter(content);
+        
+        projects.push({
+          id: path.basename(file, path.extname(file)),
+          title: data.title || 'Untitled Project',
+          description: data.description || '',
+          techStack: data.techStack || [],
+          githubLink: data.githubLink || undefined,
+          demoLink: data.demoLink || undefined,
+          coverImage: data.coverImage || undefined,
+          featured: data.featured || false,
+        });
+      }
+    }
+    
+    return projects.sort((a, b) => a.title.localeCompare(b.title));
   } catch (error) {
-    console.error('Error fetching projects:', error);
-    // Return mock data for development/preview
-    return getMockProjects();
+    console.error('Error reading projects:', error);
+    return [];
   }
 }
 
