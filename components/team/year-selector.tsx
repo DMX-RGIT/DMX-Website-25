@@ -25,17 +25,18 @@ export function YearSelector({ yearToMembers, defaultYear }: Props) {
   const members = yearToMembers[selectedYear] ?? [];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" style={{ position: 'relative', zIndex: 10 }}>
       <div className="flex items-center justify-between">
-        <label htmlFor="team-year" className="text-sm text-gray-300">Select year</label>
+        <label htmlFor="team-year" className="text-sm text-purple-700 font-semibold">Select year</label>
         <select
           id="team-year"
-          className="bg-white/5 border border-white/10 rounded-md px-3 py-2 text-sm text-white"
+          className="bg-white border-2 border-purple-200 rounded-lg px-4 py-2 text-sm text-purple-900 font-medium shadow-sm hover:border-purple-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all cursor-pointer"
           value={selectedYear}
           onChange={(e) => setSelectedYear(Number(e.target.value))}
+          style={{ position: 'relative', zIndex: 20 }}
         >
           {years.map((year) => (
-            <option key={year} value={year} className="text-black">
+            <option key={year} value={year} className="text-purple-900">
               {year}
             </option>
           ))}

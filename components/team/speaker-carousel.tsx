@@ -22,11 +22,11 @@ export function SpeakerCarousel({ speakers, className = "" }: SpeakerCarouselPro
     <div className={`speaker-carousel-container ${className}`}>
       <style jsx>{`
         .speaker-carousel-container {
-          padding: 4rem 0;
+          padding: 2rem 0;
           display: grid;
           place-items: center;
-          min-height: 100vh;
-          font-family: 'Google Sans', sans-serif, system-ui;
+          min-height: 60vh;
+          font-family: inherit;
         }
 
         .speaker-carousel {
@@ -59,6 +59,19 @@ export function SpeakerCarousel({ speakers, className = "" }: SpeakerCarouselPro
           width: 0;
           position: absolute;
           flex-shrink: 1;
+          border: 1px solid rgba(0, 255, 170, 0.3);
+          box-shadow: 
+            0 0 20px rgba(0, 255, 170, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(8px);
+        }
+
+        .speaker-item:hover {
+          border-color: rgba(0, 255, 170, 0.6);
+          box-shadow: 
+            0 0 30px rgba(0, 255, 170, 0.2),
+            0 0 60px rgba(0, 255, 170, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
         .speaker-input {
@@ -102,6 +115,7 @@ export function SpeakerCarousel({ speakers, className = "" }: SpeakerCarouselPro
           } else if (isVisible && isAdjacent) {
             return `
               .speaker-item:nth-child(${speakerId}) {
+                --active: 0;
                 --content: 1;
                 --width: calc(var(--container-width) * (var(--size-2) + (var(--hover, 0) * (var(--size-2) * 1.5))));
                 width: var(--width);
@@ -113,6 +127,7 @@ export function SpeakerCarousel({ speakers, className = "" }: SpeakerCarouselPro
           } else if (isVisible) {
             return `
               .speaker-item:nth-child(${speakerId}) {
+                --active: 0;
                 width: var(--size-3);
                 position: static;
               }
@@ -120,6 +135,7 @@ export function SpeakerCarousel({ speakers, className = "" }: SpeakerCarouselPro
           } else {
             return `
               .speaker-item:nth-child(${speakerId}) {
+                --active: 0;
                 width: 0;
                 position: static;
               }
@@ -168,24 +184,17 @@ export function SpeakerCarousel({ speakers, className = "" }: SpeakerCarouselPro
           aspect-ratio: 1/1;
         }
 
-        .speaker-image::after {
-          content: "";
-          position: absolute;
-          inset: 0;
-          transition: opacity var(--transition) ease;
-          opacity: var(--active, 0);
-          background: radial-gradient(circle at 35% 0%, hsl(0 0% 100% / 0.65) 25%, hsl(var(--brand-hue) 80% 80% / 0.35) 50% 75%, hsl(0 0% 100% / 0.25));
-        }
-
         .speaker-title {
           text-transform: uppercase;
           font-weight: bold;
-          color: hsl(var(--brand-hue) 80% 70%);
-          background: linear-gradient(65deg, hsl(var(--brand-hue) 80% 80%), hsl(var(--brand-hue) 80% 70%));
+          background: linear-gradient(65deg, #00ffaa, #00ffdd);
           background-clip: text;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
           color: transparent;
           font-size: 0.875rem;
           font-family: sans-serif;
+          text-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
         }
 
         .speaker-name {
@@ -222,7 +231,7 @@ export function SpeakerCarousel({ speakers, className = "" }: SpeakerCarouselPro
           border-radius: 50%;
           aspect-ratio: 1/1;
           transition: all var(--transition) ease;
-          filter: grayscale(calc(2 - var(--active, 0)));
+          filter: grayscale(calc((1 - var(--active, 0)) * 100%)) brightness(calc(0.6 + (var(--active, 0) * 0.4)));
         }
       `}</style>
 
@@ -230,9 +239,18 @@ export function SpeakerCarousel({ speakers, className = "" }: SpeakerCarouselPro
         {speakers.map((speaker, index) => {
           const speakerId = index + 1;
           const isChecked = speakerId === selectedSpeaker;
+          const isActive = speakerId === selectedSpeaker;
           
           return (
-            <li key={speaker.id} className="speaker-item">
+            <li 
+              key={speaker.id} 
+              className="speaker-item"
+              style={{
+                '--active': isActive ? 1 : 0,
+                '--content': Math.abs(speakerId - selectedSpeaker) <= 3 ? 1 : 0,
+                '--hover': 0
+              } as React.CSSProperties}
+            >
               <span className="sr-only"></span>
               <label 
                 className="speaker-label"
