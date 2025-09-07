@@ -5,8 +5,8 @@
 import fs from 'fs/promises';
 import path from 'path';
 import matter from 'gray-matter';
-import { EventCard } from '@/components/events/event-card';
 import { Event } from '@/types';
+import EventsContent from './EventsContent';
 
 // Server-side function to fetch all events from markdown files
 async function getEvents(): Promise<Event[]> {
@@ -51,27 +51,5 @@ async function getEvents(): Promise<Event[]> {
 export default async function EventsPage() {
   const events = await getEvents(); // Fetch events data
 
-  return (
-    <div className="min-h-screen py-20 px-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Page title with gradient text styling */}
-        <h1 className="text-4xl md:text-5xl font-bold text-gradient mb-12">Events</h1>
-        
-        {/* Events grid - responsive layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.length > 0 ? (
-            // Render event cards if events exist
-            events.map(event => (
-              <EventCard key={event.id} event={event} />
-            ))
-          ) : (
-            // Show message if no events found
-            <div className="col-span-full text-center text-gray-400">
-              <p>No events found. Please check back later!</p>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+  return <EventsContent events={events} />;
 }

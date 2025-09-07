@@ -18,7 +18,7 @@ export function EventCard({ event }: EventCardProps) {
   return (
     // Link wrapper for navigation to event detail page
     <Link href={`/events/${event.id}`}> {/* Uses Firestore document ID as slug */}
-      <div className="group relative bg-white/5 backdrop-blur-lg rounded-xl overflow-hidden border border-white/10 card-hover">
+      <div className="group relative bg-white/5 backdrop-blur-lg rounded-xl overflow-hidden border-2 border-gray-200/60">
         {/* Event cover image section */}
         {event.coverImage && (
           <div className="relative h-48 w-full">
@@ -37,12 +37,12 @@ export function EventCard({ event }: EventCardProps) {
         {/* Event information section */}
         <div className="p-6">
           {/* Event title with hover effect */}
-          <h3 className="text-xl font-bold text-white mb-2 group-hover:text-gradient transition">
+          <h3 className="text-xl font-bold text-gray-900 mb-2">
             {event.title}
           </h3>
           
           {/* Event description - truncated to 2 lines */}
-          <p className="text-gray-400 mb-4 line-clamp-2">{event.description}</p>
+          <p className="text-gray-700 mb-4 line-clamp-2">{event.description}</p>
           
           {/* Event metadata (date and venue) */}
           <div className="flex items-center gap-4 text-sm text-gray-500">

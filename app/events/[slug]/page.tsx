@@ -9,6 +9,7 @@ import matter from 'gray-matter';
 import { remark } from 'remark';
 import remarkHtml from 'remark-html';
 import { ImageGallery } from '@/components/events/image-gallery';
+import EventDetailContent from './EventDetailContent';
 
 // Event detail page component
 export default async function EventPage({ 
@@ -51,54 +52,16 @@ export default async function EventPage({
     }
 
     return (
-      <div className="min-h-screen py-20 px-4">
-        <div className="max-w-4xl mx-auto">
-          {/* Event title with gradient styling */}
-          <h1 className="text-4xl md:text-5xl font-bold text-gradient mb-4">
-            {data.title}
-          </h1>
-          
-          {/* Event metadata */}
-          <div className="mb-8 text-gray-400">
-            <p>Date: {new Date(data.date).toLocaleDateString()}</p>
-            {data.venue && <p>Venue: {data.venue}</p>}
-          </div>
-          
-          {/* Event content */}
-          <div className="prose prose-invert max-w-none mb-8">
-            <div dangerouslySetInnerHTML={{ __html: htmlString }} />
-          </div>
-          
-          {/* Speakers section */}
-          {data.speakers && data.speakers.length > 0 && (
-            <div className="mb-8">
-              <h3 className="text-xl font-bold text-white mb-2">Speakers</h3>
-              <ul className="text-gray-300">
-                {data.speakers.map((speaker: string, index: number) => (
-                  <li key={index}>{speaker}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-          
-          {/* Registration link */}
-          {data.registrationLink && (
-            <div className="mb-8">
-              <a 
-                href={data.registrationLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block px-6 py-3 bg-dmx-primary text-white rounded-lg hover:bg-dmx-primary/80 transition"
-              >
-                Register for Event
-              </a>
-            </div>
-          )}
-          
-          {/* Image Gallery */}
-          <ImageGallery images={filteredGalleryImages} />
-        </div>
-      </div>
+      <EventDetailContent
+        title={data.title}
+        date={new Date(data.date).toLocaleDateString()}
+        venue={data.venue}
+        description={data.description}
+        speakers={data.speakers}
+        registrationLink={data.registrationLink}
+        htmlContent={htmlString}
+        galleryImages={filteredGalleryImages}
+      />
     );
   } catch (error) {
     console.error('Error loading event:', error);

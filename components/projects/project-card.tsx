@@ -1,14 +1,22 @@
 'use client';
 
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Project } from '@/types';
 import { Github, ExternalLink } from 'lucide-react';
 
 export function ProjectCard({ project }: { project: Project }) {
+  const router = useRouter();
+
+  const handleCardClick = () => {
+    router.push(`/projects/${project.id}`);
+  };
+
   return (
-    <Link href={`/projects/${project.id}`} className="block">
-      <div className="group relative bg-white/5 backdrop-blur-lg rounded-xl overflow-hidden border border-white/10 card-hover">
+    <div 
+      className="group relative bg-white/5 backdrop-blur-lg rounded-xl overflow-hidden border-2 border-gray-200/60 cursor-pointer"
+      onClick={handleCardClick}
+    >
         {project.coverImage && (
           <div className="relative h-48 w-full">
             <Image
@@ -21,10 +29,10 @@ export function ProjectCard({ project }: { project: Project }) {
           </div>
         )}
         <div className="p-6">
-          <h3 className="text-xl font-bold text-white mb-2 group-hover:text-gradient transition">
+          <h3 className="text-xl font-bold text-gray-900 mb-2">
             {project.title}
           </h3>
-          <p className="text-gray-400 mb-4 line-clamp-2">{project.description}</p>
+          <p className="text-gray-700 mb-4 line-clamp-2">{project.description}</p>
           <div className="flex flex-wrap gap-2 mb-4">
             {project.techStack.map((tech, i) => (
               <span
@@ -41,7 +49,7 @@ export function ProjectCard({ project }: { project: Project }) {
                 href={project.githubLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 text-gray-400 hover:text-white transition"
+                className="flex items-center gap-1 text-gray-700 hover:text-gray-900 transition"
                 onClick={(e) => e.stopPropagation()}
               >
                 <Github className="w-4 h-4" />
@@ -53,7 +61,7 @@ export function ProjectCard({ project }: { project: Project }) {
                 href={project.demoLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 text-gray-400 hover:text-white transition"
+                className="flex items-center gap-1 text-gray-700 hover:text-gray-900 transition"
                 onClick={(e) => e.stopPropagation()}
               >
                 <ExternalLink className="w-4 h-4" />
@@ -63,6 +71,5 @@ export function ProjectCard({ project }: { project: Project }) {
           </div>
         </div>
       </div>
-    </Link>
-  );
+    );
 }
