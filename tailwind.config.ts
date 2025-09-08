@@ -16,9 +16,13 @@ const config: Config = {
           accent: "#10B981",
           dark: "#0F172A",
           light: "#F8FAFC",
+          purple: "#6b21a8",
         },
         background: "var(--background)",
         foreground: "var(--foreground)",
+      },
+      backgroundImage: {
+        'team-gradient': 'linear-gradient(135deg, #fef7f4 0%, #fff5f0 50%, #f9f4ff 100%)',
       },
       animation: {
         gradient: "gradient 8s linear infinite",

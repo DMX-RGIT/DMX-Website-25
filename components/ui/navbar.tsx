@@ -45,13 +45,13 @@ export function Navbar() {
               
               {/* Desktop navigation links */}
               <div className="hidden md:flex space-x-8"> {/* Increased spacing between links */}
-                <Link href="/events" className="nav-link">
+                <Link href="/events" className="nav-link text-dmx-primary hover:text-dmx-purple">
                   Events
                 </Link>
-                <Link href="/projects" className="nav-link">
+                <Link href="/projects" className="nav-link text-dmx-primary hover:text-dmx-purple">
                   Projects
                 </Link>
-                <Link href="/team" className="nav-link">
+                <Link href="/team" className="nav-link text-dmx-primary hover:text-dmx-purple">
                   Team
                 </Link>
               </div>
@@ -85,21 +85,21 @@ export function Navbar() {
                 <div className="mobile-nav-links">
                   <Link 
                     href="/events" 
-                    className="mobile-nav-link"
+                    className="mobile-nav-link text-dmx-primary hover:text-dmx-purple"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Events
                   </Link>
                   <Link 
                     href="/projects" 
-                    className="mobile-nav-link"
+                    className="mobile-nav-link text-dmx-primary hover:text-dmx-purple"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Projects
                   </Link>
                   <Link 
                     href="/team" 
-                    className="mobile-nav-link"
+                    className="mobile-nav-link text-dmx-primary hover:text-dmx-purple"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Team
@@ -144,9 +144,8 @@ export function Navbar() {
         }
 
         .nav-link {
-          color: #24292e; /* Dark text like MetaMask */
+          color: #8b5cf6; /* Purple like team page */
           font-weight: 500; /* Medium weight like MetaMask */
-          font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
           font-size: 0.95rem;
           letter-spacing: -0.01em; /* Tighter like MetaMask */
           text-decoration: none;
@@ -158,8 +157,8 @@ export function Navbar() {
         }
 
         .nav-link:hover {
-          background: rgba(0, 0, 0, 0.04); /* Very subtle gray hover like MetaMask */
-          color: #24292e; /* Keep same color */
+          background: rgba(139, 92, 246, 0.1); /* Purple hover background */
+          color: #7c3aed; /* Darker purple on hover */
           border-radius: 8px;
           transform: none; /* No transform like MetaMask */
         }
@@ -259,9 +258,8 @@ export function Navbar() {
         }
 
         .mobile-nav-link {
-          color: #24292e;
+          color: #8b5cf6; /* Purple like team page */
           font-weight: 600;
-          font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
           font-size: 1.1rem;
           letter-spacing: 0.01em;
           text-decoration: none;
@@ -269,17 +267,17 @@ export function Navbar() {
           border-radius: 12px;
           transition: all 0.3s ease;
           background: transparent;
-          border: 1px solid rgba(111, 66, 193, 0.1);
+          border: 1px solid rgba(139, 92, 246, 0.2); /* Purple border */
         }
 
         .mobile-nav-link:hover {
           background: linear-gradient(135deg, 
-            rgba(111, 66, 193, 0.08), 
+            rgba(139, 92, 246, 0.1), 
             rgba(246, 133, 27, 0.05));
-          color: #6f42c1;
+          color: #7c3aed; /* Darker purple on hover */
           border-color: rgba(246, 133, 27, 0.3);
           box-shadow: 
-            0 4px 15px rgba(111, 66, 193, 0.1),
+            0 4px 15px rgba(139, 92, 246, 0.15),
             inset 0 1px 0 rgba(255, 255, 255, 0.8);
           transform: translateX(4px);
         }

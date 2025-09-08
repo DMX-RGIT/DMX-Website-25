@@ -129,6 +129,16 @@ export default function LoginPage() {
           50% { transform: translateY(-35px) rotate(120deg); }
         }
 
+        /* Mobile responsive: Hide floating shapes on small screens */
+        @media (max-width: 767px) {
+          .metamask-page::before,
+          .metamask-page::after,
+          .floating-shape-1,
+          .floating-shape-2 {
+            display: none;
+          }
+        }
+
         /* Mobile first responsive padding */
         @media (min-width: 640px) {
           .metamask-page {
