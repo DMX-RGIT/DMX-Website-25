@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+import React, { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 
 interface Speaker {
   id: number;
@@ -38,22 +38,25 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
 
   const getCardClass = (index: number) => {
     const offset = (index - currentIndex + speakers.length) % speakers.length;
-    
-    if (offset === 0) return 'center';
-    if (offset === 1) return 'right-1';
-    if (offset === 2) return 'right-2';
-    if (offset === speakers.length - 1) return 'left-1';
-    if (offset === speakers.length - 2) return 'left-2';
-    return 'hidden';
+
+    if (offset === 0) return "center";
+    if (offset === 1) return "right-1";
+    if (offset === 2) return "right-2";
+    if (offset === speakers.length - 1) return "left-1";
+    if (offset === speakers.length - 2) return "left-2";
+    return "hidden";
   };
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'ArrowLeft') {
-      updateCarousel(currentIndex - 1);
-    } else if (e.key === 'ArrowRight') {
-      updateCarousel(currentIndex + 1);
-    }
-  };
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        updateCarousel(currentIndex - 1);
+      } else if (e.key === "ArrowRight") {
+        updateCarousel(currentIndex + 1);
+      }
+    },
+    ["currentIndex", "updateCarousel"]
+  );
 
   // Touch handlers for swipe functionality
   const onTouchStart = (e: React.TouchEvent) => {
@@ -67,7 +70,7 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
 
   const onTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
-    
+
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
@@ -80,9 +83,9 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
   };
 
   useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [currentIndex]);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [currentIndex, handleKeyDown]);
 
   return (
     <div className={`team-carousel-wrapper ${className}`}>
@@ -154,14 +157,15 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
           position: absolute;
           width: 200px; /* Mobile first - smaller cards */
           height: 260px; /* Mobile first - smaller cards */
-          background: linear-gradient(135deg, 
-            rgba(255, 255, 255, 0.95), 
-            rgba(248, 250, 252, 0.9)); /* Light MetaMask-inspired background */
+          background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.95),
+            rgba(248, 250, 252, 0.9)
+          ); /* Light MetaMask-inspired background */
           border: 2px solid rgba(111, 66, 193, 0.2); /* Subtle purple border */
           border-radius: 16px; /* Mobile first - smaller radius */
           overflow: hidden;
-          box-shadow: 
-            0 10px 30px rgba(111, 66, 193, 0.1),
+          box-shadow: 0 10px 30px rgba(111, 66, 193, 0.1),
             0 5px 15px rgba(0, 0, 0, 0.1),
             inset 0 1px 0 rgba(255, 255, 255, 0.8);
           transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -191,8 +195,7 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
 
         .card:hover {
           border-color: rgba(246, 133, 27, 0.4); /* MetaMask orange on hover */
-          box-shadow: 
-            0 15px 40px rgba(246, 133, 27, 0.2),
+          box-shadow: 0 15px 40px rgba(246, 133, 27, 0.2),
             0 8px 20px rgba(111, 66, 193, 0.1),
             inset 0 1px 0 rgba(255, 255, 255, 0.9);
           transform: translateY(-5px);
@@ -221,21 +224,24 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
 
         .card.left-2 {
           z-index: 1;
-          transform: translate(-50%, -50%) translateX(-250px) scale(0.7) translateZ(-300px); /* Mobile first - smaller transforms */
+          transform: translate(-50%, -50%) translateX(-250px) scale(0.7)
+            translateZ(-300px); /* Mobile first - smaller transforms */
           opacity: 0.6;
         }
 
         /* Responsive left-2 positioning */
         @media (min-width: 640px) {
           .card.left-2 {
-            transform: translate(-50%, -50%) translateX(-320px) scale(0.75) translateZ(-300px);
+            transform: translate(-50%, -50%) translateX(-320px) scale(0.75)
+              translateZ(-300px);
             opacity: 0.65;
           }
         }
 
         @media (min-width: 1024px) {
           .card.left-2 {
-            transform: translate(-50%, -50%) translateX(-500px) scale(0.8) translateZ(-300px); /* Adjusted for bigger cards */
+            transform: translate(-50%, -50%) translateX(-500px) scale(0.8)
+              translateZ(-300px); /* Adjusted for bigger cards */
             opacity: 0.7;
           }
         }
@@ -246,21 +252,24 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
 
         .card.left-1 {
           z-index: 5;
-          transform: translate(-50%, -50%) translateX(-120px) scale(0.85) translateZ(-100px); /* Mobile first - smaller transforms */
+          transform: translate(-50%, -50%) translateX(-120px) scale(0.85)
+            translateZ(-100px); /* Mobile first - smaller transforms */
           opacity: 0.85;
         }
 
         /* Responsive left-1 positioning */
         @media (min-width: 640px) {
           .card.left-1 {
-            transform: translate(-50%, -50%) translateX(-160px) scale(0.88) translateZ(-100px);
+            transform: translate(-50%, -50%) translateX(-160px) scale(0.88)
+              translateZ(-100px);
             opacity: 0.88;
           }
         }
 
         @media (min-width: 1024px) {
           .card.left-1 {
-            transform: translate(-50%, -50%) translateX(-250px) scale(0.9) translateZ(-100px); /* Adjusted for bigger cards */
+            transform: translate(-50%, -50%) translateX(-250px) scale(0.9)
+              translateZ(-100px); /* Adjusted for bigger cards */
             opacity: 0.9;
           }
         }
@@ -271,21 +280,24 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
 
         .card.right-1 {
           z-index: 5;
-          transform: translate(-50%, -50%) translateX(120px) scale(0.85) translateZ(-100px); /* Mobile first - smaller transforms */
+          transform: translate(-50%, -50%) translateX(120px) scale(0.85)
+            translateZ(-100px); /* Mobile first - smaller transforms */
           opacity: 0.85;
         }
 
         /* Responsive right-1 positioning */
         @media (min-width: 640px) {
           .card.right-1 {
-            transform: translate(-50%, -50%) translateX(160px) scale(0.88) translateZ(-100px);
+            transform: translate(-50%, -50%) translateX(160px) scale(0.88)
+              translateZ(-100px);
             opacity: 0.88;
           }
         }
 
         @media (min-width: 1024px) {
           .card.right-1 {
-            transform: translate(-50%, -50%) translateX(250px) scale(0.9) translateZ(-100px); /* Adjusted for bigger cards */
+            transform: translate(-50%, -50%) translateX(250px) scale(0.9)
+              translateZ(-100px); /* Adjusted for bigger cards */
             opacity: 0.9;
           }
         }
@@ -296,21 +308,24 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
 
         .card.right-2 {
           z-index: 1;
-          transform: translate(-50%, -50%) translateX(250px) scale(0.7) translateZ(-300px); /* Mobile first - smaller transforms */
+          transform: translate(-50%, -50%) translateX(250px) scale(0.7)
+            translateZ(-300px); /* Mobile first - smaller transforms */
           opacity: 0.6;
         }
 
         /* Responsive right-2 positioning */
         @media (min-width: 640px) {
           .card.right-2 {
-            transform: translate(-50%, -50%) translateX(320px) scale(0.75) translateZ(-300px);
+            transform: translate(-50%, -50%) translateX(320px) scale(0.75)
+              translateZ(-300px);
             opacity: 0.65;
           }
         }
 
         @media (min-width: 1024px) {
           .card.right-2 {
-            transform: translate(-50%, -50%) translateX(500px) scale(0.8) translateZ(-300px); /* Adjusted for bigger cards */
+            transform: translate(-50%, -50%) translateX(500px) scale(0.8)
+              translateZ(-300px); /* Adjusted for bigger cards */
             opacity: 0.7;
           }
         }
@@ -334,7 +349,8 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
           color: #24292e;
           font-size: 2rem;
           font-weight: 800; /* MetaMask bold style */
-          font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+          font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont,
+            sans-serif;
           margin-bottom: 10px;
           position: relative;
           display: inline-block;
@@ -350,7 +366,13 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
           top: 100%;
           width: 60px;
           height: 2px; /* Slightly thicker for MetaMask boldness */
-          background: linear-gradient(90deg, transparent, #f6851b 20%, #f6851b 80%, transparent); /* MetaMask orange */
+          background: linear-gradient(
+            90deg,
+            transparent,
+            #f6851b 20%,
+            #f6851b 80%,
+            transparent
+          ); /* MetaMask orange */
         }
 
         .member-name::before {
@@ -365,7 +387,8 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
           color: #6f42c1; /* MetaMask purple accent */
           font-size: 1.1rem;
           font-weight: 600; /* Bolder like MetaMask */
-          font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+          font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont,
+            sans-serif;
           opacity: 0.9;
           text-transform: uppercase;
           letter-spacing: 0.08em; /* Wider spacing for emphasis */
@@ -395,8 +418,7 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
         .dot.active {
           background: rgba(246, 133, 27, 0.8); /* MetaMask orange for active */
           border-color: #f6851b; /* Orange border */
-          box-shadow: 
-            0 2px 8px rgba(246, 133, 27, 0.4),
+          box-shadow: 0 2px 8px rgba(246, 133, 27, 0.4),
             0 1px 4px rgba(246, 133, 27, 0.2);
           transform: scale(1.2);
         }
@@ -411,9 +433,11 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
           position: absolute;
           top: 50%;
           transform: translateY(-50%);
-          background: linear-gradient(135deg, 
-            rgba(255, 255, 255, 0.95), 
-            rgba(248, 250, 252, 0.9)); /* Light MetaMask background */
+          background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.95),
+            rgba(248, 250, 252, 0.9)
+          ); /* Light MetaMask background */
           border: 2px solid rgba(111, 66, 193, 0.3); /* Purple border */
           color: #6f42c1; /* MetaMask purple */
           width: 35px; /* Mobile first - smaller buttons */
@@ -429,8 +453,7 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
           font-weight: 700; /* Bold like MetaMask */
           outline: none;
           backdrop-filter: blur(8px);
-          box-shadow: 
-            0 4px 15px rgba(111, 66, 193, 0.1),
+          box-shadow: 0 4px 15px rgba(111, 66, 193, 0.1),
             inset 0 1px 0 rgba(255, 255, 255, 0.8);
         }
 
@@ -452,13 +475,14 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
         }
 
         .nav-arrow:hover {
-          background: linear-gradient(135deg, 
-            rgba(246, 133, 27, 0.1), 
-            rgba(246, 133, 27, 0.05)); /* MetaMask orange hover */
+          background: linear-gradient(
+            135deg,
+            rgba(246, 133, 27, 0.1),
+            rgba(246, 133, 27, 0.05)
+          ); /* MetaMask orange hover */
           border-color: #f6851b; /* Orange border */
           color: #f6851b; /* Orange text */
-          box-shadow: 
-            0 6px 20px rgba(246, 133, 27, 0.2),
+          box-shadow: 0 6px 20px rgba(246, 133, 27, 0.2),
             inset 0 1px 0 rgba(255, 255, 255, 0.9);
           transform: translateY(-50%) scale(1.1);
         }
@@ -502,15 +526,21 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
           color: #6f42c1;
           font-size: 0.85rem;
           font-weight: 600;
-          font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+          font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont,
+            sans-serif;
           letter-spacing: 0.05em;
           opacity: 0.7;
           animation: swipePulse 2s infinite;
         }
 
         @keyframes swipePulse {
-          0%, 100% { opacity: 0.7; }
-          50% { opacity: 1; }
+          0%,
+          100% {
+            opacity: 0.7;
+          }
+          50% {
+            opacity: 1;
+          }
         }
 
         /* Touch-friendly features for mobile */
@@ -526,11 +556,11 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
           .carousel-track {
             touch-action: pan-x;
           }
-          
+
           .card {
             cursor: default; /* Remove cursor on mobile */
           }
-          
+
           .nav-arrow {
             /* Larger touch targets on mobile */
             width: 45px;
@@ -578,15 +608,15 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
       <h1 className="about-title">OUR TEAM</h1>
 
       <div className="carousel-container">
-        <button 
-          className="nav-arrow left" 
+        <button
+          className="nav-arrow left"
           onClick={() => updateCarousel(currentIndex - 1)}
           aria-label="Previous member"
         >
           ‹
         </button>
-        
-        <div 
+
+        <div
           className="carousel-track"
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
@@ -609,14 +639,12 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
             </div>
           ))}
         </div>
-        
+
         {/* Swipe indicator for mobile */}
-        <div className="swipe-indicator">
-          ← swipe →
-        </div>
-        
-        <button 
-          className="nav-arrow right" 
+        <div className="swipe-indicator">← swipe →</div>
+
+        <button
+          className="nav-arrow right"
           onClick={() => updateCarousel(currentIndex + 1)}
           aria-label="Next member"
         >
@@ -633,7 +661,7 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
         {speakers.map((_, index) => (
           <div
             key={index}
-            className={`dot ${index === currentIndex ? 'active' : ''}`}
+            className={`dot ${index === currentIndex ? "active" : ""}`}
             onClick={() => updateCarousel(index)}
           />
         ))}

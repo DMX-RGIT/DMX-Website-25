@@ -1,8 +1,7 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import Link from 'next/link';
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -11,15 +10,15 @@ export default function AdminDashboard() {
   // and redirect to login if not authenticated
   useEffect(() => {
     // Check if user is authenticated
-    const isAuthenticated = localStorage.getItem('isAuthenticated');
+    const isAuthenticated = localStorage.getItem("isAuthenticated");
     if (!isAuthenticated) {
-      router.push('/login');
+      router.push("/login");
     }
   }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('isAuthenticated');
-    router.push('/login');
+    localStorage.removeItem("isAuthenticated");
+    router.push("/login");
   };
 
   return (
@@ -44,12 +43,17 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Stats Cards */}
           {[
-            { title: 'Total Users', value: '1,234' },
-            { title: 'Active Events', value: '12' },
-            { title: 'Revenue', value: '$24,567' },
+            { title: "Total Users", value: "1,234" },
+            { title: "Active Events", value: "12" },
+            { title: "Revenue", value: "$24,567" },
           ].map((stat, index) => (
-            <div key={index} className="bg-dmx-dark/50 border border-white/10 rounded-lg p-6">
-              <h3 className="text-gray-400 text-sm font-medium">{stat.title}</h3>
+            <div
+              key={index}
+              className="bg-dmx-dark/50 border border-white/10 rounded-lg p-6"
+            >
+              <h3 className="text-gray-400 text-sm font-medium">
+                {stat.title}
+              </h3>
               <p className="text-2xl font-bold mt-2">{stat.value}</p>
             </div>
           ))}
@@ -60,7 +64,10 @@ export default function AdminDashboard() {
           <h2 className="text-lg font-medium mb-4">Recent Activity</h2>
           <div className="space-y-4">
             {[1, 2, 3, 4, 5].map((item) => (
-              <div key={item} className="border-b border-white/5 pb-3 last:border-0 last:pb-0">
+              <div
+                key={item}
+                className="border-b border-white/5 pb-3 last:border-0 last:pb-0"
+              >
                 <p className="text-sm">Activity log entry {item}</p>
                 <p className="text-xs text-gray-400 mt-1">2 hours ago</p>
               </div>
