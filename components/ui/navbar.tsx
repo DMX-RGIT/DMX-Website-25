@@ -45,9 +45,9 @@ export function Navbar() {
               
               {/* Desktop navigation links */}
               <div className="hidden md:flex space-x-8"> {/* Increased spacing between links */}
-                <a href="https://events.dmxrgit.com/docs" className="nav-link text-dmx-primary hover:text-dmx-purple">
+                <Link href="https://events.dmxrgit.com/docs" className="nav-link text-dmx-primary hover:text-dmx-purple">
                   Events
-                </a>
+                </Link>
                 <Link href="/projects" className="nav-link text-dmx-primary hover:text-dmx-purple">
                   Projects
                 </Link>
@@ -83,13 +83,13 @@ export function Navbar() {
             <div className="mobile-menu-overlay md:hidden">
               <div className="mobile-menu">
                 <div className="mobile-nav-links">
-                  <a 
+                  <Link 
                     href="https://events.dmxrgit.com/docs" 
                     className="mobile-nav-link text-dmx-primary hover:text-dmx-purple"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Events
-                  </a>
+                  </Link>
                   <Link 
                     href="/projects" 
                     className="mobile-nav-link text-dmx-primary hover:text-dmx-purple"
