@@ -83,13 +83,13 @@ export function Navbar() {
             <div className="mobile-menu-overlay md:hidden">
               <div className="mobile-menu">
                 <div className="mobile-nav-links">
-                  <Link 
-                    href="/events" 
+                  <a 
+                    href="https://events.dmxrgit.com" 
                     className="mobile-nav-link text-dmx-primary hover:text-dmx-purple"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Events
-                  </Link>
+                  </a>
                   <Link 
                     href="/projects" 
                     className="mobile-nav-link text-dmx-primary hover:text-dmx-purple"
