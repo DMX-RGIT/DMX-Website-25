@@ -45,9 +45,9 @@ export function Navbar() {
               
               {/* Desktop navigation links */}
               <div className="hidden md:flex space-x-8"> {/* Increased spacing between links */}
-                <Link href="/events" className="nav-link text-dmx-primary hover:text-dmx-purple">
+                <a href="https://events.dmxrgit.com/docs" className="nav-link text-dmx-primary hover:text-dmx-purple">
                   Events
-                </Link>
+                </a>
                 <Link href="/projects" className="nav-link text-dmx-primary hover:text-dmx-purple">
                   Projects
                 </Link>
