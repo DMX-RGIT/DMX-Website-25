@@ -84,7 +84,7 @@ export function Navbar() {
               <div className="mobile-menu">
                 <div className="mobile-nav-links">
                   <a 
-                    href="https://events.dmxrgit.com" 
+                    href="https://events.dmxrgit.com/docs" 
                     className="mobile-nav-link text-dmx-primary hover:text-dmx-purple"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
