@@ -45,7 +45,7 @@ export function Navbar() {
               
               {/* Desktop navigation links */}
               <div className="hidden md:flex space-x-8"> {/* Increased spacing between links */}
-                <Link href="https://events.dmxrgit.com/docs" className="nav-link text-dmx-primary hover:text-dmx-purple">
+                <Link href="https://events.dmxrgit.com" className="nav-link text-dmx-primary hover:text-dmx-purple">
                   Events
                 </Link>
                 <Link href="/projects" className="nav-link text-dmx-primary hover:text-dmx-purple">
@@ -84,7 +84,7 @@ export function Navbar() {
               <div className="mobile-menu">
                 <div className="mobile-nav-links">
                   <Link 
-                    href="https://events.dmxrgit.com/docs" 
+                    href="https://events.dmxrgit.com" 
                     className="mobile-nav-link text-dmx-primary hover:text-dmx-purple"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
