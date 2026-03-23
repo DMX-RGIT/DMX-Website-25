@@ -1,49 +1,14 @@
-// pages/login.js
 'use client';
 
-import { useState } from 'react';
-import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import Link from 'next/link';
+import { EventCard } from '@/components/events/event-card';
+import { Event } from '@/types';
 
-export default function LoginPage() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+interface EventsContentProps {
+  upcomingEvents: Event[];
+  pastEvents: Event[];
+}
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setMessage('');
-    
-    try {
-      const usersRef = collection(db, 'logins');
-      const q = query(usersRef, where('username', '==', username));
-      const querySnapshot = await getDocs(q);
-      
-      if (querySnapshot.empty) {
-        setMessage('User not found.');
-        return;
-      }
-
-      const user = querySnapshot.docs[0].data();
-      if (user.password === password) {
-        // Store authentication status in localStorage
-        localStorage.setItem('isAuthenticated', 'true');
-        // Redirect to admin panel
-        window.location.href = '/admin';
-      } else {
-        setMessage('Incorrect password.');
-      }
-    } catch (error) {
-      console.error(error);
-      setMessage('An error occurred. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+export default function EventsContent({ upcomingEvents, pastEvents }: EventsContentProps) {
   return (
     <div className="min-h-screen metamask-page">
       <style jsx>{`
@@ -159,7 +124,7 @@ export default function LoginPage() {
           border-radius: 24px;
           padding: 1.5rem;
           margin-bottom: 2rem;
-          box-shadow: 
+          box-shadow:
             0 20px 40px rgba(139, 92, 246, 0.1),
             0 8px 32px rgba(255, 107, 53, 0.1),
             inset 0 1px 0 rgba(255, 255, 255, 0.6);
@@ -188,7 +153,7 @@ export default function LoginPage() {
 
         .glass-container:hover {
           transform: translateY(-8px);
-          box-shadow: 
+          box-shadow:
             0 32px 64px rgba(139, 92, 246, 0.2),
             0 16px 48px rgba(255, 107, 53, 0.15),
             inset 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -205,7 +170,7 @@ export default function LoginPage() {
           bottom: 0;
           border-radius: inherit;
           padding: 2px;
-          background: linear-gradient(45deg, 
+          background: linear-gradient(45deg,
             #8b5cf6, #06d6a0, #ff6b35, #ffd60a, #8b5cf6);
           background-size: 300% 300%;
           animation: gradientShift 6s ease infinite;
@@ -261,32 +226,6 @@ export default function LoginPage() {
             margin-bottom: 3rem;
           }
         }
-
-        .section-title {
-          color: #6b21a8;
-          font-size: 1.1rem;
-          font-weight: 600;
-          margin-bottom: 1.5rem;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          position: relative;
-          z-index: 2;
-        }
-
-        /* Responsive section title */
-        @media (min-width: 640px) {
-          .section-title {
-            font-size: 1.2rem;
-            margin-bottom: 1.75rem;
-          }
-        }
-
-        @media (min-width: 1024px) {
-          .section-title {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-          }
-        }
       `}</style>
 
       {/* Floating Shapes */}
@@ -295,63 +234,42 @@ export default function LoginPage() {
 
       {/* Page Title */}
       <h1 className="page-title">
-        Sign in to your account
+        Events
       </h1>
-
-      {/* Login Form Section */}
-      <div className="glass-container max-w-md mx-auto">
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Or{' '}
-          <Link href="/register" className="font-medium text-purple-600 hover:text-purple-500">
-            create a new account
-          </Link>
-        </p>
-        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
-          <div className="rounded-md shadow-sm space-y-4">
-            <div>
-              <label htmlFor="username" className="sr-only">Username</label>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                required
-                className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
+      
+      <div className="max-w-7xl mx-auto z-10 relative">
+        {/* Upcoming Events Section */}
+        <section className="mb-16">
+          <h2 className="text-2xl font-bold mb-6 text-gray-800 tracking-wide uppercase">Upcoming Events</h2>
+          {upcomingEvents.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {upcomingEvents.map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))}
             </div>
-            <div>
-              <label htmlFor="password" className="sr-only">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-          </div>
-
-          {message && (
-            <div className={`text-sm p-3 rounded-md ${message.includes('success') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-              {message}
+          ) : (
+            <div className="glass-container text-center py-10">
+              <p className="text-gray-500 text-lg">No upcoming events scheduled at the moment.</p>
+              <p className="text-gray-400">Stay tuned for updates!</p>
             </div>
           )}
+        </section>
 
-          <div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? 'Signing in...' : 'Sign in'}
-            </button>
-          </div>
-        </form>
+        {/* Past Events Section */}
+        <section>
+          <h2 className="text-2xl font-bold mb-6 text-gray-800 tracking-wide uppercase">Past Events</h2>
+          {pastEvents.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {pastEvents.map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))}
+            </div>
+          ) : (
+            <div className="glass-container text-center py-8">
+              <p className="text-gray-500">No past events found.</p>
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );

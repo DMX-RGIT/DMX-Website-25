@@ -1,80 +1,47 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 export default function AdminDashboard() {
-  const router = useRouter();
-
-  // In a real app, you would check for authentication status here
-  // and redirect to login if not authenticated
-  useEffect(() => {
-    // Check if user is authenticated
-    const isAuthenticated = localStorage.getItem("isAuthenticated");
-    if (!isAuthenticated) {
-      router.push("/login");
-    }
-  }, [router]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    router.push("/login");
-  };
-
   return (
-    <div className="min-h-screen bg-dmx-dark text-white">
-      {/* Header */}
-      <header className="bg-dmx-dark/90 backdrop-blur-lg border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <h1 className="text-xl font-bold">Admin Dashboard</h1>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md text-sm font-medium"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Stats Cards */}
-          {[
-            { title: "Total Users", value: "1,234" },
-            { title: "Active Events", value: "12" },
-            { title: "Revenue", value: "$24,567" },
-          ].map((stat, index) => (
-            <div
-              key={index}
-              className="bg-dmx-dark/50 border border-white/10 rounded-lg p-6"
-            >
-              <h3 className="text-gray-400 text-sm font-medium">
-                {stat.title}
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        {/* Module Nav Cards */}
+        {[
+          { title: "Manage Events", desc: "Add or update hackathons & workshops.", link: "/admin/events" },
+          { title: "Manage Projects", desc: "Update student project repositories.", link: "/admin/projects" },
+          { title: "Manage Gallery", desc: "Add event image assets.", link: "/admin/gallery" },
+          { title: "Manage Team", desc: "Update core committee members.", link: "/admin/team" },
+        ].map((module, index) => (
+          <div
+            key={index}
+            className="bg-white/5 border border-white/10 rounded-xl p-6 flex flex-col justify-between"
+          >
+            <div>
+              <h3 className="text-white text-lg font-semibold mb-2">
+                {module.title}
               </h3>
-              <p className="text-2xl font-bold mt-2">{stat.value}</p>
+              <p className="text-gray-400 text-sm mb-6">{module.desc}</p>
             </div>
-          ))}
-        </div>
-
-        {/* Recent Activity */}
-        <div className="mt-8 bg-dmx-dark/50 border border-white/10 rounded-lg p-6">
-          <h2 className="text-lg font-medium mb-4">Recent Activity</h2>
-          <div className="space-y-4">
-            {[1, 2, 3, 4, 5].map((item) => (
-              <div
-                key={item}
-                className="border-b border-white/5 pb-3 last:border-0 last:pb-0"
-              >
-                <p className="text-sm">Activity log entry {item}</p>
-                <p className="text-xs text-gray-400 mt-1">2 hours ago</p>
-              </div>
-            ))}
+            <Link href={module.link} className="flex items-center gap-2 text-purple-400 font-medium hover:text-purple-300 transition-colors w-fit">
+              Go to Module <ArrowRight size={16} />
+            </Link>
           </div>
-        </div>
-      </main>
+        ))}
+      </div>
+
+      {/* Info Block */}
+      <div className="mt-8 bg-white/5 border border-white/10 rounded-xl p-8 max-w-4xl">
+        <h2 className="text-xl font-medium mb-4">Welcome to the DMX CMS</h2>
+        <p className="text-gray-400 text-sm leading-relaxed mb-4">
+          This dashboard interfaces directly with the static filesystem for this repository.
+          Edits made to Markdown (MDX) and JSON configurations on these modules are instantly written and reflected locally.
+        </p>
+        <p className="text-gray-400 text-sm leading-relaxed">
+          <strong>Remember:</strong> In production deployments without persistent local volumes (like Vercel standard hosting), these filesystem changes require a fresh deployment. The local CMS is primarily designed for developers to orchestrate localized content edits pre-commit.
+        </p>
+      </div>
     </div>
   );
 }
