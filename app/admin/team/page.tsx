@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Plus, Trash2, Save, X } from "lucide-react";
 
 // The underlying JSON mapping schema
@@ -21,7 +21,7 @@ export default function TeamAdmin() {
   // Editor mode state
   const [editingMember, setEditingMember] = useState<{ index: number, data: TeamMember } | null>(null);
 
-  const fetchTeam = async () => {
+  const fetchTeam = useCallback(async () => {
     setLoading(true);
     const res = await fetch("/api/admin/team");
     if (res.ok) {
@@ -34,9 +34,9 @@ export default function TeamAdmin() {
       }
     }
     setLoading(false);
-  };
+  }, [activeYear]);
 
-  useEffect(() => { fetchTeam(); }, []);
+  useEffect(() => { fetchTeam(); }, [fetchTeam]);
 
   const handleSaveYear = async () => {
     if (!activeYear || !yearsData[activeYear]) return;

@@ -10,7 +10,7 @@ export async function GET() {
     const files = await fs.readdir(TEAM_DIR);
     const jsonFiles = files.filter(f => f.endsWith('.json'));
     
-    const result: Record<string, any> = {};
+    const result: Record<string, unknown> = {};
     for (const file of jsonFiles) {
       const year = file.replace('.json', '');
       const content = await fs.readFile(path.join(TEAM_DIR, file), 'utf8');
