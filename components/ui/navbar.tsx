@@ -45,7 +45,10 @@ export function Navbar() {
               
               {/* Desktop navigation links */}
               <div className="hidden md:flex space-x-8"> {/* Increased spacing between links */}
-                <Link href="https://events.dmxrgit.com" className="nav-link text-dmx-primary hover:text-dmx-purple">
+                <Link href="/about" className="nav-link text-dmx-primary hover:text-dmx-purple">
+                  About
+                </Link>
+                <Link href="/events" className="nav-link text-dmx-primary hover:text-dmx-purple">
                   Events
                 </Link>
                 <Link href="/projects" className="nav-link text-dmx-primary hover:text-dmx-purple">
@@ -53,6 +56,9 @@ export function Navbar() {
                 </Link>
                 <Link href="/team" className="nav-link text-dmx-primary hover:text-dmx-purple">
                   Team
+                </Link>
+                <Link href="/gallery" className="nav-link text-dmx-primary hover:text-dmx-purple">
+                  Gallery
                 </Link>
               </div>
             </div>
@@ -84,7 +90,14 @@ export function Navbar() {
               <div className="mobile-menu">
                 <div className="mobile-nav-links">
                   <Link 
-                    href="https://events.dmxrgit.com" 
+                    href="/about" 
+                    className="mobile-nav-link text-dmx-primary hover:text-dmx-purple"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    About
+                  </Link>
+                  <Link 
+                    href="/events" 
                     className="mobile-nav-link text-dmx-primary hover:text-dmx-purple"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -103,6 +116,13 @@ export function Navbar() {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Team
+                  </Link>
+                  <Link 
+                    href="/gallery" 
+                    className="mobile-nav-link text-dmx-primary hover:text-dmx-purple"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Gallery
                   </Link>
                 </div>
                 

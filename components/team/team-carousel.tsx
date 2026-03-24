@@ -24,7 +24,7 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50;
 
-  const updateCarousel = (newIndex: number) => {
+  const updateCarousel = useCallback((newIndex: number) => {
     if (isAnimating) return;
     setIsAnimating(true);
 
@@ -34,7 +34,7 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
     setTimeout(() => {
       setIsAnimating(false);
     }, 800);
-  };
+  }, [isAnimating, speakers.length]);
 
   const getCardClass = (index: number) => {
     const offset = (index - currentIndex + speakers.length) % speakers.length;
@@ -55,7 +55,7 @@ export function TeamCarousel({ speakers, className = "" }: TeamCarouselProps) {
         updateCarousel(currentIndex + 1);
       }
     },
-    ["currentIndex", "updateCarousel"]
+    [currentIndex, updateCarousel]
   );
 
   // Touch handlers for swipe functionality

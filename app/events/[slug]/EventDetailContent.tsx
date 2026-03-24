@@ -1,14 +1,22 @@
 'use client';
 
-import { Project } from "@/types";
-import { Github, ExternalLink } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Calendar, MapPin, ImageIcon } from 'lucide-react';
 
-interface ProjectDetailContentProps {
-  project: Project;
+interface EventDetailContentProps {
+  event: {
+    title: string;
+    description: string;
+    date: string | Date;
+    venue?: string;
+    image?: string;
+    tags?: string[];
+  };
   htmlContent: string;
 }
 
-export default function ProjectDetailContent({ project, htmlContent }: ProjectDetailContentProps) {
+export default function EventDetailContent({ event, htmlContent }: EventDetailContentProps) {
   return (
     <div className="min-h-screen metamask-page">
       <style jsx>{`
@@ -228,14 +236,6 @@ export default function ProjectDetailContent({ project, htmlContent }: ProjectDe
           }
         }
 
-        .project-description {
-          color: #374151;
-          font-size: 1.125rem;
-          line-height: 1.75;
-          margin-bottom: 2rem;
-          text-align: center;
-        }
-
         .tech-stack {
           display: flex;
           flex-wrap: wrap;
@@ -253,78 +253,33 @@ export default function ProjectDetailContent({ project, htmlContent }: ProjectDe
           font-weight: 500;
         }
 
-        .project-content {
+        .event-content {
           color: #111827;
           line-height: 1.7;
         }
 
-        .project-content h1,
-        .project-content h2,
-        .project-content h3 {
+        .event-content h1,
+        .event-content h2,
+        .event-content h3 {
           color: #1f2937;
           margin-top: 2rem;
           margin-bottom: 1rem;
         }
 
-        .project-content p {
+        .event-content p {
           margin-bottom: 1rem;
           color: #374151;
-        }
-
-        .project-content code {
-          background: rgba(139, 92, 246, 0.1);
-          padding: 0.125rem 0.25rem;
-          border-radius: 0.25rem;
-          font-size: 0.875em;
-          color: #7c3aed;
         }
 
         .action-buttons {
           display: flex;
           gap: 1rem;
           justify-content: center;
-          margin-top: 2rem;
+          margin-top: 3rem;
+          border-top: 1px solid rgba(139, 92, 246, 0.1);
+          padding-top: 2rem;
           position: relative;
           z-index: 10;
-        }
-
-        .btn-primary {
-          padding: 0.75rem 1.5rem;
-          background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-          color: white;
-          border-radius: 0.5rem;
-          font-weight: 600;
-          transition: all 0.3s ease;
-          text-decoration: none;
-          display: inline-flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-
-        .btn-primary:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
-        }
-
-        .btn-secondary {
-          padding: 0.75rem 1.5rem;
-          border: 2px solid #8b5cf6;
-          color: #8b5cf6;
-          background: transparent;
-          border-radius: 0.5rem;
-          font-weight: 600;
-          transition: all 0.3s ease;
-          text-decoration: none;
-          display: inline-flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-
-        .btn-secondary:hover {
-          background: #8b5cf6;
-          color: white;
-          transform: translateY(-2px);
-          box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
         }
       `}</style>
 
@@ -334,44 +289,69 @@ export default function ProjectDetailContent({ project, htmlContent }: ProjectDe
 
       {/* Page Title */}
       <h1 className="page-title">
-        {project.title}
+        {event.title}
       </h1>
 
-      {/* Project Content */}
+      {/* Event Content */}
       <div className="glass-container">
         <div className="max-w-4xl mx-auto">
-          <p className="project-description">{project.description}</p>
-
-          {project.techStack && project.techStack.length > 0 && (
-            <div className="tech-stack">
-              {project.techStack.map((tech, i) => (
-                <span key={i} className="tech-tag">
-                  {tech}
-                </span>
-              ))}
+          {event.image && (
+            <div className="mb-8 relative h-[400px] w-full rounded-2xl overflow-hidden shadow-lg border border-gray-100">
+              <Image
+                src={event.image}
+                alt={event.title}
+                fill
+                className="object-cover"
+                priority
+              />
             </div>
           )}
 
-          <div className="project-content prose prose-lg max-w-none">
+          <div className="flex flex-wrap items-center justify-center gap-6 text-gray-600 mb-8 border-b border-gray-200 pb-8">
+            {event.date && (
+               <div className="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-full shadow-sm">
+                 <Calendar className="w-5 h-5 text-dmx-primary" />
+                 <span className="font-semibold">
+                   {new Date(event.date).toLocaleDateString(undefined, {
+                       weekday: 'long',
+                       year: 'numeric',
+                       month: 'long',
+                       day: 'numeric'
+                   })}
+                 </span>
+               </div>
+            )}
+            {event.venue && (
+               <div className="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-full shadow-sm">
+                 <MapPin className="w-5 h-5 text-dmx-primary" />
+                 <span className="font-semibold">{event.venue}</span>
+               </div>
+            )}
+          </div>
+
+          {event.tags && event.tags.length > 0 && (
+             <div className="tech-stack">
+               {event.tags.map((tag: string) => (
+                 <span key={tag} className="tech-tag">
+                   {tag}
+                 </span>
+               ))}
+             </div>
+          )}
+
+          <div className="event-content prose prose-lg max-w-none">
             <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
           </div>
 
-          {(project.githubLink || project.demoLink) && (
-            <div className="action-buttons">
-              {project.githubLink && (
-                <a href={project.githubLink} target="_blank" rel="noopener noreferrer" className="btn-primary">
-                  <Github className="w-5 h-5" />
-                  View on GitHub
-                </a>
-              )}
-              {project.demoLink && (
-                <a href={project.demoLink} target="_blank" rel="noopener noreferrer" className="btn-secondary">
-                  <ExternalLink className="w-5 h-5" />
-                  Live Demo
-                </a>
-              )}
-            </div>
-          )}
+          <div className="action-buttons">
+            <Link 
+              href="/gallery" 
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[#8b5cf6] to-[#7c3aed] hover:from-[#7c3aed] hover:to-[#6d28d9] text-white font-semibold rounded-full shadow-[0_4px_14px_0_rgba(139,92,246,0.39)] hover:shadow-[0_6px_20px_rgba(139,92,246,0.5)] hover:-translate-y-1 transition-all duration-300 no-underline"
+            >
+              <ImageIcon className="w-5 h-5" />
+              View Event Gallery
+            </Link>
+          </div>
         </div>
       </div>
     </div>
