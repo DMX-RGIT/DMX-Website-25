@@ -10,18 +10,20 @@ import { Event } from '@/types';
 import { Calendar, MapPin } from 'lucide-react';
 
 interface EventCardProps {
-  event: Event; // Event data from Firestore
+  event: Event;
 }
 
 // Event card component with hover effects and navigation
 export function EventCard({ event }: EventCardProps) {
+  const href = `/events/${event.slug || event.id}`;
+
   return (
-    <Link href={`/events/${event.id}`}>
+    <Link href={href}>
       <style jsx>{`
         .card-glass {
-          background: rgba(255, 255, 255, 0.9);
-          backdrop-filter: blur(10px);
-          border: 2px solid rgba(255, 255, 255, 0.4);
+          background: rgba(255, 255, 255, 0.88);
+          backdrop-filter: blur(8px);
+          border: 1px solid rgba(148, 163, 184, 0.25);
           border-radius: 20px;
           position: relative;
           overflow: hidden;
@@ -31,12 +33,9 @@ export function EventCard({ event }: EventCardProps) {
         }
 
         .card-glass:hover {
-          transform: translateY(-8px) scale(1.02);
-          box-shadow:
-            0 24px 48px rgba(139, 92, 246, 0.2),
-            0 12px 24px rgba(255, 107, 53, 0.15),
-            inset 0 1px 0 rgba(255, 255, 255, 0.8);
-          border-color: rgba(139, 92, 246, 0.5);
+          transform: translateY(-4px);
+          box-shadow: 0 24px 36px -24px rgba(30, 41, 59, 0.45);
+          border-color: rgba(30, 64, 175, 0.35);
         }
 
         .card-glass::before {
@@ -48,8 +47,7 @@ export function EventCard({ event }: EventCardProps) {
           bottom: 0;
           border-radius: inherit;
           padding: 2px;
-          background: linear-gradient(45deg,
-            #8b5cf6, #06d6a0, #ff6b35, #ffd60a, #8b5cf6);
+          background: linear-gradient(90deg, #f97316, #2563eb, #0f172a);
           background-size: 300% 300%;
           animation: gradientShift 4s ease infinite;
           mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -84,6 +82,12 @@ export function EventCard({ event }: EventCardProps) {
         )}
         
         <div className="p-6 relative z-10 bg-white/40 group-hover:bg-white/60 transition-colors duration-300">
+          {event.category && (
+            <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700 mb-3">
+              {event.category}
+            </span>
+          )}
+
           <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-dmx-purple transition-colors duration-300">
             {event.title}
           </h3>
@@ -114,6 +118,19 @@ export function EventCard({ event }: EventCardProps) {
               </div>
             )}
           </div>
+
+          {event.tags && event.tags.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {event.tags.slice(0, 3).map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </Link>

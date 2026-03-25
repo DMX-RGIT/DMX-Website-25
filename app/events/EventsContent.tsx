@@ -4,272 +4,92 @@ import { EventCard } from '@/components/events/event-card';
 import { Event } from '@/types';
 
 interface EventsContentProps {
-  upcomingEvents: Event[];
-  pastEvents: Event[];
+  events: Event[];
 }
 
-export default function EventsContent({ upcomingEvents, pastEvents }: EventsContentProps) {
+export default function EventsContent({ events }: EventsContentProps) {
   return (
-    <div className="min-h-screen metamask-page">
+    <div className="min-h-screen blog-events-page">
       <style jsx>{`
-        .metamask-page {
-          background: linear-gradient(135deg, #fef7f4 0%, #fff5f0 50%, #f9f4ff 100%);
+        .blog-events-page {
+          background: radial-gradient(circle at 20% 20%, rgba(251, 146, 60, 0.08), transparent 40%),
+            radial-gradient(circle at 80% 10%, rgba(37, 99, 235, 0.08), transparent 35%),
+            linear-gradient(165deg, #f8fafc 0%, #f1f5f9 55%, #fff7ed 100%);
           min-height: 100vh;
           padding: 1rem;
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
           position: relative;
-          overflow-x: hidden;
+          color: #0f172a;
         }
 
-        /* Floating geometric shapes animation */
-        .metamask-page::before {
-          content: '';
-          position: absolute;
-          top: 10%;
-          left: -5%;
-          width: 150px;
-          height: 150px;
-          background: linear-gradient(45deg, #ff6b35, #f7931e);
-          border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-          animation: float1 12s ease-in-out infinite;
-          z-index: 1;
-        }
-
-        .metamask-page::after {
-          content: '';
-          position: absolute;
-          top: 60%;
-          right: -3%;
-          width: 120px;
-          height: 120px;
-          background: linear-gradient(135deg, #8b5cf6, #a855f7);
-          border-radius: 50% 20% 50% 20%;
-          animation: float2 15s ease-in-out infinite reverse;
-          z-index: 1;
-        }
-
-        @keyframes float1 {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-30px) rotate(180deg); }
-        }
-
-        @keyframes float2 {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-40px) rotate(-180deg); }
-        }
-
-        /* Add more floating shapes */
-        .floating-shape-1 {
-          position: absolute;
-          top: 30%;
-          right: 10%;
-          width: 80px;
-          height: 80px;
-          background: linear-gradient(45deg, #06d6a0, #118ab2);
-          border-radius: 20px;
-          animation: float3 10s ease-in-out infinite;
-          z-index: 1;
-          transform-origin: center;
-        }
-
-        .floating-shape-2 {
-          position: absolute;
-          bottom: 20%;
-          left: 8%;
-          width: 100px;
-          height: 100px;
-          background: linear-gradient(135deg, #ffd60a, #ff8500);
-          clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-          animation: float4 14s ease-in-out infinite;
-          z-index: 1;
-        }
-
-        @keyframes float3 {
-          0%, 100% { transform: translateY(0px) scale(1); }
-          50% { transform: translateY(-25px) scale(1.1); }
-        }
-
-        @keyframes float4 {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-35px) rotate(120deg); }
-        }
-
-        /* Mobile responsive: Hide floating shapes on small screens */
-        @media (max-width: 767px) {
-          .metamask-page::before,
-          .metamask-page::after,
-          .floating-shape-1,
-          .floating-shape-2 {
-            display: none;
-          }
-        }
-
-        /* Mobile first responsive padding */
         @media (min-width: 640px) {
-          .metamask-page {
+          .blog-events-page {
             padding: 1.5rem;
           }
         }
 
         @media (min-width: 1024px) {
-          .metamask-page {
+          .blog-events-page {
             padding: 2rem;
           }
         }
 
-        .glass-container {
-          background: rgba(255, 255, 255, 0.9);
-          backdrop-filter: blur(20px);
-          border: 2px solid rgba(255, 255, 255, 0.3);
+        .hero {
+          max-width: 72rem;
+          margin: 0 auto 2.5rem auto;
+          background: rgba(255, 255, 255, 0.8);
+          border: 1px solid rgba(148, 163, 184, 0.25);
           border-radius: 24px;
           padding: 1.5rem;
-          margin-bottom: 2rem;
-          box-shadow:
-            0 20px 40px rgba(139, 92, 246, 0.1),
-            0 8px 32px rgba(255, 107, 53, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.6);
           position: relative;
-          overflow: hidden;
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          z-index: 2;
-        }
-
-        /* Responsive design for larger screens */
-        @media (min-width: 640px) {
-          .glass-container {
-            padding: 2rem;
-            border-radius: 28px;
-            margin-bottom: 2.5rem;
-          }
-        }
-
-        @media (min-width: 1024px) {
-          .glass-container {
-            padding: 2.5rem;
-            border-radius: 32px;
-            margin-bottom: 3rem;
-          }
-        }
-
-        .glass-container:hover {
-          transform: translateY(-8px);
-          box-shadow:
-            0 32px 64px rgba(139, 92, 246, 0.2),
-            0 16px 48px rgba(255, 107, 53, 0.15),
-            inset 0 1px 0 rgba(255, 255, 255, 0.8);
-          border-color: rgba(139, 92, 246, 0.4);
-        }
-
-        /* Animated gradient border effect */
-        .glass-container::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          border-radius: inherit;
-          padding: 2px;
-          background: linear-gradient(45deg,
-            #8b5cf6, #06d6a0, #ff6b35, #ffd60a, #8b5cf6);
-          background-size: 300% 300%;
-          animation: gradientShift 6s ease infinite;
-          mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-          mask-composite: subtract;
-          opacity: 0;
-          transition: opacity 0.3s ease;
-        }
-
-        .glass-container:hover::before {
-          opacity: 1;
-        }
-
-        @keyframes gradientShift {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
+          box-shadow: 0 25px 50px -30px rgba(30, 41, 59, 0.35);
         }
 
         .page-title {
-          text-align: center;
-          margin-bottom: 2rem;
-          font-size: 3.5rem; /* Bold like MetaMask */
-          font-weight: 900; /* Extra bold */
-          background: linear-gradient(135deg, #8b5cf6, #5b21b6, #7c3aed);
+          font-size: 2.25rem;
+          font-weight: 800;
+          margin-bottom: 0.75rem;
+          background: linear-gradient(120deg, #0f172a, #1d4ed8);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
-          color: #5b21b6; /* Fallback */
-          line-height: 0.9;
+          color: #0f172a;
+          line-height: 1.1;
           letter-spacing: -0.02em;
-          text-transform: uppercase;
-          position: relative;
-          z-index: 2;
-          animation: titlePulse 4s ease-in-out infinite;
         }
 
-        @keyframes titlePulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.02); }
+        .subtitle {
+          color: #334155;
+          max-width: 50rem;
+          font-size: 1rem;
         }
 
-        /* Responsive title sizing */
         @media (min-width: 640px) {
           .page-title {
-            font-size: 4rem;
-            margin-bottom: 2.5rem;
-          }
-        }
-
-        @media (min-width: 1024px) {
-          .page-title {
-            font-size: 5rem;
-            margin-bottom: 3rem;
+            font-size: 3rem;
           }
         }
       `}</style>
 
-      {/* Floating Shapes */}
-      <div className="floating-shape-1"></div>
-      <div className="floating-shape-2"></div>
+      <div className="hero">
+        <h1 className="page-title">Events Archive</h1>
+        <p className="subtitle">
+          Every past DMX event in one place. Browse stories, outcomes, and highlights in reverse chronological order.
+        </p>
+      </div>
 
-      {/* Page Title */}
-      <h1 className="page-title">
-        Events
-      </h1>
-      
-      <div className="max-w-7xl mx-auto z-10 relative">
-        {/* Upcoming Events Section */}
-        <section className="mb-16">
-          <h2 className="text-2xl font-bold mb-6 text-gray-800 tracking-wide uppercase">Upcoming Events</h2>
-          {upcomingEvents.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {upcomingEvents.map((event) => (
-                <EventCard key={event.id} event={event} />
-              ))}
-            </div>
-          ) : (
-            <div className="glass-container text-center py-10">
-              <p className="text-gray-500 text-lg">No upcoming events scheduled at the moment.</p>
-              <p className="text-gray-400">Stay tuned for updates!</p>
-            </div>
-          )}
-        </section>
-
-        {/* Past Events Section */}
-        <section>
-          <h2 className="text-2xl font-bold mb-6 text-gray-800 tracking-wide uppercase">Past Events</h2>
-          {pastEvents.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {pastEvents.map((event) => (
-                <EventCard key={event.id} event={event} />
-              ))}
-            </div>
-          ) : (
-            <div className="glass-container text-center py-8">
-              <p className="text-gray-500">No past events found.</p>
-            </div>
-          )}
-        </section>
+      <div className="max-w-6xl mx-auto relative z-10">
+        {events.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+            {events.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+        ) : (
+          <div className="hero text-center py-12">
+            <p className="text-slate-500">No past events found.</p>
+          </div>
+        )}
       </div>
     </div>
   );

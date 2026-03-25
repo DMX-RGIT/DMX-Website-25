@@ -35,11 +35,11 @@ export default function AdminDashboard() {
       <div className="mt-8 bg-white/5 border border-white/10 rounded-xl p-8 max-w-4xl">
         <h2 className="text-xl font-medium mb-4">Welcome to the DMX CMS</h2>
         <p className="text-gray-400 text-sm leading-relaxed mb-4">
-          This dashboard interfaces directly with the static filesystem for this repository.
-          Edits made to Markdown (MDX) and JSON configurations on these modules are instantly written and reflected locally.
+          This dashboard uses Supabase for database-backed content management.
+          Event CRUD updates are stored in PostgreSQL and reflected immediately on the public site.
         </p>
         <p className="text-gray-400 text-sm leading-relaxed">
-          <strong>Remember:</strong> In production deployments without persistent local volumes (like Vercel standard hosting), these filesystem changes require a fresh deployment. The local CMS is primarily designed for developers to orchestrate localized content edits pre-commit.
+          <strong>Remember:</strong> configure admin emails and Supabase credentials in environment variables before deploying this CMS.
         </p>
       </div>
     </div>

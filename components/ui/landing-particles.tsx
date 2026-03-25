@@ -247,7 +247,7 @@ export default function LandingParticles() {
         <p className="font-mono text-gray-400 text-xs sm:text-base md:text-sm ">
           Where{" "}
           <a
-            href="https://vercel.fyi/v0-reinvent"
+            href=""
             target="_blank"
             className="invite-link text-gray-400 hover:text-cyan-400 transition-colors duration-300"
             rel="noreferrer"
@@ -257,7 +257,7 @@ export default function LandingParticles() {
           <span className="transition-colors duration-300"> curiosity</span>{" "}
           <br />
           <a
-            href="https://v0.dev/chat/RqstUbkUVcB?b=b_BoU5qmQ0ehp"
+            href=""
             className="text-gray-500 text-xs mt-2.5 inline-block"
             target="_blank"
             rel="noreferrer"
