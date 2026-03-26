@@ -12,6 +12,7 @@ export interface Event {
   description: string;
   content?: string;
   coverImage: string;
+  galleryImages?: string[];
   tags?: string[];
   category?: string;
   venue?: string;

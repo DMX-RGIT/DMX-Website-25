@@ -10,6 +10,7 @@ create table if not exists public.events (
   description text not null,
   content text not null,
   cover_image_url text,
+  gallery_images text[] not null default '{}',
   event_date timestamptz not null,
   category text,
   tags text[] not null default '{}',
@@ -17,6 +18,9 @@ create table if not exists public.events (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.events
+  add column if not exists gallery_images text[] not null default '{}';
 
 create index if not exists events_event_date_idx on public.events (event_date desc);
 create index if not exists events_slug_idx on public.events (slug);

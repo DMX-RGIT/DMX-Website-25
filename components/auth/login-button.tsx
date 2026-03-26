@@ -1,14 +1,14 @@
 'use client';
 
-import { signIn } from 'next-auth/react';
+import Link from 'next/link';
 
 export function LoginButton() {
   return (
-    <button
-      onClick={() => signIn('google', { callbackUrl: '/admin' })}
-      className="px-4 py-2 bg-dmx-primary text-white rounded-lg hover:bg-dmx-primary/80 transition"
+    <Link
+      href="/login?callbackUrl=/admin"
+      className="inline-flex px-4 py-2 bg-dmx-primary text-white rounded-lg hover:bg-dmx-primary/80 transition"
     >
-      Sign In
-    </button>
+      Admin Login
+    </Link>
   );
 }

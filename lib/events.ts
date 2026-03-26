@@ -7,6 +7,7 @@ export interface EventInput {
   description: string;
   content: string;
   coverImage: string;
+  galleryImages?: string[];
   date: string;
   category?: string | null;
   tags?: string[];
@@ -20,6 +21,7 @@ interface EventRow {
   description: string;
   content: string;
   cover_image_url: string | null;
+  gallery_images: string[] | null;
   event_date: string;
   category: string | null;
   tags: string[] | null;
@@ -36,6 +38,7 @@ function mapEventRowToEvent(row: EventRow): Event {
     description: row.description,
     content: row.content,
     coverImage: row.cover_image_url || '/images/placeholder-event.jpg',
+    galleryImages: row.gallery_images || [],
     date: row.event_date,
     category: row.category || undefined,
     tags: row.tags || [],
@@ -106,6 +109,7 @@ export async function createEvent(input: EventInput): Promise<Event> {
       description: input.description,
       content: input.content,
       cover_image_url: input.coverImage || null,
+      gallery_images: input.galleryImages || [],
       event_date: input.date,
       category: input.category || null,
       tags: input.tags || [],
@@ -132,6 +136,7 @@ export async function updateEvent(id: string, input: EventInput): Promise<Event>
       description: input.description,
       content: input.content,
       cover_image_url: input.coverImage || null,
+      gallery_images: input.galleryImages || [],
       event_date: input.date,
       category: input.category || null,
       tags: input.tags || [],

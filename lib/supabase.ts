@@ -9,9 +9,19 @@ function getEnv(name: string) {
 }
 
 export function createSupabaseServerClient() {
+  const publishableKey =
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!publishableKey) {
+    throw new Error(
+      'Missing required environment variable: NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY'
+    );
+  }
+
   return createClient(
     getEnv('NEXT_PUBLIC_SUPABASE_URL'),
-    getEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY')
+    publishableKey
   );
 }
 

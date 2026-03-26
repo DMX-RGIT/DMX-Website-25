@@ -3,6 +3,40 @@ import path from 'path';
 import matter from 'gray-matter';
 import { createClient } from '@supabase/supabase-js';
 
+async function loadDotEnvLocal() {
+  const envPath = path.join(process.cwd(), '.env.local');
+
+  let raw = '';
+  try {
+    raw = await fs.readFile(envPath, 'utf8');
+  } catch {
+    return;
+  }
+
+  for (const line of raw.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+
+    const eqIndex = trimmed.indexOf('=');
+    if (eqIndex <= 0) continue;
+
+    const key = trimmed.slice(0, eqIndex).trim();
+    let value = trimmed.slice(eqIndex + 1).trim();
+
+    // Strip matching single/double quotes around value.
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+
+    if (!(key in process.env)) {
+      process.env[key] = value;
+    }
+  }
+}
+
 function requiredEnv(name) {
   const value = process.env[name];
   if (!value) {
@@ -19,6 +53,16 @@ function normalizeTags(tags) {
   return [];
 }
 
+function normalizeGalleryImages(images) {
+  if (Array.isArray(images)) {
+    return images.map((img) => String(img).trim()).filter(Boolean);
+  }
+  if (typeof images === 'string') {
+    return images.split(',').map((img) => img.trim()).filter(Boolean);
+  }
+  return [];
+}
+
 function normalizeDate(input, slug) {
   const date = new Date(input || Date.now());
   if (Number.isNaN(date.getTime())) {
@@ -28,6 +72,8 @@ function normalizeDate(input, slug) {
 }
 
 async function main() {
+  await loadDotEnvLocal();
+
   const supabase = createClient(
     requiredEnv('NEXT_PUBLIC_SUPABASE_URL'),
     requiredEnv('SUPABASE_SERVICE_ROLE_KEY')
@@ -56,6 +102,7 @@ async function main() {
       description: data.description || '',
       content: content || '',
       cover_image_url: data.image || null,
+      gallery_images: normalizeGalleryImages(data.galleryImages || data.gallery || []),
       event_date: normalizeDate(data.date, slug),
       category: data.category || null,
       tags: normalizeTags(data.tags),

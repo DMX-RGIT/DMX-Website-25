@@ -14,8 +14,10 @@ Then edit `.env.local` and set:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=...
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 SUPABASE_SERVICE_ROLE_KEY=...
+SUPABASE_EVENTS_BUCKET=events
 
 NEXTAUTH_SECRET=...
 GOOGLE_CLIENT_ID=...
@@ -32,8 +34,10 @@ NEXT_PUBLIC_ADMIN_EMAILS=admin1@example.com,admin2@example.com
 
 1. Open Supabase SQL editor.
 2. Run [supabase/events_schema.sql](supabase/events_schema.sql).
-3. Create a storage bucket (optional) for event images, e.g. `events`.
-4. Upload image files and store their public URL in `cover_image_url`.
+3. Create a storage bucket for event images, e.g. `events`.
+4. Set the bucket as Public (Storage -> Bucket -> Configuration).
+5. Add `SUPABASE_EVENTS_BUCKET=events` in `.env.local`.
+6. You can now upload images directly from the admin Events form.
 
 Tip: if you do not want to use storage yet, keep old image paths for now (for example `/images/event-files/...`).
 
@@ -73,6 +77,17 @@ Implemented in [app/api/admin/events/route.ts](app/api/admin/events/route.ts):
 - `POST /api/admin/events` -> create event
 - `PUT /api/admin/events` -> update event (requires `id`)
 - `DELETE /api/admin/events?id=...` -> delete event
+- `POST /api/admin/uploads/events` -> upload event cover image to Supabase Storage (admin only)
+
+## 5.1 Supabase SSR Helpers Added
+
+The following helper files are now available (matching Supabase quickstart style):
+
+- [utils/supabase/client.ts](utils/supabase/client.ts)
+- [utils/supabase/server.ts](utils/supabase/server.ts)
+- [utils/supabase/middleware.ts](utils/supabase/middleware.ts)
+
+Global middleware at [middleware.ts](middleware.ts) now refreshes Supabase sessions and still enforces admin protection.
 
 ## 6. Frontend Behavior
 
@@ -80,6 +95,8 @@ Implemented in [app/api/admin/events/route.ts](app/api/admin/events/route.ts):
 - Events are always ordered by latest first.
 - [app/events/[slug]/page.tsx](app/events/[slug]/page.tsx) renders event details from Supabase content.
 - [app/admin/events/page.tsx](app/admin/events/page.tsx) provides create/edit/delete with a clean form.
+- [app/gallery/page.tsx](app/gallery/page.tsx) now reads gallery albums from Supabase event gallery images.
+- Event detail "View Event Gallery" now redirects to `/gallery?event=<slug>` and auto-selects that event album.
 
 ## 7. Updated Folder Structure (Relevant)
 

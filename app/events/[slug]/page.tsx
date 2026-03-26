@@ -46,11 +46,13 @@ export default async function EventPage({ params }: EventPageProps) {
   return (
     <EventDetailContent 
       event={{
+        slug: event.slug,
         title: event.title,
         description: event.description,
         date: event.date,
         venue: event.venue,
         image: event.coverImage,
+        galleryImages: event.galleryImages,
         tags: event.tags,
       }}
       htmlContent={contentHtml} 
