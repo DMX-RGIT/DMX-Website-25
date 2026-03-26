@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { Navbar } from '@/components/ui/navbar';
 import { Providers } from '@/components/providers';
+import { ClientLayoutWrapper } from '@/components/ui/client-layout-wrapper';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,10 +20,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Providers>
-          <div className="min-h-screen bg-team-gradient">
-            <Navbar />
-            <main className="pt-16">{children}</main>
-          </div>
+          <ClientLayoutWrapper>
+            {children}
+          </ClientLayoutWrapper>
         </Providers>
       </body>
     </html>

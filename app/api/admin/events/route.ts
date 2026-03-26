@@ -1,31 +1,21 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
-import matter from 'gray-matter';
+import { createEvent, deleteEvent, getAdminEvents, updateEvent } from '@/lib/events';
+import { requireAdminSession } from '@/lib/admin-auth';
 
-const EVENTS_DIR = path.join(process.cwd(), 'public', 'images', 'event-files');
+async function assertAdmin() {
+  const session = await requireAdminSession();
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  return null;
+}
 
 export async function GET() {
+  const unauthorized = await assertAdmin();
+  if (unauthorized) return unauthorized;
+
   try {
-    // Ensure directory exists
-    await fs.mkdir(EVENTS_DIR, { recursive: true });
-    
-    const files = await fs.readdir(EVENTS_DIR);
-    const mdxFiles = files.filter(file => file.endsWith('.mdx'));
-    
-    const events = await Promise.all(
-      mdxFiles.map(async (file) => {
-        const filePath = path.join(EVENTS_DIR, file);
-        const fileContent = await fs.readFile(filePath, 'utf8');
-        const { data, content } = matter(fileContent);
-        return {
-          slug: file.replace(/\.mdx$/, ''),
-          frontmatter: data,
-          content
-        };
-      })
-    );
-    
+    const events = await getAdminEvents();
     return NextResponse.json(events);
   } catch (error) {
     console.error('Failed to read events:', error);
@@ -34,30 +24,47 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const unauthorized = await assertAdmin();
+  if (unauthorized) return unauthorized;
+
   try {
-    const { slug, frontmatter, content } = await req.json();
-    if (!slug) return NextResponse.json({ error: 'Slug is required' }, { status: 400 });
-    
-    await fs.mkdir(EVENTS_DIR, { recursive: true });
-    const filePath = path.join(EVENTS_DIR, `${slug}.mdx`);
-    const fileContent = matter.stringify(content || '', frontmatter || {});
-    
-    await fs.writeFile(filePath, fileContent, 'utf8');
-    return NextResponse.json({ success: true, slug });
+    const payload = await req.json();
+    const created = await createEvent(payload);
+    return NextResponse.json(created, { status: 201 });
   } catch (error) {
     console.error('Failed to save event:', error);
     return NextResponse.json({ error: 'Failed to save event' }, { status: 500 });
   }
 }
 
+export async function PUT(req: Request) {
+  const unauthorized = await assertAdmin();
+  if (unauthorized) return unauthorized;
+
+  try {
+    const payload = await req.json();
+    if (!payload.id) {
+      return NextResponse.json({ error: 'Event id is required' }, { status: 400 });
+    }
+
+    const updated = await updateEvent(payload.id, payload);
+    return NextResponse.json(updated);
+  } catch (error) {
+    console.error('Failed to update event:', error);
+    return NextResponse.json({ error: 'Failed to update event' }, { status: 500 });
+  }
+}
+
 export async function DELETE(req: Request) {
+  const unauthorized = await assertAdmin();
+  if (unauthorized) return unauthorized;
+
   try {
     const { searchParams } = new URL(req.url);
-    const slug = searchParams.get('slug');
-    if (!slug) return NextResponse.json({ error: 'Slug is required' }, { status: 400 });
-    
-    const filePath = path.join(EVENTS_DIR, `${slug}.mdx`);
-    await fs.unlink(filePath);
+    const id = searchParams.get('id');
+    if (!id) return NextResponse.json({ error: 'Event id is required' }, { status: 400 });
+
+    await deleteEvent(id);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Failed to delete event:', error);

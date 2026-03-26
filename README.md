@@ -1,6 +1,6 @@
 # DMX Website - RGIT Tech Committee
 
-This is a Next.js-based website for the DataMatrix (DMX) Tech Committee at RGIT, showcasing events, projects, gallery, and team members. The site uses modern web technologies including TypeScript, Tailwind CSS, Firebase, and MDX for content management.
+This is a Next.js-based website for the DataMatrix (DMX) Tech Committee at RGIT, showcasing events, projects, gallery, and team members. The site uses modern web technologies including TypeScript, Tailwind CSS, Supabase (for Events Database), NextAuth, and MDX for content management.
 
 ## Project Structure
 
@@ -8,32 +8,33 @@ This is a Next.js-based website for the DataMatrix (DMX) Tech Committee at RGIT,
 - **`package.json`** - Node.js dependencies and scripts. Run `npm install` to install dependencies, `npm run dev` to start the development server.
 - **`tailwind.config.ts`** - Tailwind CSS configuration.
 - **`tsconfig.json`** - TypeScript configuration.
-- **`FIREBASE_REFERENCE.md`** - Documentation for Firebase setup and usage.
+- **`SUPABASE_MIGRATION.md`** - Documentation for the transition from purely MDX/Firebase to a Supabase PostgreSQL backend.
 - **`README.md`** - This file, containing project overview and structure.
 
 ### `app/` Directory - Next.js App Router
 Contains the main application pages and API routes.
 
-- **`layout.tsx`** - Root layout component, includes the unified navbar and providers.
+- **`layout.tsx`** - Root layout component, strictly wraps public views vs. admin dashboard layouts dynamically via a custom `ClientLayoutWrapper`.
 - **`page.tsx`** - Homepage component.
 - **`about/page.tsx`** - About page detailing the committee's vision, mission, and stats.
-- **`gallery/page.tsx`** - Gallery page showcasing event images in a dynamic Bento Box grid.
+- **`gallery/page.tsx`** - Gallery page showcasing event images in a dynamic grid layout with active background blurring.
+- **`not-found.tsx`** - Custom stylized 404 page for missing routes, directing user safely back to home.
 
-#### `app/(auth)/` - Authentication Pages
-- **`login/page.tsx`** - Login page accessing Firebase to authorize admin users.
-- **`register/page.tsx`** - Registration interface for new admin members.
+#### `app/login/` - Authentication
+- **`page.tsx`** - Simplified login flow executing NextAuth checks to authenticate system administrators via whitelist config.
 
-#### `app/admin/` - Local Admin CMS
-A fully functional Content Management System to update the repository's files directly via the browser.
-- **`layout.tsx`** - Dashboard frame and sidebar navigation.
-- **`page.tsx`** - CMS Overview component.
-- **`events/page.tsx`** & **`projects/page.tsx`** - Editors to stringify and write MDX data to `public/images/`.
-- **`gallery/page.tsx`** - JSON visual editor mapping to `content/gallery.json`.
+#### `app/admin/` - Custom Admin CMS
+A fully functional Content Management System to update backend databases and content. Includes mobile-optimized dashboard sidebar.
+- **`layout.tsx`** - Dashboard frame and sidebar navigation logic (desktop and mobile sliding sidebar).
+- **`page.tsx`** - CMS Overview displaying quick actions, connection stats, and data notices.
+- **`events/page.tsx`** - Connected to the Supabase Postgres client. Creates, updates, or deletes live events data.
+- **`projects/page.tsx`** - Editors to stringify and write project MDX data to `public/images/`.
+- **`gallery/page.tsx`** - Event gallery manager backed by Supabase event records.
 - **`team/page.tsx`** - JSON editor to establish cohorts in `content/team/`.
 
 #### `app/events/` - Events Pages
-- **`page.tsx`** - Events listing page, reads MDX files from `public/images/event-files/`.
-- **`[slug]/page.tsx`** - Dynamic event detail page.
+- **`page.tsx`** - Events listing page dynamically querying past public events from the Supabase database.
+- **`[slug]/page.tsx`** - Dynamic event detail page pulling live content.
 
 #### `app/projects/` - Projects Pages
 - **`page.tsx`** - Projects listing page, reads MDX files from `public/images/project-files/`.
@@ -41,17 +42,14 @@ A fully functional Content Management System to update the repository's files di
 #### `app/team/` - Team Page
 - **`page.tsx`** - Team roster separated by year cohorts.
 
-#### `app/api/admin/` - CMS Backend
-- Houses API endpoints (`events`, `projects`, `gallery`, `team`) that utilize Node's native `fs` module to perform file-system CRUD edits directly into the local repo infrastructure.
+#### `app/api/` - Backend Routes
+- **`auth/[...nextauth]/route.ts`** - Handles Google O-Auth and admin authorization session tokens mappings.
+- **`admin/events/`** - REST endpoints bridging Supabase event insertion, editing, and deletion operations directly from the CMS.
+- **`admin/uploads/`** - Handles local file system or cloud-bucket storage uploads from the CMS interface.
 
 ### `components/` Directory - Reusable React Components
-- **`ui/navbar.tsx`** - Main navigation bar dynamically hidden during auth/admin modes.
-- **`home/`, `events/`, `projects/`, `team/`** - Reusable modular UI parts for different frontend sections.
-
-### `content/` Directory - Data Structures
-Contains JSON mappings manually edited or managed by the local CMS.
-- **`gallery.json`** - Schema of image strings and custom visual categories.
-- **`team/`** - JSON arrays representing user cohorts (e.g., `2025.json`).
+- **`ui/navbar.tsx`** - Main navigation bar hidden during admin routes logic to ensure isolation.
+- **`ui/client-layout-wrapper.tsx`** - Controls Next.js client-boundary transitions and resets padding for full-bleed Admin UI.
 
 ### `public/images/` Directory - Static Assets
 - **`team/`** - Member profile photos.
@@ -65,14 +63,14 @@ Contains JSON mappings manually edited or managed by the local CMS.
    ```
 
 2. **Set up Environment Variables:**
-   - Copy `.env.example` to `.env.local` and add your Firebase configuration credentials.
+   - Copy `.env.example` to `.env.local` and add your required Postgres/Supabase configuration URLs + NextAuth `NEXTAUTH_SECRET` strings.
 
-3. **Run Development Server (CMS Supported):**
+3. **Run Development Server:**
    ```bash
    npm run dev
    ```
    - Open [http://localhost:3000](http://localhost:3000) to view the site.
-   - Navigate to [http://localhost:3000/admin](http://localhost:3000/admin) to manage local dynamic content files safely.
+   - Navigate to [http://localhost:3000/admin](http://localhost:3000/admin) to manage content.
 
 4. **Build for Production:**
    ```bash
@@ -81,10 +79,10 @@ Contains JSON mappings manually edited or managed by the local CMS.
    ```
 
 ## Key Technologies
-- **Next.js 14** - React framework with App Router
+- **Next.js 15 (App Router)** - Modern React application framing
 - **TypeScript** - Type-safe JavaScript
 - **Tailwind CSS** - Utility-first CSS styling framework
-- **Firebase** - Database logins and registration
-- **MDX & Gray-Matter** - Markdown paired with JSX parsing
+- **Supabase (PostgreSQL)** - Handles rapid-firing Event CRUD queries and active syncing
+- **NextAuth.js** - Protected administrative sessions
 - **Framer Motion** - Interactive CSS animations
 - **Lucide React** - Universal icon library

@@ -6,11 +6,13 @@ import { Calendar, MapPin, ImageIcon } from 'lucide-react';
 
 interface EventDetailContentProps {
   event: {
+    slug?: string;
     title: string;
     description: string;
     date: string | Date;
     venue?: string;
     image?: string;
+    galleryImages?: string[];
     tags?: string[];
   };
   htmlContent: string;
@@ -200,20 +202,26 @@ export default function EventDetailContent({ event, htmlContent }: EventDetailCo
 
         .page-title {
           text-align: center;
-          margin-bottom: 2rem;
-          font-size: 3.5rem;
+          margin-bottom: 0.75rem;
+          font-size: clamp(2rem, 10vw, 3.5rem);
           font-weight: 900;
           background: linear-gradient(135deg, #8b5cf6, #5b21b6, #7c3aed);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
           color: #5b21b6;
-          line-height: 0.9;
+          line-height: 0.95;
           letter-spacing: -0.02em;
           text-transform: uppercase;
           position: relative;
           z-index: 2;
           animation: titlePulse 4s ease-in-out infinite;
+          max-width: 92vw;
+          margin-left: auto;
+          margin-right: auto;
+          overflow-wrap: anywhere;
+          word-break: break-word;
+          text-wrap: balance;
         }
 
         @keyframes titlePulse {
@@ -224,8 +232,9 @@ export default function EventDetailContent({ event, htmlContent }: EventDetailCo
         /* Responsive title sizing */
         @media (min-width: 640px) {
           .page-title {
-            font-size: 4rem;
+            font-size: clamp(2.7rem, 7vw, 4rem);
             margin-bottom: 2.5rem;
+            max-width: 84vw;
           }
         }
 
@@ -239,18 +248,39 @@ export default function EventDetailContent({ event, htmlContent }: EventDetailCo
         .tech-stack {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.5rem;
+          gap: 0.6rem;
           justify-content: center;
           margin-bottom: 2rem;
         }
 
         .tech-tag {
-          padding: 0.5rem 1rem;
-          background: rgba(139, 92, 246, 0.1);
-          color: #7c3aed;
+          padding: 0.45rem 0.9rem;
+          background: rgba(255, 255, 255, 0.85);
+          color: #6b21a8;
+          border: 1px solid rgba(139, 92, 246, 0.28);
           border-radius: 9999px;
-          font-size: 0.875rem;
-          font-weight: 500;
+          font-size: 0.82rem;
+          font-weight: 600;
+        }
+
+        .hero-subtitle {
+          text-align: center;
+          color: #6b7280;
+          max-width: 56rem;
+          margin: 0 auto 2rem auto;
+          position: relative;
+          z-index: 2;
+          font-size: 1rem;
+        }
+
+        .meta-pill {
+          background: rgba(255, 255, 255, 0.72);
+          border: 1px solid rgba(139, 92, 246, 0.16);
+          color: #4b5563;
+        }
+
+        .meta-icon {
+          color: #7c3aed;
         }
 
         .event-content {
@@ -273,6 +303,7 @@ export default function EventDetailContent({ event, htmlContent }: EventDetailCo
 
         .action-buttons {
           display: flex;
+          flex-wrap: wrap;
           gap: 1rem;
           justify-content: center;
           margin-top: 3rem;
@@ -291,6 +322,7 @@ export default function EventDetailContent({ event, htmlContent }: EventDetailCo
       <h1 className="page-title">
         {event.title}
       </h1>
+      <p className="hero-subtitle">A complete recap with highlights, outcomes, and media from this event.</p>
 
       {/* Event Content */}
       <div className="glass-container">
@@ -307,10 +339,10 @@ export default function EventDetailContent({ event, htmlContent }: EventDetailCo
             </div>
           )}
 
-          <div className="flex flex-wrap items-center justify-center gap-6 text-gray-600 mb-8 border-b border-gray-200 pb-8">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-gray-600 mb-8 border-b border-gray-200 pb-8">
             {event.date && (
-               <div className="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-full shadow-sm">
-                 <Calendar className="w-5 h-5 text-dmx-primary" />
+               <div className="flex items-center gap-2 px-4 py-2 rounded-full shadow-sm meta-pill">
+                 <Calendar className="w-5 h-5 meta-icon" />
                  <span className="font-semibold">
                    {new Date(event.date).toLocaleDateString(undefined, {
                        weekday: 'long',
@@ -322,8 +354,8 @@ export default function EventDetailContent({ event, htmlContent }: EventDetailCo
                </div>
             )}
             {event.venue && (
-               <div className="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-full shadow-sm">
-                 <MapPin className="w-5 h-5 text-dmx-primary" />
+               <div className="flex items-center gap-2 px-4 py-2 rounded-full shadow-sm meta-pill">
+                 <MapPin className="w-5 h-5 meta-icon" />
                  <span className="font-semibold">{event.venue}</span>
                </div>
             )}
@@ -344,8 +376,14 @@ export default function EventDetailContent({ event, htmlContent }: EventDetailCo
           </div>
 
           <div className="action-buttons">
+            <Link
+              href="/events"
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-violet-700 border border-violet-200 hover:border-violet-300 font-semibold rounded-full shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 no-underline"
+            >
+              Back to Events
+            </Link>
             <Link 
-              href="/gallery" 
+              href={event.slug ? `/gallery?event=${event.slug}` : '/gallery'} 
               className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[#8b5cf6] to-[#7c3aed] hover:from-[#7c3aed] hover:to-[#6d28d9] text-white font-semibold rounded-full shadow-[0_4px_14px_0_rgba(139,92,246,0.39)] hover:shadow-[0_6px_20px_rgba(139,92,246,0.5)] hover:-translate-y-1 transition-all duration-300 no-underline"
             >
               <ImageIcon className="w-5 h-5" />

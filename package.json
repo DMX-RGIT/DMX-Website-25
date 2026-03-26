@@ -7,13 +7,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "import:events": "node scripts/import-events-to-supabase.mjs"
   },
   "dependencies": {
     "@radix-ui/react-icons": "^1.3.2",
+    "@supabase/ssr": "^0.9.0",
+    "@supabase/supabase-js": "^2.57.4",
     "@tailwindcss/typography": "^0.5.16",
     "clsx": "^2.1.1",
-    "firebase": "^12.1.0",
     "framer-motion": "^12.23.12",
     "fumadocs-core": "^15.6.9",
     "fumadocs-mdx": "^11.7.4",

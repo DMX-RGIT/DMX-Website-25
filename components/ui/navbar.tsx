@@ -8,15 +8,21 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
+import { usePathname } from 'next/navigation';
 import { UserMenu } from '@/components/auth/user-menu';
-import { LoginButton } from '@/components/auth/login-button';
 
 // Main navigation component
 export function Navbar() {
   // Get current session data from NextAuth
   const { data: session } = useSession();
+  const pathname = usePathname();
   // State for mobile menu toggle
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Hide navbar on admin routes
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -67,8 +73,8 @@ export function Navbar() {
             <div className="flex items-center space-x-4">
               {/* Desktop auth section */}
               <div className="hidden md:block">
-                {/* Show user menu if authenticated, login button if not */}
-                {session && session.user ? <UserMenu user={session.user} /> : <LoginButton />}
+                {/* Show user menu if authenticated */}
+                {session && session.user ? <UserMenu user={session.user} /> : null}
               </div>
               
               {/* Mobile hamburger menu button */}
@@ -128,7 +134,7 @@ export function Navbar() {
                 
                 {/* Mobile auth section */}
                 <div className="mobile-auth-section">
-                  {session && session.user ? <UserMenu user={session.user} /> : <LoginButton />}
+                  {session && session.user ? <UserMenu user={session.user} /> : null}
                 </div>
               </div>
             </div>
