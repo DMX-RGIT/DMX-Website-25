@@ -2,6 +2,7 @@
 
 import { Project } from "@/types";
 import { Github, ExternalLink } from 'lucide-react';
+import DOMPurify from 'isomorphic-dompurify';
 
 interface ProjectDetailContentProps {
   project: Project;
@@ -353,7 +354,7 @@ export default function ProjectDetailContent({ project, htmlContent }: ProjectDe
           )}
 
           <div className="project-content prose prose-lg max-w-none">
-            <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(htmlContent) }} />
           </div>
 
           {(project.githubLink || project.demoLink) && (

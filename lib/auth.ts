@@ -16,6 +16,8 @@ function isAdminEmail(email?: string | null) {
   return getAdminEmails().includes(email.toLowerCase());
 }
 
+import { loginRateLimiter } from './rate-limit';
+
 // NextAuth configuration options
 export const authOptions: NextAuthOptions = {
   // Authentication providers
@@ -26,7 +28,16 @@ export const authOptions: NextAuthOptions = {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
+        // Implement Rate Limiting by IP. In Next.js App Router, the IP isn't directly exposed in NextAuth req.
+        // We will fallback to email-based rate limiting if IP isn't reliably available in NextAuth's req, but we can try headers.
+        const ip = req?.headers?.['x-forwarded-for'] || 'unknown-ip';
+        const ratelimitKey = ip !== 'unknown-ip' ? ip : credentials?.email || 'global';
+        
+        if (!loginRateLimiter.check(ratelimitKey as string)) {
+          throw new Error('Too many login attempts. Please try again in 15 minutes.');
+        }
+
         const email = credentials?.email?.toLowerCase().trim();
         const password = credentials?.password;
         const adminPassword = process.env.ADMIN_PASSWORD;

@@ -1,10 +1,30 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
+import { requireAdminSession } from '@/lib/admin-auth';
+import { z } from 'zod';
+
+const teamMemberSchema = z.object({
+  name: z.string().min(1),
+  role: z.string().min(1),
+  image: z.string().min(1),
+  linkedin: z.string().optional(),
+  twitter: z.string().optional(),
+  github: z.string().optional(),
+});
+
+const teamPostSchema = z.object({
+  year: z.string().regex(/^[0-9A-Za-z-]+$/),
+  teamData: z.array(teamMemberSchema),
+});
 
 const TEAM_DIR = path.join(process.cwd(), 'content', 'team');
 
 export async function GET() {
+  if (!await requireAdminSession()) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     await fs.mkdir(TEAM_DIR, { recursive: true });
     const files = await fs.readdir(TEAM_DIR);
@@ -25,9 +45,13 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  if (!await requireAdminSession()) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
-    const { year, teamData } = await req.json();
-    if (!year || !teamData) return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
+    const json = await req.json();
+    const { year, teamData } = teamPostSchema.parse(json);
     
     await fs.mkdir(TEAM_DIR, { recursive: true });
     
@@ -41,10 +65,19 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  if (!await requireAdminSession()) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const { searchParams } = new URL(req.url);
     const year = searchParams.get('year');
     if (!year) return NextResponse.json({ error: 'Year is required' }, { status: 400 });
+    
+    // Mitigate Path Traversal
+    if (!/^[0-9A-Za-z-]+$/.test(year)) {
+      return NextResponse.json({ error: 'Invalid year format' }, { status: 400 });
+    }
     
     const filePath = path.join(TEAM_DIR, `${year}.json`);
     await fs.unlink(filePath);

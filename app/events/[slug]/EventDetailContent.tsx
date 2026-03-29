@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Calendar, MapPin, ImageIcon } from 'lucide-react';
+import DOMPurify from 'isomorphic-dompurify';
 
 interface EventDetailContentProps {
   event: {
@@ -372,7 +373,7 @@ export default function EventDetailContent({ event, htmlContent }: EventDetailCo
           )}
 
           <div className="event-content prose prose-lg max-w-none">
-            <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(htmlContent) }} />
           </div>
 
           <div className="action-buttons">

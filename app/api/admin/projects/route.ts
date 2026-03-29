@@ -2,10 +2,30 @@ import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
 import matter from 'gray-matter';
+import { requireAdminSession } from '@/lib/admin-auth';
+import { z } from 'zod';
+
+const projectPostSchema = z.object({
+  slug: z.string().regex(/^[a-zA-Z0-9_-]+$/),
+  content: z.string().optional().default(''),
+  frontmatter: z.object({
+    title: z.string().min(1).default('Untitled'),
+    description: z.string().min(1).default(''),
+    date: z.string().optional(),
+    githubLink: z.string().optional(),
+    demoLink: z.string().optional(),
+    techStack: z.array(z.string()).optional(),
+    coverImage: z.string().optional(),
+  }).optional().default({ title: 'Untitled', description: '' })
+});
 
 const PROJECTS_DIR = path.join(process.cwd(), 'public', 'images', 'project-files');
 
 export async function GET() {
+  if (!await requireAdminSession()) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     await fs.mkdir(PROJECTS_DIR, { recursive: true });
     
@@ -33,9 +53,13 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  if (!await requireAdminSession()) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
-    const { slug, frontmatter, content } = await req.json();
-    if (!slug) return NextResponse.json({ error: 'Slug is required' }, { status: 400 });
+    const json = await req.json();
+    const { slug, frontmatter, content } = projectPostSchema.parse(json);
     
     await fs.mkdir(PROJECTS_DIR, { recursive: true });
     const filePath = path.join(PROJECTS_DIR, `${slug}.mdx`);
@@ -50,10 +74,19 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  if (!await requireAdminSession()) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const { searchParams } = new URL(req.url);
     const slug = searchParams.get('slug');
     if (!slug) return NextResponse.json({ error: 'Slug is required' }, { status: 400 });
+    
+    // Mitigate Path Traversal
+    if (!/^[a-zA-Z0-9_-]+$/.test(slug)) {
+      return NextResponse.json({ error: 'Invalid slug format' }, { status: 400 });
+    }
     
     const filePath = path.join(PROJECTS_DIR, `${slug}.mdx`);
     await fs.unlink(filePath);
