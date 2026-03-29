@@ -1,6 +1,20 @@
 import { NextResponse } from 'next/server';
 import { createEvent, deleteEvent, getAdminEvents, updateEvent } from '@/lib/events';
 import { requireAdminSession } from '@/lib/admin-auth';
+import { z } from 'zod';
+
+const eventSchema = z.object({
+  slug: z.string().min(1),
+  title: z.string().min(1),
+  description: z.string().min(1),
+  content: z.string().min(1),
+  coverImage: z.string().optional().default(''),
+  galleryImages: z.array(z.string()).optional(),
+  date: z.string().min(1),
+  category: z.string().nullable().optional(),
+  tags: z.array(z.string()).optional(),
+  isPublished: z.boolean().optional(),
+});
 
 async function assertAdmin() {
   const session = await requireAdminSession();
@@ -28,7 +42,8 @@ export async function POST(req: Request) {
   if (unauthorized) return unauthorized;
 
   try {
-    const payload = await req.json();
+    const json = await req.json();
+    const payload = eventSchema.parse(json);
     const created = await createEvent(payload);
     return NextResponse.json(created, { status: 201 });
   } catch (error) {
@@ -42,12 +57,16 @@ export async function PUT(req: Request) {
   if (unauthorized) return unauthorized;
 
   try {
-    const payload = await req.json();
-    if (!payload.id) {
+    const json = await req.json();
+    
+    // Zod parses everything except the explicit ID needed for the update query.
+    const payload = eventSchema.parse(json);
+    
+    if (!json.id) {
       return NextResponse.json({ error: 'Event id is required' }, { status: 400 });
     }
 
-    const updated = await updateEvent(payload.id, payload);
+    const updated = await updateEvent(json.id, payload);
     return NextResponse.json(updated);
   } catch (error) {
     console.error('Failed to update event:', error);

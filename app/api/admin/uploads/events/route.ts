@@ -27,7 +27,13 @@ export async function POST(request: Request) {
     }
 
     if (!file.type.startsWith('image/')) {
-      return NextResponse.json({ error: 'Only image uploads are allowed' }, { status: 400 });
+      return NextResponse.json({ error: 'MIME type must be an image' }, { status: 400 });
+    }
+
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    const allowed = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+    if (!ext || !allowed.includes(ext)) {
+      return NextResponse.json({ error: 'Invalid file extension. Only jpg, jpeg, png, webp, and gif are allowed.' }, { status: 400 });
     }
 
     if (file.size > MAX_IMAGE_SIZE_BYTES) {
@@ -35,7 +41,6 @@ export async function POST(request: Request) {
     }
 
     const bucket = process.env.SUPABASE_EVENTS_BUCKET || 'events';
-    const ext = file.name.includes('.') ? file.name.split('.').pop() : 'jpg';
     const safeSlug = sanitizeFileName(slug) || 'event';
     const uniqueName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
     const storagePath = `${safeSlug}/${sanitizeFileName(uniqueName)}`;
