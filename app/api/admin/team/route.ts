@@ -1,22 +1,13 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
-
-const TEAM_DIR = path.join(process.cwd(), 'content', 'team');
+import { requireAdminResponse } from '@/lib/admin-route';
+import { deleteTeamData, getAllTeamData, saveTeamData } from '@/lib/team';
 
 export async function GET() {
+  const unauthorized = await requireAdminResponse();
+  if (unauthorized) return unauthorized;
+
   try {
-    await fs.mkdir(TEAM_DIR, { recursive: true });
-    const files = await fs.readdir(TEAM_DIR);
-    const jsonFiles = files.filter(f => f.endsWith('.json'));
-    
-    const result: Record<string, unknown> = {};
-    for (const file of jsonFiles) {
-      const year = file.replace('.json', '');
-      const content = await fs.readFile(path.join(TEAM_DIR, file), 'utf8');
-      result[year] = JSON.parse(content);
-    }
-    
+    const result = await getAllTeamData();
     return NextResponse.json(result);
   } catch (error) {
     console.error('Failed to read team data:', error);
@@ -25,14 +16,14 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const unauthorized = await requireAdminResponse();
+  if (unauthorized) return unauthorized;
+
   try {
     const { year, teamData } = await req.json();
     if (!year || !teamData) return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
-    
-    await fs.mkdir(TEAM_DIR, { recursive: true });
-    
-    const filePath = path.join(TEAM_DIR, `${year}.json`);
-    await fs.writeFile(filePath, JSON.stringify(teamData, null, 2), 'utf8');
+
+    await saveTeamData(year, teamData);
     return NextResponse.json({ success: true, year });
   } catch (error) {
     console.error('Failed to save team data:', error);
@@ -41,13 +32,15 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  const unauthorized = await requireAdminResponse();
+  if (unauthorized) return unauthorized;
+
   try {
     const { searchParams } = new URL(req.url);
     const year = searchParams.get('year');
     if (!year) return NextResponse.json({ error: 'Year is required' }, { status: 400 });
-    
-    const filePath = path.join(TEAM_DIR, `${year}.json`);
-    await fs.unlink(filePath);
+
+    await deleteTeamData(year);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Failed to delete team data:', error);

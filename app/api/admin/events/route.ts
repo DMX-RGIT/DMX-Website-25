@@ -1,17 +1,9 @@
 import { NextResponse } from 'next/server';
 import { createEvent, deleteEvent, getAdminEvents, updateEvent } from '@/lib/events';
-import { requireAdminSession } from '@/lib/admin-auth';
-
-async function assertAdmin() {
-  const session = await requireAdminSession();
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  return null;
-}
+import { requireAdminResponse } from '@/lib/admin-route';
 
 export async function GET() {
-  const unauthorized = await assertAdmin();
+  const unauthorized = await requireAdminResponse();
   if (unauthorized) return unauthorized;
 
   try {
@@ -24,7 +16,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const unauthorized = await assertAdmin();
+  const unauthorized = await requireAdminResponse();
   if (unauthorized) return unauthorized;
 
   try {
@@ -38,7 +30,7 @@ export async function POST(req: Request) {
 }
 
 export async function PUT(req: Request) {
-  const unauthorized = await assertAdmin();
+  const unauthorized = await requireAdminResponse();
   if (unauthorized) return unauthorized;
 
   try {
@@ -56,7 +48,7 @@ export async function PUT(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-  const unauthorized = await assertAdmin();
+  const unauthorized = await requireAdminResponse();
   if (unauthorized) return unauthorized;
 
   try {

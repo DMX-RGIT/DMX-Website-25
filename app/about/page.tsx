@@ -305,14 +305,14 @@ export default function AboutPage() {
           box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
-        .activity-card h3 {
+        .activity-title, :global(.activity-card h3) {
           color: #1f2937;
           font-size: 1.15rem;
           font-weight: 700;
           margin-bottom: 0.5rem;
         }
 
-        .activity-card p {
+        .activity-desc, :global(.activity-card p) {
           color: #6b7280;
           font-size: 0.95rem;
           line-height: 1.6;
@@ -401,7 +401,7 @@ export default function AboutPage() {
           border-color: rgba(139, 92, 246, 0.3);
         }
 
-        .mission-card h3 {
+        .mission-title, :global(.mission-card h3) {
           font-size: 1.2rem;
           font-weight: 700;
           color: #5b21b6;
@@ -411,7 +411,7 @@ export default function AboutPage() {
           gap: 0.5rem;
         }
 
-        .mission-card p {
+        .mission-desc, :global(.mission-card p) {
           color: #4b5563;
           font-size: 0.95rem;
           line-height: 1.7;
@@ -452,16 +452,16 @@ export default function AboutPage() {
           <h2 className="section-title">Our Mission &amp; Vision</h2>
           <div className="mission-grid">
             <motion.div className="mission-card" whileHover={{ scale: 1.02 }}>
-              <h3><Target size={22} color="#8b5cf6" /> Our Mission</h3>
-              <p>
+              <h3 className="mission-title"><Target size={22} color="#8b5cf6" /> Our Mission</h3>
+              <p className="mission-desc">
                 To empower students with practical AI/ML knowledge through immersive hackathons,
                 workshops, and collaborative projects—bridging the gap between theoretical learning
                 and real-world application.
               </p>
             </motion.div>
             <motion.div className="mission-card" whileHover={{ scale: 1.02 }}>
-              <h3><Zap size={22} color="#f59e0b" /> Our Vision</h3>
-              <p>
+              <h3 className="mission-title"><Zap size={22} color="#f59e0b" /> Our Vision</h3>
+              <p className="mission-desc">
                 To build a thriving ecosystem of student innovators at RGIT who are equipped to solve
                 tomorrow&apos;s problems using artificial intelligence and become leaders in the
                 global tech community.
@@ -490,8 +490,8 @@ export default function AboutPage() {
                 >
                   <activity.icon size={28} color="#fff" />
                 </div>
-                <h3>{activity.title}</h3>
-                <p>{activity.description}</p>
+                <h3 className="activity-title">{activity.title}</h3>
+                <p className="activity-desc">{activity.description}</p>
               </motion.div>
             ))}
           </div>

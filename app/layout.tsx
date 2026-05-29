@@ -18,7 +18,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} bg-[#030305] text-white selection:bg-[#00F0FF] selection:text-black`}>
+        <div className="noise-overlay pointer-events-none"></div>
         <Providers>
           <ClientLayoutWrapper>
             {children}

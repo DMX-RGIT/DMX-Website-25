@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const file = formData.get('file');
-    const slug = String(formData.get('slug') || 'event');
+    const slug = String(formData.get('slug') || 'team');
 
     if (!(file instanceof File)) {
       return NextResponse.json({ error: 'Image file is required' }, { status: 400 });
@@ -32,9 +32,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Image must be 10MB or less' }, { status: 400 });
     }
 
-    const bucket = process.env.SUPABASE_EVENTS_BUCKET || 'events';
+    const bucket = process.env.SUPABASE_TEAM_BUCKET || 'team';
     const ext = file.name.includes('.') ? file.name.split('.').pop() : 'jpg';
-    const safeSlug = sanitizeFileName(slug) || 'event';
+    const safeSlug = sanitizeFileName(slug) || 'team';
     const uniqueName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
     const storagePath = `${safeSlug}/${sanitizeFileName(uniqueName)}`;
 
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
       bucket,
     });
   } catch (error) {
-    console.error('Failed to upload event image:', error);
+    console.error('Failed to upload team image:', error);
     return NextResponse.json({ error: 'Failed to upload image' }, { status: 500 });
   }
 }

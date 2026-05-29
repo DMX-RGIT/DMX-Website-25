@@ -1,30 +1,17 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
-import matter from 'gray-matter';
-
-const PROJECTS_DIR = path.join(process.cwd(), 'public', 'images', 'project-files');
+import {
+  deleteProjectDocument,
+  getAllProjectDocuments,
+  saveProjectDocument,
+} from '@/lib/projects';
+import { requireAdminResponse } from '@/lib/admin-route';
 
 export async function GET() {
+  const unauthorized = await requireAdminResponse();
+  if (unauthorized) return unauthorized;
+
   try {
-    await fs.mkdir(PROJECTS_DIR, { recursive: true });
-    
-    const files = await fs.readdir(PROJECTS_DIR);
-    const mdxFiles = files.filter(file => file.endsWith('.mdx'));
-    
-    const projects = await Promise.all(
-      mdxFiles.map(async (file) => {
-        const filePath = path.join(PROJECTS_DIR, file);
-        const fileContent = await fs.readFile(filePath, 'utf8');
-        const { data, content } = matter(fileContent);
-        return {
-          slug: file.replace(/\.mdx$/, ''),
-          frontmatter: data,
-          content
-        };
-      })
-    );
-    
+    const projects = await getAllProjectDocuments();
     return NextResponse.json(projects);
   } catch (error) {
     console.error('Failed to read projects:', error);
@@ -33,15 +20,19 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const unauthorized = await requireAdminResponse();
+  if (unauthorized) return unauthorized;
+
   try {
     const { slug, frontmatter, content } = await req.json();
     if (!slug) return NextResponse.json({ error: 'Slug is required' }, { status: 400 });
-    
-    await fs.mkdir(PROJECTS_DIR, { recursive: true });
-    const filePath = path.join(PROJECTS_DIR, `${slug}.mdx`);
-    const fileContent = matter.stringify(content || '', frontmatter || {});
-    
-    await fs.writeFile(filePath, fileContent, 'utf8');
+
+    await saveProjectDocument({
+      slug,
+      frontmatter: frontmatter ?? {},
+      content: content ?? '',
+    });
+
     return NextResponse.json({ success: true, slug });
   } catch (error) {
     console.error('Failed to save project:', error);
@@ -50,13 +41,15 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  const unauthorized = await requireAdminResponse();
+  if (unauthorized) return unauthorized;
+
   try {
     const { searchParams } = new URL(req.url);
     const slug = searchParams.get('slug');
     if (!slug) return NextResponse.json({ error: 'Slug is required' }, { status: 400 });
-    
-    const filePath = path.join(PROJECTS_DIR, `${slug}.mdx`);
-    await fs.unlink(filePath);
+
+    await deleteProjectDocument(slug);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Failed to delete project:', error);

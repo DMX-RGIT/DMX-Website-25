@@ -12,14 +12,28 @@ type TeamMember = {
   github?: string;
 };
 
+type LeadershipMember = {
+  id: string;
+  name: string;
+  title: string;
+  image: string;
+  sortOrder: number;
+  isActive: boolean;
+};
+
 export default function TeamAdmin() {
   const [yearsData, setYearsData] = useState<Record<string, TeamMember[]>>({});
   const [activeYear, setActiveYear] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [leadershipLoading, setLeadershipLoading] = useState(true);
+  const [leadershipSaving, setLeadershipSaving] = useState(false);
+  const [leadershipMembers, setLeadershipMembers] = useState<LeadershipMember[]>([]);
 
   // Editor mode state
   const [editingMember, setEditingMember] = useState<{ index: number, data: TeamMember } | null>(null);
+  const [editingLeadership, setEditingLeadership] = useState<LeadershipMember | null>(null);
+  const [creatingLeadership, setCreatingLeadership] = useState(false);
 
   const fetchTeam = useCallback(async () => {
     setLoading(true);
@@ -36,7 +50,23 @@ export default function TeamAdmin() {
     setLoading(false);
   }, [activeYear]);
 
-  useEffect(() => { fetchTeam(); }, [fetchTeam]);
+  const fetchLeadership = useCallback(async () => {
+    setLeadershipLoading(true);
+    try {
+      const res = await fetch('/api/admin/team/leadership');
+      if (res.ok) {
+        const data = (await res.json()) as LeadershipMember[];
+        setLeadershipMembers(data);
+      }
+    } finally {
+      setLeadershipLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchTeam();
+    fetchLeadership();
+  }, [fetchTeam, fetchLeadership]);
 
   const handleSaveYear = async () => {
     if (!activeYear || !yearsData[activeYear]) return;
@@ -89,6 +119,59 @@ export default function TeamAdmin() {
     const currList = [...yearsData[activeYear]];
     currList.splice(index, 1);
     setYearsData({ ...yearsData, [activeYear]: currList });
+  };
+
+  const upsertLeadershipMember = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const target = editingLeadership;
+    if (!target) return;
+
+    if (!target.name.trim() || !target.title.trim() || !target.image.trim()) {
+      alert('Name, title and image are required');
+      return;
+    }
+
+    setLeadershipSaving(true);
+    try {
+      const method = creatingLeadership ? 'POST' : 'PUT';
+      const payload = {
+        ...(creatingLeadership ? {} : { id: target.id }),
+        name: target.name,
+        role: target.title,
+        imageUrl: target.image,
+        sortOrder: Number(target.sortOrder || 0),
+        isActive: target.isActive,
+      };
+
+      const res = await fetch('/api/admin/team/leadership', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        alert('Failed to save leadership member');
+        return;
+      }
+
+      setEditingLeadership(null);
+      setCreatingLeadership(false);
+      await fetchLeadership();
+    } finally {
+      setLeadershipSaving(false);
+    }
+  };
+
+  const deleteLeadership = async (id: string) => {
+    if (!confirm('Remove leadership member?')) return;
+
+    const res = await fetch(`/api/admin/team/leadership?id=${id}`, { method: 'DELETE' });
+    if (!res.ok) {
+      alert('Failed to delete leadership member');
+      return;
+    }
+
+    await fetchLeadership();
   };
 
   if (loading) return <div className="text-gray-400">Loading team rosters...</div>;
@@ -199,6 +282,189 @@ export default function TeamAdmin() {
           No team data found. Create a cohort year to get started!
         </div>
       )}
+
+      <div className="mt-10 bg-[#111] border border-white/10 rounded-xl p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-6 border-b border-white/10 pb-4">
+          <div>
+            <h2 className="text-xl font-bold">Leadership Carousel (Supabase)</h2>
+            <p className="text-sm text-gray-400 mt-1">These cards power the Team page carousel.</p>
+          </div>
+          <button
+            onClick={() => {
+              setCreatingLeadership(true);
+              setEditingLeadership({
+                id: '',
+                name: '',
+                title: '',
+                image: '',
+                sortOrder: leadershipMembers.length,
+                isActive: true,
+              });
+            }}
+            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors text-sm"
+          >
+            <Plus size={16} /> Add Leader
+          </button>
+        </div>
+
+        {leadershipLoading ? (
+          <div className="text-gray-400">Loading leadership carousel...</div>
+        ) : (
+          <div className="space-y-3">
+            {leadershipMembers.map((member) => (
+              <div
+                key={member.id}
+                className="bg-[#1a1a1f] border border-white/10 rounded-lg p-4 flex flex-wrap items-center justify-between gap-3"
+              >
+                <div>
+                  <h3 className="font-semibold text-white">{member.name}</h3>
+                  <p className="text-sm text-indigo-300">{member.title}</p>
+                  <p className="text-xs text-gray-500 mt-1">Order: {member.sortOrder} • {member.isActive ? 'Active' : 'Hidden'}</p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setCreatingLeadership(false);
+                      setEditingLeadership(member);
+                    }}
+                    className="px-3 py-2 rounded-lg border border-white/10 text-gray-300 hover:bg-white/5 text-sm"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => deleteLeadership(member.id)}
+                    className="px-3 py-2 rounded-lg border border-red-500/20 text-red-300 hover:bg-red-500/10 text-sm"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+            {leadershipMembers.length === 0 && (
+              <div className="text-gray-500 text-sm">No leadership members found in Supabase.</div>
+            )}
+          </div>
+        )}
+
+        {editingLeadership && (
+          <form onSubmit={upsertLeadershipMember} className="mt-6 border-t border-white/10 pt-6 space-y-4">
+            <h3 className="text-lg font-semibold text-white">
+              {creatingLeadership ? 'Add Leadership Member' : 'Edit Leadership Member'}
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">Name</label>
+                <input
+                  required
+                  type="text"
+                  value={editingLeadership.name}
+                  onChange={(e) => setEditingLeadership({ ...editingLeadership, name: e.target.value })}
+                  className="w-full bg-[#222] border border-white/10 rounded-lg p-3 text-white focus:border-indigo-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">Title / Role</label>
+                <input
+                  required
+                  type="text"
+                  value={editingLeadership.title}
+                  onChange={(e) => setEditingLeadership({ ...editingLeadership, title: e.target.value })}
+                  className="w-full bg-[#222] border border-white/10 rounded-lg p-3 text-white focus:border-indigo-500 outline-none"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm text-gray-400 mb-1">Image URL / Path</label>
+                <div className="flex gap-3 items-center">
+                  <input
+                    type="text"
+                    value={editingLeadership.image}
+                    onChange={(e) => setEditingLeadership({ ...editingLeadership, image: e.target.value })}
+                    placeholder="/images/team/member.webp or remote URL"
+                    className="flex-1 bg-[#222] border border-white/10 rounded-lg p-3 text-white focus:border-indigo-500 outline-none"
+                  />
+                  <div className="flex flex-col items-end">
+                    <input
+                      id="leadership-image-file"
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file || !editingLeadership) return;
+                        try {
+                          // show temporary uploading state
+                          setLeadershipSaving(true);
+                          const fd = new FormData();
+                          fd.append('file', file);
+                          fd.append('slug', 'leadership');
+                          const res = await fetch('/api/admin/uploads/team', {
+                            method: 'POST',
+                            body: fd,
+                          });
+                          if (!res.ok) {
+                            const err = await res.json().catch(() => ({}));
+                            alert(err?.error || 'Upload failed');
+                            return;
+                          }
+                          const data = await res.json();
+                          if (data?.url) {
+                            setEditingLeadership({ ...editingLeadership, image: data.url });
+                          }
+                        } catch (err) {
+                          console.error('Upload failed', err);
+                          alert('Upload failed');
+                        } finally {
+                          setLeadershipSaving(false);
+                        }
+                      }}
+                      className="text-sm text-gray-400"
+                    />
+                    {leadershipSaving && <span className="text-xs text-gray-400 mt-1">Uploading...</span>}
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">Sort Order</label>
+                <input
+                  type="number"
+                  value={editingLeadership.sortOrder}
+                  onChange={(e) => setEditingLeadership({ ...editingLeadership, sortOrder: Number(e.target.value || 0) })}
+                  className="w-full bg-[#222] border border-white/10 rounded-lg p-3 text-white focus:border-indigo-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">Visibility</label>
+                <select
+                  value={editingLeadership.isActive ? 'active' : 'hidden'}
+                  onChange={(e) => setEditingLeadership({ ...editingLeadership, isActive: e.target.value === 'active' })}
+                  className="w-full bg-[#222] border border-white/10 rounded-lg p-3 text-white focus:border-indigo-500 outline-none"
+                >
+                  <option value="active">Active</option>
+                  <option value="hidden">Hidden</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingLeadership(null);
+                  setCreatingLeadership(false);
+                }}
+                className="px-5 py-2 rounded-lg border border-white/10 hover:bg-white/5 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={leadershipSaving}
+                className="px-5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white transition-colors"
+              >
+                {leadershipSaving ? 'Saving...' : 'Save Member'}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
     </div>
   );
 }

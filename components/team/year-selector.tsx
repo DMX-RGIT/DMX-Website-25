@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { MemberCard } from '@/components/team/member-card';
 
 type Member = {
@@ -21,6 +21,13 @@ export function YearSelector({ yearToMembers, defaultYear }: Props) {
   );
 
   const [selectedYear, setSelectedYear] = useState<number>(defaultYear);
+
+  useEffect(() => {
+    const keys = Object.keys(yearToMembers);
+    if (keys.length > 0 && !keys.includes(String(selectedYear))) {
+      setSelectedYear(defaultYear);
+    }
+  }, [defaultYear, yearToMembers, selectedYear]);
 
   const members = yearToMembers[selectedYear] ?? [];
 

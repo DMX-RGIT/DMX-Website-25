@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 
 interface Speaker {
-  id: number;
+  id: number | string;
   name: string;
   title: string;
   image: string;

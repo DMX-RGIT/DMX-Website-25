@@ -1,80 +1,92 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { YearSelector } from '@/components/team/year-selector';
 import { TeamCarousel } from '@/components/team/team-carousel';
-import current from '@/content/team/members.json';
-import y2025 from '@/content/team/2025.json';
-import y2024 from '@/content/team/2024.json';
 
 type Member = { name: string; position: string; quote?: string };
+type LeadershipMember = { id: string | number; name: string; title: string; image: string };
+
+const defaultLeadershipMembers: LeadershipMember[] = [
+  {
+    id: 1,
+    name: 'Harsh Tiwari',
+    title: 'President',
+    image: '/images/team/harsh.webp',
+  },
+  {
+    id: 2,
+    name: 'Bhushan Naikwade',
+    title: 'Vice President',
+    image: '/images/team/bhushan.webp',
+  },
+  {
+    id: 3,
+    name: 'Aadish Gotekar',
+    title: 'Vice President',
+    image: '/images/team/aadish.webp',
+  },
+  {
+    id: 4,
+    name: 'Yaksh Rajput',
+    title: 'General Secretary',
+    image: '/images/team/yaksh.webp',
+  },
+  {
+    id: 5,
+    name: 'Tejas Gawde',
+    title: 'General Secretary',
+    image: '/images/team/tejas.webp',
+  },
+  {
+    id: 6,
+    name: 'Somnath Shanbaug',
+    title: 'General Secretary',
+    image: '/images/team/somnath.webp',
+  },
+];
 
 export default function TeamPage() {
-  const yearToMembers: Record<number, Member[]> = {
-    2024: (y2024 as Member[]),
-    2025: (y2025 as Member[]),
-  };
+  const [leadershipMembers, setLeadershipMembers] = useState<LeadershipMember[]>(defaultLeadershipMembers);
+  const [yearToMembers, setYearToMembers] = useState<Record<number, Member[]>>({});
 
-  
+  const years = Object.keys(yearToMembers).map(Number);
+  const mostRecentYear = years.length > 0 ? Math.max(...years) : new Date().getFullYear();
 
-  // Fallback to support existing members.json shape if needed, with safe parsing
-  const currentFile = current as unknown as { year?: number; members?: Member[] } | Member[];
-  let detectedYear = 2025;
-  let detectedMembers: Member[] = [];
+  useEffect(() => {
+    let isMounted = true;
 
-  if (Array.isArray(currentFile)) {
-    detectedMembers = currentFile as Member[];
-  } else {
-    detectedYear = currentFile.year ?? 2025;
-    detectedMembers = currentFile.members ?? [];
-  }
+    const fetchLeadershipAndTeam = async () => {
+      try {
+        const [leadershipRes, teamRes] = await Promise.all([
+          fetch('/api/team/leadership'),
+          fetch('/api/team')
+        ]);
 
-  if (detectedMembers.length > 0 && !yearToMembers[detectedYear]) {
-    yearToMembers[detectedYear] = detectedMembers;
-  }
+        if (isMounted && teamRes.ok) {
+          const teamData = await teamRes.json();
+          if (Object.keys(teamData).length > 0) {
+            setYearToMembers(teamData);
+          }
+        }
 
-  const mostRecentYear = Math.max(...Object.keys(yearToMembers).map(Number));
+        if (isMounted && leadershipRes.ok) {
+          const leadershipData = (await leadershipRes.json()) as LeadershipMember[];
+          if (Array.isArray(leadershipData) && leadershipData.length > 0) {
+            setLeadershipMembers(leadershipData);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load team data:', error);
+      }
+    };
 
-  // Team carousel members data - optimized for mobile
-  const teamMembers = [
-    {
-      id: 1,
-      name: "Harsh Tiwari",
-      title: "President",
-      image: "/images/team/harsh.webp"
-    },
-    {
-      id: 2,
-      name: "Bhushan Naikwade", 
-      title: "Vice President",
-      image: "/images/team/bhushan.webp"
-    },
-    {
-      id: 3,
-      name: "Aadish Gotekar",
-      title: "Vice President", 
-      image: "/images/team/aadish.webp"
-    },
-    {
-      id: 4,
-      name: "Yaksh Rajput",
-      title: "General Secretary",
-      image: "/images/team/yaksh.webp"
-    },
-    {
-      id: 5,
-      name: "Tejas Gawde",
-      title: "General Secretary",
-      image: "/images/team/tejas.webp"
-    },
-    {
-      id: 6,
-      name: "Somnath Shanbaug", 
-      title: "General Secretary",
-      image: "/images/team/somnath.webp"
-    }
-  ];
-  
-  
+    fetchLeadershipAndTeam();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
   return (
     <div className="min-h-screen metamask-page">
       <style jsx>{`
@@ -332,7 +344,7 @@ export default function TeamPage() {
       {/* Team Carousel Section */}
       <div className="glass-container">
         <h2 className="section-title">Leadership Team</h2>
-        <TeamCarousel speakers={teamMembers} />
+        <TeamCarousel speakers={leadershipMembers} />
       </div>
 
       {/* Year Selector Section */}
