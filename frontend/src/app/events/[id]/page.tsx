@@ -52,7 +52,7 @@ export default function EventDetailPage() {
 
   return (
     <div className="min-h-screen pt-24 pb-20">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <button 
           onClick={() => router.back()}
           className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors mb-8 group"
@@ -61,9 +61,9 @@ export default function EventDetailPage() {
           Back to Events
         </button>
 
-        <div className="glass-card overflow-hidden border border-border-default shadow-lg">
+        <div className="overflow-hidden">
           {event.image_url && (
-            <div className="w-full h-64 md:h-96 relative bg-bg-surface border-b border-border-default">
+            <div className="w-full h-64 md:h-96 relative bg-bg-surface border-b border-border-default rounded-xl mb-8 overflow-hidden">
               <img 
                 src={event.image_url} 
                 alt={event.title} 
@@ -72,7 +72,7 @@ export default function EventDetailPage() {
             </div>
           )}
           
-          <div className="p-8 md:p-12">
+          <div className="pt-4">
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
               <div>
                 <div className="flex items-center gap-3 mb-4">
@@ -94,17 +94,26 @@ export default function EventDetailPage() {
                 </h1>
               </div>
 
-              {event.registration_url && (
+              <div className="flex items-center gap-3 shrink-0">
                 <a 
-                  href={event.registration_url} 
-                  target="_blank" 
-                  rel="noreferrer"
-                  className="shrink-0 flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-brand-teal text-bg-primary font-bold hover:bg-brand-teal-light transition-all shadow-[0_0_15px_rgba(52,217,166,0.3)] hover:-translate-y-1"
+                  href={`/gallery?event_id=${event.id}`}
+                  className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-bg-surface border border-border-default text-text-primary font-bold hover:bg-bg-secondary transition-all"
                 >
-                  {event.is_upcoming ? "Register Now" : "View Event Site"}
-                  <ArrowUpRight className="w-4 h-4" />
+                  View Photos
                 </a>
-              )}
+                
+                {event.registration_url && (
+                  <a 
+                    href={event.registration_url} 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-brand-teal text-bg-primary font-bold hover:bg-brand-teal-light transition-all shadow-[0_0_15px_rgba(52,217,166,0.3)] hover:-translate-y-1"
+                  >
+                    {event.is_upcoming ? "Register Now" : "View Event Site"}
+                    <ArrowUpRight className="w-4 h-4" />
+                  </a>
+                )}
+              </div>
             </div>
 
             <SectionDivider />

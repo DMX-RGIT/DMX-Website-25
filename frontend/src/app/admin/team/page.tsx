@@ -19,19 +19,14 @@ export default function AdminTeamPage() {
     },
     {
       name: "year",
-      label: "Year",
-      type: "select" as const,
+      label: "Year (e.g., TE, SE, BE, FE)",
+      type: "text" as const,
       required: false,
-      options: [
-        { label: "First", value: "First" },
-        { label: "Second", value: "Second" },
-        { label: "Third", value: "Third" },
-        { label: "Fourth", value: "Fourth" },
-      ],
     },
+    { name: "department", label: "Department (e.g., AIDS, COMP)", type: "text" as const },
     { name: "photo_url", label: "Photo URL", type: "url" as const },
-    { name: "fun_fact", label: "Fun Fact", type: "text" as const },
-    { name: "social_links", label: "Social Links (JSON object)", type: "json" as const },
+    { name: "fun_fact", label: "Fun Fact", type: "text" as const, required: false },
+    { name: "social_links", label: "Social Links (JSON object)", type: "json" as const, required: false },
     { name: "display_order", label: "Display Order (lower is first)", type: "number" as const },
   ];
 

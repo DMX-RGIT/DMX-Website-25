@@ -27,12 +27,44 @@ const benefits = [
 
 export default function JoinPage() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
+  const [error, setError] = useState("");
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    role: "",
+    github: "",
+    why: ""
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("submitting");
-    // Simulate API call
-    setTimeout(() => setStatus("success"), 1500);
+    setError("");
+    
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/join`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          email: formData.email,
+          role_interest: formData.role,
+          github_url: formData.github || null,
+          reason: formData.why
+        })
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to submit application");
+      }
+      
+      setStatus("success");
+    } catch (err: any) {
+      setError(err.message || "An error occurred");
+      setStatus("idle");
+    }
   };
 
   return (
@@ -114,6 +146,8 @@ export default function JoinPage() {
                       <input 
                         id="firstName"
                         required
+                        value={formData.firstName}
+                        onChange={e => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
                         className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary"
                         placeholder="Ada"
                       />
@@ -123,6 +157,8 @@ export default function JoinPage() {
                       <input 
                         id="lastName"
                         required
+                        value={formData.lastName}
+                        onChange={e => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
                         className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary"
                         placeholder="Lovelace"
                       />
@@ -130,38 +166,49 @@ export default function JoinPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="email" className="text-sm font-medium text-text-secondary">College Email</label>
+                    <label htmlFor="email" className="text-sm font-medium text-text-secondary">Email Address</label>
                     <input 
                       id="email"
                       type="email"
                       required
+                      value={formData.email}
+                      onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
                       className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary"
-                      placeholder="ada@rgit.ac.in"
+                      placeholder="ada@example.com"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="role" className="text-sm font-medium text-text-secondary">Domain of Interest</label>
+                    <label htmlFor="role" className="text-sm font-medium text-text-secondary">Role Interest</label>
                     <select 
                       id="role"
                       required
+                      value={formData.role}
+                      onChange={e => setFormData(prev => ({ ...prev, role: e.target.value }))}
                       className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary appearance-none"
                     >
-                      <option value="">Select a domain...</option>
-                      <option value="ml">Machine Learning / AI</option>
-                      <option value="web">Web Development</option>
-                      <option value="design">UI / UX Design</option>
-                      <option value="content">Content & Strategy</option>
+                      <option value="">Select a role...</option>
+                      <option value="machine_learning">Machine Learning / AI</option>
+                      <option value="web_development">Web Development</option>
+                      <option value="technical">Technical</option>
+                      <option value="marketing">Marketing</option>
+                      <option value="publicity">Publicity</option>
+                      <option value="event_management">Event Management</option>
+                      <option value="digital_creative">Digital Creative / UI UX</option>
+                      <option value="content_editorial">Content & Editorial</option>
+                      <option value="photography">Photography</option>
                     </select>
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="github" className="text-sm font-medium text-text-secondary">GitHub Profile (Optional)</label>
+                    <label htmlFor="github" className="text-sm font-medium text-text-secondary">GitHub / Portfolio URL (Optional)</label>
                     <input 
                       id="github"
                       type="url"
+                      value={formData.github}
+                      onChange={e => setFormData(prev => ({ ...prev, github: e.target.value }))}
                       className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary"
-                      placeholder="https://github.com/..."
+                      placeholder="https://..."
                     />
                   </div>
 
@@ -171,11 +218,15 @@ export default function JoinPage() {
                       id="why"
                       required
                       rows={4}
+                      value={formData.why}
+                      onChange={e => setFormData(prev => ({ ...prev, why: e.target.value }))}
                       className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary resize-none"
                       placeholder="Tell us about your interests and what you hope to build..."
                     />
                   </div>
                 </div>
+
+                {error && <div className="text-sm text-red-500">{error}</div>}
 
                 <MagneticButton className="w-full group">
                   {status === "submitting" ? (

@@ -10,15 +10,9 @@ export default function AdminProjectsPage() {
     {
       name: "domain",
       label: "Domain",
-      type: "select" as const,
+      type: "text" as const,
       required: true,
-      options: [
-        { label: "Computer Vision", value: "cv" },
-        { label: "NLP", value: "nlp" },
-        { label: "Generative AI", value: "genai" },
-        { label: "Robotics", value: "robotics" },
-        { label: "Data Science", value: "data_science" },
-      ],
+      placeholder: "e.g., Computer Vision, NLP, etc."
     },
     { name: "tech_stack", label: "Tech Stack (comma separated)", type: "tags" as const },
     { name: "github_url", label: "GitHub URL", type: "url" as const },

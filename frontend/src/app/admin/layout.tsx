@@ -17,11 +17,13 @@ import {
 
 const sidebarLinks = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/join", label: "Applications", icon: Users },
   { href: "/admin/events", label: "Events", icon: CalendarDays },
   { href: "/admin/projects", label: "Projects", icon: FolderKanban },
   { href: "/admin/team", label: "Team", icon: Users },
   { href: "/admin/gallery", label: "Gallery", icon: Image },
   { href: "/admin/sponsors", label: "Sponsors", icon: Handshake },
+  { href: "/admin/content", label: "Site Content", icon: LayoutDashboard },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

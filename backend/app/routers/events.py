@@ -5,7 +5,7 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
-from app.models import Event, EventCategory
+from app.models import Event
 from app.schemas import EventResponse
 
 router = APIRouter(prefix="/events", tags=["events"])

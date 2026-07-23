@@ -50,7 +50,7 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="min-h-screen pt-24 pb-20">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <button 
           onClick={() => router.back()}
           className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors mb-8 group"
@@ -59,7 +59,7 @@ export default function ProjectDetailPage() {
           Back to Projects
         </button>
 
-        <div className="glass-card p-8 md:p-12 border border-border-default shadow-lg">
+        <div className="pt-4">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
             <div>
               <div className="flex items-center gap-3 mb-4">

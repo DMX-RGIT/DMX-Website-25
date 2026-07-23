@@ -55,6 +55,7 @@ class ProjectResponse(ProjectBase):
 class TeamMemberBase(BaseModel):
     name: str
     role: str
+    department: str | None = None
     tier: str
     year: str | None = None
     photo_url: str | None = None
@@ -102,10 +103,44 @@ class SponsorResponse(SponsorBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-# --- Stats ---
+# --- Join Request Schemas ---
 
-class StatsResponse(BaseModel):
-    members: int
-    projects: int
-    events: int
-    papers: int
+class JoinRequestBase(BaseModel):
+    first_name: str
+    last_name: str
+    email: str
+    role_interest: str
+    github_url: str | None = None
+    reason: str
+
+
+class JoinRequestCreate(JoinRequestBase):
+    pass
+
+
+class JoinRequestResponse(JoinRequestBase):
+    id: UUID
+    status: str
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class JoinRequestUpdate(JoinRequestBase):
+    status: str
+
+
+# --- Site Content Schemas ---
+
+class SiteContentBase(BaseModel):
+    stats: dict = {"members": 0, "projects": 0, "events": 0, "papers": 0}
+    about_text: str | None = None
+    terminal_code: str | None = None
+    testimonials: list[dict] = []
+
+
+class SiteContentResponse(SiteContentBase):
+    id: int
+    updated_at: datetime | None = None
+
+    model_config = ConfigDict(from_attributes=True)

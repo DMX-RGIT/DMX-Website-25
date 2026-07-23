@@ -21,7 +21,11 @@ async function adminFetch(path: string, options?: RequestInit) {
   });
   if (!res.ok) {
     const data = await res.json().catch(() => ({ detail: "Request failed" }));
-    throw new Error(data.detail || `Error ${res.status}`);
+    let msg = data.detail;
+    if (Array.isArray(msg)) {
+      msg = msg.map((m: any) => `${m.loc?.[m.loc.length-1] || 'Field'}: ${m.msg}`).join(", ");
+    }
+    throw new Error(msg || `Error ${res.status}`);
   }
   return res.json();
 }
@@ -38,11 +42,12 @@ interface Field {
 interface AdminCrudPageProps {
   title: string;
   endpoint: string; // e.g., "/events"
+  listEndpoint?: string; // e.g., "/admin/join" if different from endpoint
   fields: Field[];
   columns: { key: string; label: string; render?: (item: any) => React.ReactNode }[];
 }
 
-export function AdminCrudPage({ title, endpoint, fields, columns }: AdminCrudPageProps) {
+export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns }: AdminCrudPageProps) {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -54,14 +59,20 @@ export function AdminCrudPage({ title, endpoint, fields, columns }: AdminCrudPag
   const fetchItems = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await adminFetch(endpoint);
+      const data = await adminFetch(listEndpoint || endpoint);
       setItems(data);
     } catch (err: any) {
-      setError(err.message);
+      let msg = err.message;
+      try {
+        if (msg.includes("[object Object]")) {
+          // Fallback if stringified incorrectly earlier, though adminFetch should handle it
+        }
+      } catch {}
+      setError(msg);
     } finally {
       setLoading(false);
     }
-  }, [endpoint]);
+  }, [endpoint, listEndpoint]);
 
   useEffect(() => { fetchItems(); }, [fetchItems]);
 
@@ -285,20 +296,27 @@ export function AdminCrudPage({ title, endpoint, fields, columns }: AdminCrudPag
                         className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary text-sm"
                         placeholder={field.placeholder || "https://..."}
                       />
-                      {field.name.includes("image") && (
-                        <label className="flex items-center gap-2 px-3 py-2 border border-dashed border-border-default rounded-lg cursor-pointer hover:border-brand-teal transition-colors text-text-secondary text-xs">
-                          <Upload className="w-4 h-4" />
-                          Or upload an image
-                          <input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) handleImageUpload(field.name, file);
-                            }}
-                          />
-                        </label>
+                      { (field.name.includes("image") || field.name.includes("photo")) && (
+                        <div className="flex flex-col gap-2">
+                          <label className="flex items-center gap-2 px-3 py-2 border border-dashed border-border-default rounded-lg cursor-pointer hover:border-brand-teal transition-colors text-text-secondary text-xs">
+                            <Upload className="w-4 h-4" />
+                            Or upload an image
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleImageUpload(field.name, file);
+                              }}
+                            />
+                          </label>
+                          {formData[field.name] && (
+                            <div className="w-24 h-24 rounded-lg overflow-hidden border border-border-default bg-bg-surface">
+                              <img src={formData[field.name]} alt="Preview" className="w-full h-full object-cover" />
+                            </div>
+                          )}
+                        </div>
                       )}
                     </div>
                   ) : field.type === "tags" ? (

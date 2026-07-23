@@ -30,13 +30,13 @@ export const api = {
     list: () => fetchApi<TeamMember[]>("/team"),
   },
   gallery: {
-    list: (params?: { category?: string }) =>
+    list: (params?: { category?: string; event_id?: string }) =>
       fetchApi<GalleryImage[]>("/gallery", params),
   },
   sponsors: {
     list: () => fetchApi<Sponsor[]>("/sponsors"),
   },
   stats: {
-    get: () => fetchApi<Stats>("/stats"),
+    get: () => fetchApi<any>("/content"),
   },
 };
