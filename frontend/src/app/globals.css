@@ -1,0 +1,316 @@
+@import "tailwindcss";
+
+/* ============================================
+   Tailwind v4 3D Utilities Extension
+   ============================================ */
+@theme inline {
+  --perspective-1000: 1000px;
+}
+
+@utility perspective-1000 {
+  perspective: 1000px;
+}
+
+@utility preserve-3d {
+  transform-style: preserve-3d;
+}
+
+@utility backface-hidden {
+  backface-visibility: hidden;
+}
+
+@utility rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* ============================================
+   DMX Design System — CSS Variables
+   ============================================ */
+
+:root {
+  /* Base surfaces */
+  --bg-primary: #07090D;
+  --bg-secondary: #0A0D12;
+  --bg-surface: rgba(15, 18, 25, 0.8);
+  --bg-elevated: rgba(20, 24, 35, 0.9);
+
+  /* Text */
+  --text-primary: #F7F8FA;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+
+  /* Brand */
+  --brand-navy: #1E3A8A;
+  --brand-navy-light: #2B4C9B;
+  --brand-navy-dark: #162D6B;
+  --brand-teal: #34D9A6;
+  --brand-teal-light: #3FE0B0;
+  --brand-teal-dark: #2BC494;
+
+  /* Glassmorphism */
+  --glass-bg: rgba(10, 13, 18, 0.6);
+  --glass-border: rgba(30, 58, 138, 0.15);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+  /* Borders */
+  --border-subtle: rgba(148, 163, 184, 0.08);
+  --border-default: rgba(148, 163, 184, 0.12);
+
+  /* Gradients */
+  --gradient-navy: linear-gradient(135deg, #1E3A8A, #2B4C9B);
+  --gradient-teal: linear-gradient(135deg, #34D9A6, #3FE0B0);
+  --gradient-brand: linear-gradient(135deg, #1E3A8A, #34D9A6);
+
+  /* Misc */
+  --radius: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="light"] {
+  --bg-primary: #FCFCFD;
+  --bg-secondary: #F7F8FA;
+  --bg-surface: rgba(255, 255, 255, 0.9);
+  --bg-elevated: rgba(255, 255, 255, 0.95);
+
+  --text-primary: #0A0D12;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
+
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(30, 58, 138, 0.08);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+
+  --border-subtle: rgba(0, 0, 0, 0.04);
+  --border-default: rgba(0, 0, 0, 0.08);
+}
+
+/* ============================================
+   Tailwind v4 Theme Extension
+   ============================================ */
+
+@theme inline {
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-elevated: var(--bg-elevated);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-navy-light: var(--brand-navy-light);
+  --color-brand-teal: var(--brand-teal);
+  --color-brand-teal-light: var(--brand-teal-light);
+
+  --color-glass-bg: var(--glass-bg);
+  --color-glass-border: var(--glass-border);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-default: var(--border-default);
+
+  --font-sans: "Inter", "Geist", system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Geist Mono", monospace;
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--brand-navy) transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--transition-slow), color var(--transition-slow);
+}
+
+::selection {
+  background-color: rgba(52, 217, 166, 0.25);
+  color: var(--text-primary);
+}
+
+/* ============================================
+   Glassmorphism Utilities
+   ============================================ */
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.glass-card:hover {
+  border-color: rgba(30, 58, 138, 0.3);
+  box-shadow: 0 8px 40px rgba(30, 58, 138, 0.1), 0 0 0 1px rgba(30, 58, 138, 0.15);
+}
+
+/* ============================================
+   Gradient Border Utility
+   ============================================ */
+
+.gradient-border {
+  position: relative;
+  border-radius: var(--radius-lg);
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--brand-navy), var(--brand-teal));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.gradient-border:hover::before {
+  opacity: 1;
+}
+
+/* ============================================
+   Animated Underline
+   ============================================ */
+
+.nav-link {
+  position: relative;
+  color: var(--text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--text-primary);
+}
+
+/* ============================================
+   Neural Network Background
+   ============================================ */
+
+.neural-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================
+   Section Divider — Two-tone X
+   ============================================ */
+
+.x-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 3rem 0;
+}
+
+.x-divider .line-navy {
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, var(--brand-navy));
+}
+
+.x-divider .line-teal {
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, var(--brand-teal), transparent);
+}
+
+/* ============================================
+   Keyframe Animations
+   ============================================ */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes draw-line {
+  0% { stroke-dashoffset: 1; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+.animate-marquee-left {
+  animation: marquee-left 40s linear infinite;
+}
+
+.animate-marquee-right {
+  animation: marquee-right 40s linear infinite;
+}
+
+@keyframes marquee-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marquee-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 9999px;
+}
+
