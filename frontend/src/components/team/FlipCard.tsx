@@ -42,9 +42,9 @@ export function FlipCard({ member, index }: MemberCardProps) {
       <h3 className="text-xl font-bold text-text-primary mb-1 group-hover:text-brand-teal transition-colors">{member.name}</h3>
       <p className="text-brand-teal-light text-sm font-semibold mb-2">{member.role}</p>
       
-      {(member.department || member.year) && (
+      {member.year && (
         <p className="text-xs text-text-muted mb-4 uppercase tracking-widest">
-          {member.year ? `${member.year} Year` : ''} {member.department && member.year ? '·' : ''} {member.department}
+          {member.year} Year
         </p>
       )}
 
