@@ -13,7 +13,7 @@ class Settings(BaseSettings):
 
     # Admin
     admin_username: str = "admin"
-    admin_password_hash: str = "$2b$12$LJ3mFz2yjR4GKv.Q4qX7IOx5DFx.y7Js9Kq1WcHfZ7.KZ7ZjZ7Zq"  # default: "dmx@admin2026"
+    admin_password_hash: str = "$2b$12$hP1ZqXPbq8dUcDQ.5UHVZOLjDdJ90lyjHASaNHVm.bFu7ETznrIL2"
 
     # Cloudinary
     cloudinary_cloud_name: str = ""
