@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { GalleryImage, GalleryFilter } from "@/types";
 import { api } from "@/lib/api";
@@ -10,7 +10,7 @@ import { FilterPills } from "@/components/shared/FilterPills";
 
 import { useSearchParams } from "next/navigation";
 
-export default function GalleryPage() {
+function GalleryContent() {
   const searchParams = useSearchParams();
   const initialEventId = searchParams.get("event_id") || "all";
   
@@ -120,7 +120,6 @@ export default function GalleryPage() {
                   className="w-full h-auto object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 group-hover:scale-105"
                   loading="lazy"
                 />
-                {/* Hover Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                   {img.caption && (
                     <p className="text-sm font-medium text-white line-clamp-2">
@@ -141,5 +140,17 @@ export default function GalleryPage() {
         onClose={() => setSelectedImage(null)} 
       />
     </div>
+  );
+}
+
+export default function GalleryPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen pt-24 pb-20 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-teal"></div>
+      </div>
+    }>
+      <GalleryContent />
+    </Suspense>
   );
 }
