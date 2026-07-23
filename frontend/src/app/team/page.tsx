@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { TeamMember } from "@/types";
+import { TeamMember, GalleryImage } from "@/types";
 import { api } from "@/lib/api";
 import { FlipCard } from "@/components/team/FlipCard";
 import { SectionDivider } from "@/components/shared/SectionDivider";
 import { FilterPills } from "@/components/shared/FilterPills";
+import { Lightbox } from "@/components/gallery/Lightbox";
 
 type TeamFilter = "all" | "core" | "lead" | "member";
 
@@ -13,6 +14,7 @@ export default function TeamPage() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<TeamFilter>("all");
+  const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchTeam() {
@@ -44,7 +46,7 @@ export default function TeamPage() {
         <h2 className="text-2xl font-display font-bold text-text-primary mb-8 text-center">{title}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {list.map((member, idx) => (
-            <FlipCard key={member.id} member={member} index={idx} />
+            <FlipCard key={member.id} member={member} index={idx} onImageClick={() => setSelectedMemberId(member.id)} />
           ))}
         </div>
       </div>
@@ -68,11 +70,23 @@ export default function TeamPage() {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filtered.map((member, idx) => (
-          <FlipCard key={member.id} member={member} index={idx} />
+          <FlipCard key={member.id} member={member} index={idx} onImageClick={() => setSelectedMemberId(member.id)} />
         ))}
       </div>
     );
   };
+
+  // Prepare images for lightbox
+  const lightboxImages: GalleryImage[] = filtered
+    .filter(m => m.photo_url)
+    .map(m => ({
+      id: m.id,
+      image_url: m.photo_url as string,
+      caption: `${m.name} - ${m.role}`,
+      category: "social",
+      event_id: null,
+      created_at: m.created_at,
+    }));
 
   return (
     <div className="min-h-screen pt-24 pb-20">
@@ -113,6 +127,13 @@ export default function TeamPage() {
           )}
         </div>
       </div>
+
+      <Lightbox 
+        images={lightboxImages}
+        initialIndex={lightboxImages.findIndex(img => img.id === selectedMemberId)} 
+        isOpen={!!selectedMemberId}
+        onClose={() => setSelectedMemberId(null)} 
+      />
     </div>
   );
 }
