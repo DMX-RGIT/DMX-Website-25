@@ -34,21 +34,35 @@ export function SponsorMarquee() {
       </div>
       
       <div className="relative flex overflow-x-hidden group">
-        {/* Left fade gradient */}
-        <div className="absolute top-0 left-0 h-full w-24 md:w-48 bg-gradient-to-r from-bg-primary to-transparent z-10 pointer-events-none" />
+        {sponsors.length > 2 && (
+          <div className="absolute top-0 left-0 h-full w-24 md:w-48 bg-gradient-to-r from-bg-primary to-transparent z-10 pointer-events-none" />
+        )}
         
-        <div className="animate-marquee flex items-center gap-16 md:gap-24 px-8 md:px-12 w-max">
-          {marqueeItems.map((sponsor, idx) => (
-            <div key={`${sponsor.id}-${idx}`} className="flex items-center justify-center grayscale hover:grayscale-0 opacity-50 hover:opacity-100 transition-all duration-300">
-              <span className="text-xl md:text-2xl font-bold font-display text-text-secondary hover:text-text-primary transition-colors whitespace-nowrap">
-                {sponsor.name}
-              </span>
-            </div>
-          ))}
-        </div>
+        {sponsors.length <= 2 ? (
+          <div className="flex items-center justify-center gap-16 md:gap-24 px-8 md:px-12 w-full">
+            {sponsors.map((sponsor) => (
+              <div key={sponsor.id} className="flex items-center justify-center grayscale hover:grayscale-0 opacity-50 hover:opacity-100 transition-all duration-300">
+                <span className="text-xl md:text-2xl font-bold font-display text-text-secondary hover:text-text-primary transition-colors whitespace-nowrap">
+                  {sponsor.name}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="animate-marquee flex items-center gap-16 md:gap-24 px-8 md:px-12 w-max">
+            {marqueeItems.map((sponsor, idx) => (
+              <div key={`${sponsor.id}-${idx}`} className="flex items-center justify-center grayscale hover:grayscale-0 opacity-50 hover:opacity-100 transition-all duration-300">
+                <span className="text-xl md:text-2xl font-bold font-display text-text-secondary hover:text-text-primary transition-colors whitespace-nowrap">
+                  {sponsor.name}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
         
-        {/* Right fade gradient */}
-        <div className="absolute top-0 right-0 h-full w-24 md:w-48 bg-gradient-to-l from-bg-primary to-transparent z-10 pointer-events-none" />
+        {sponsors.length > 2 && (
+          <div className="absolute top-0 right-0 h-full w-24 md:w-48 bg-gradient-to-l from-bg-primary to-transparent z-10 pointer-events-none" />
+        )}
       </div>
     </section>
   );

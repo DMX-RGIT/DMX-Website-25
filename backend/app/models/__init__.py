@@ -21,20 +21,6 @@ from app.database import Base
 
 # --- Enums ---
 
-class EventCategory(str, PyEnum):
-    hackathon = "hackathon"
-    workshop = "workshop"
-    speaker_session = "speaker_session"
-
-
-class ProjectDomain(str, PyEnum):
-    cv = "cv"
-    nlp = "nlp"
-    genai = "genai"
-    robotics = "robotics"
-    data_science = "data_science"
-
-
 class TeamTier(str, PyEnum):
     core = "core"
     lead = "lead"
@@ -62,7 +48,7 @@ class Event(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title = Column(String(255), nullable=False)
     description = Column(Text, nullable=False)
-    category = Column(Enum(EventCategory), nullable=False)
+    category = Column(String(255), nullable=False)  # Was Enum, now dynamic String
     date = Column(DateTime(timezone=True), nullable=False)
     end_date = Column(DateTime(timezone=True), nullable=True)
     venue = Column(String(255), nullable=False)
@@ -83,7 +69,7 @@ class Project(Base):
     title = Column(String(255), nullable=False)
     description = Column(Text, nullable=False)
     long_description = Column(Text, nullable=True)
-    domain = Column(Enum(ProjectDomain), nullable=False)
+    domain = Column(String(255), nullable=False)  # Was Enum, now dynamic String
     tech_stack = Column(ARRAY(String), default=[])
     github_url = Column(String(500), nullable=True)
     demo_url = Column(String(500), nullable=True)
@@ -100,8 +86,9 @@ class TeamMember(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String(255), nullable=False)
     role = Column(String(255), nullable=False)
+    department = Column(String(255), nullable=True)
     tier = Column(Enum(TeamTier), nullable=False)
-    year = Column(String(20), nullable=True)
+    year = Column(String(50), nullable=True)
     photo_url = Column(String(500), nullable=True)
     fun_fact = Column(String(500), nullable=True)
     social_links = Column(JSONB, default={})
@@ -131,3 +118,28 @@ class Sponsor(Base):
     website_url = Column(String(500), nullable=True)
     tier = Column(Enum(SponsorTier), nullable=False)
     display_order = Column(Integer, default=0)
+
+
+class JoinRequest(Base):
+    __tablename__ = "join_requests"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    first_name = Column(String(100), nullable=False)
+    last_name = Column(String(100), nullable=False)
+    email = Column(String(255), nullable=False)
+    role_interest = Column(String(255), nullable=False)
+    github_url = Column(String(500), nullable=True)
+    reason = Column(Text, nullable=False)
+    status = Column(String(50), default="pending")  # pending, reviewed, accepted, rejected
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class SiteContent(Base):
+    __tablename__ = "site_content"
+
+    id = Column(Integer, primary_key=True, default=1)
+    stats = Column(JSONB, default={"members": 50, "projects": 15, "events": 30, "papers": 5})
+    about_text = Column(Text, nullable=True)
+    terminal_code = Column(Text, nullable=True)
+    testimonials = Column(JSONB, default=[])
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

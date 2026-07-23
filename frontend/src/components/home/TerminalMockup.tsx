@@ -2,8 +2,9 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
 
-const terminalLines = [
+const defaultLines = [
   { prompt: true, text: "dmx status", delay: 0 },
   { prompt: false, text: "→ 15+ active research projects", delay: 0.4 },
   { prompt: false, text: "→ 500+ members trained across 3 years", delay: 0.6 },
@@ -25,7 +26,31 @@ const terminalLines = [
 ];
 
 export function TerminalMockup() {
+  const [terminalLines, setTerminalLines] = useState(defaultLines);
   const [visibleLines, setVisibleLines] = useState(0);
+
+  useEffect(() => {
+    async function fetchTerminal() {
+      try {
+        const data = await api.stats.get(); // fetches /content
+        if (data.terminal_code && data.terminal_code.trim()) {
+          const lines = data.terminal_code.split("\n").map((text: string, idx: number) => {
+            const isPrompt = text.trim().startsWith("$") || text.trim().startsWith("dmx ");
+            return {
+              prompt: isPrompt,
+              text: isPrompt ? text.trim().replace(/^\$\s*/, "") : text,
+              delay: idx * 0.2
+            };
+          });
+          lines.push({ prompt: true, text: "█", delay: lines.length * 0.2 });
+          setTerminalLines(lines);
+        }
+      } catch (e) {
+        console.error("Failed to fetch terminal data", e);
+      }
+    }
+    fetchTerminal();
+  }, []);
 
   useEffect(() => {
     const timers: NodeJS.Timeout[] = [];
@@ -36,12 +61,12 @@ export function TerminalMockup() {
       timers.push(timer);
     });
     return () => timers.forEach(clearTimeout);
-  }, []);
+  }, [terminalLines]);
 
   return (
     <div className="w-full h-full p-4 md:p-6 font-mono text-xs md:text-sm leading-relaxed overflow-y-auto custom-scrollbar">
       {terminalLines.slice(0, visibleLines).map((line, idx) => {
-        if (line.text === "") {
+        if (line.text.trim() === "") {
           return <div key={idx} className="h-3" />;
         }
 

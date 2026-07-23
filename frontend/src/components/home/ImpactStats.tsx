@@ -15,7 +15,7 @@ export function ImpactStats() {
     async function loadStats() {
       try {
         const data = await api.stats.get();
-        setStats(data);
+        setStats(data.stats);
       } catch (e) {
         console.error("Failed to load stats", e);
       }

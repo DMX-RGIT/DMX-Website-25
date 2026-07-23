@@ -3,8 +3,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { Quote } from "lucide-react";
+import { api } from "@/lib/api";
 
-const testimonials = [
+const defaultTestimonials = [
   {
     quote: "DMX gave me the confidence to submit my first ML research paper. The mentorship here is unreal.",
     name: "Aarav Patel",
@@ -32,14 +33,31 @@ const testimonials = [
 ];
 
 export function Testimonials() {
+  const [testimonials, setTestimonials] = useState(defaultTestimonials);
   const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    async function fetchTestimonials() {
+      try {
+        const data = await api.stats.get(); // fetches /content
+        if (data.testimonials && Array.isArray(data.testimonials) && data.testimonials.length > 0) {
+          setTestimonials(data.testimonials);
+        }
+      } catch (e) {
+        console.error("Failed to fetch testimonials", e);
+      }
+    }
+    fetchTestimonials();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % testimonials.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [testimonials.length]);
+
+  if (testimonials.length === 0) return null;
 
   return (
     <section className="py-24 px-4 sm:px-6 lg:px-8">
@@ -68,7 +86,7 @@ export function Testimonials() {
               <div>
                 <p className="text-text-primary font-semibold">{testimonials[current].name}</p>
                 <p className="text-text-secondary text-sm">{testimonials[current].role}</p>
-                <p className="text-brand-teal text-xs font-mono mt-1">{testimonials[current].initiative}</p>
+                <p className="text-brand-teal text-xs font-mono mt-1">{testimonials[current].initiative || ""}</p>
               </div>
             </motion.div>
           </AnimatePresence>

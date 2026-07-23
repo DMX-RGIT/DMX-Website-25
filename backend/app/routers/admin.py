@@ -7,13 +7,15 @@ from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
-from app.models import Event, Project, TeamMember, GalleryImage, Sponsor
+from app.models import Event, Project, TeamMember, GalleryImage, Sponsor, JoinRequest, SiteContent
 from app.schemas import (
     EventBase, EventResponse,
     ProjectBase, ProjectResponse,
     TeamMemberBase, TeamMemberResponse,
     GalleryImageBase, GalleryImageResponse,
     SponsorBase, SponsorResponse,
+    JoinRequestResponse, JoinRequestUpdate,
+    SiteContentBase, SiteContentResponse
 )
 from app.routers.auth import get_current_admin
 
@@ -180,3 +182,54 @@ async def delete_sponsor(sponsor_id: UUID, db: AsyncSession = Depends(get_db)):
     await db.delete(db_sponsor)
     await db.commit()
     return {"detail": "Deleted"}
+
+
+# ─── Join Requests CRUD ───
+
+@router.get("/join", response_model=list[JoinRequestResponse])
+async def list_join_requests(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(JoinRequest).order_by(JoinRequest.created_at.desc()))
+    return list(result.scalars().all())
+
+
+@router.put("/join/{request_id}", response_model=JoinRequestResponse)
+async def update_join_request_status(request_id: UUID, update: JoinRequestUpdate, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(JoinRequest).where(JoinRequest.id == request_id))
+    db_request = result.scalar_one_or_none()
+    if not db_request:
+        raise HTTPException(status_code=404, detail="Join Request not found")
+    for key, value in update.model_dump().items():
+        setattr(db_request, key, value)
+    await db.commit()
+    await db.refresh(db_request)
+    return db_request
+
+
+@router.delete("/join/{request_id}")
+async def delete_join_request(request_id: UUID, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(JoinRequest).where(JoinRequest.id == request_id))
+    db_request = result.scalar_one_or_none()
+    if not db_request:
+        raise HTTPException(status_code=404, detail="Join Request not found")
+    await db.delete(db_request)
+    await db.commit()
+    return {"detail": "Deleted"}
+
+
+# ─── Site Content CRUD ───
+
+@router.put("/content", response_model=SiteContentResponse)
+async def update_site_content(content: SiteContentBase, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(SiteContent).where(SiteContent.id == 1))
+    db_content = result.scalar_one_or_none()
+    if not db_content:
+        # Create it if it doesn't exist
+        db_content = SiteContent(**content.model_dump(), id=1)
+        db.add(db_content)
+    else:
+        for key, value in content.model_dump().items():
+            setattr(db_content, key, value)
+    
+    await db.commit()
+    await db.refresh(db_content)
+    return db_content

@@ -8,17 +8,27 @@ import { Lightbox } from "@/components/gallery/Lightbox";
 import { SectionDivider } from "@/components/shared/SectionDivider";
 import { FilterPills } from "@/components/shared/FilterPills";
 
+import { useSearchParams } from "next/navigation";
+
 export default function GalleryPage() {
+  const searchParams = useSearchParams();
+  const initialEventId = searchParams.get("event_id") || "all";
+  
   const [images, setImages] = useState<GalleryImage[]>([]);
+  const [events, setEvents] = useState<{id: string, title: string}[]>([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState<GalleryFilter>("all");
+  const [eventId, setEventId] = useState<string>(initialEventId);
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
 
   useEffect(() => {
     async function fetchGallery() {
       setLoading(true);
       try {
-        const data = await api.gallery.list(category !== "all" ? { category } : undefined);
+        const params: any = {};
+        if (category !== "all") params.category = category;
+        if (eventId !== "all") params.event_id = eventId;
+        const data = await api.gallery.list(params);
         setImages(data);
       } catch (error) {
         console.error("Failed to fetch gallery", error);
@@ -27,7 +37,17 @@ export default function GalleryPage() {
       }
     }
     fetchGallery();
-  }, [category]);
+  }, [category, eventId]);
+
+  useEffect(() => {
+    async function fetchEvents() {
+      try {
+        const evtData = await api.events.list();
+        setEvents(evtData.map(e => ({ id: e.id, title: e.title })));
+      } catch (e) {}
+    }
+    fetchEvents();
+  }, []);
 
   const categories = [
     { label: "All Photos", value: "all" as GalleryFilter },
@@ -50,12 +70,25 @@ export default function GalleryPage() {
 
         <SectionDivider />
 
-        <div className="mt-12 mb-10">
+        <div className="mt-12 mb-10 flex flex-col md:flex-row items-center gap-6 justify-between">
           <FilterPills
             options={categories}
             value={category}
             onChange={setCategory}
           />
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium text-text-secondary">Filter by Event:</span>
+            <select
+              value={eventId}
+              onChange={(e) => setEventId(e.target.value)}
+              className="px-4 py-2 bg-bg-surface border border-border-default rounded-lg focus:outline-none focus:border-brand-teal text-text-primary text-sm appearance-none min-w-[200px]"
+            >
+              <option value="all">All Events</option>
+              {events.map((e) => (
+                <option key={e.id} value={e.id}>{e.title}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {loading ? (
@@ -88,7 +121,7 @@ export default function GalleryPage() {
                   loading="lazy"
                 />
                 {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-bg-primary/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                   {img.caption && (
                     <p className="text-sm font-medium text-white line-clamp-2">
                       {img.caption}
@@ -101,7 +134,12 @@ export default function GalleryPage() {
         )}
       </div>
 
-      <Lightbox image={selectedImage} onClose={() => setSelectedImage(null)} />
+      <Lightbox 
+        images={images}
+        initialIndex={images.findIndex(img => img.id === selectedImage?.id)} 
+        isOpen={!!selectedImage}
+        onClose={() => setSelectedImage(null)} 
+      />
     </div>
   );
 }
