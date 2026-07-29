@@ -95,9 +95,9 @@ export function FeaturedEvent() {
             <h2 className="text-4xl md:text-5xl font-display font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-text-primary to-text-secondary">
               {event.title}
             </h2>
-            <p className="text-text-secondary text-lg mb-8 max-w-xl">
+            <div className="text-text-secondary text-lg mb-8 max-w-xl line-clamp-3">
               {event.description}
-            </p>
+            </div>
             
             <div className="flex flex-col sm:flex-row gap-6 mb-8 text-sm text-text-secondary">
               <div className="flex items-center gap-2">
@@ -116,17 +116,25 @@ export function FeaturedEvent() {
               </div>
             </div>
 
-            <MagneticButton>
-              {event.registration_url ? (
-                <a href={event.registration_url} target="_blank" rel="noreferrer" className="flex items-center gap-2">
-                  Register Now <ArrowRight className="w-4 h-4" />
-                </a>
-              ) : (
-                <span className="flex items-center gap-2">
-                  Coming Soon <ArrowRight className="w-4 h-4" />
-                </span>
-              )}
-            </MagneticButton>
+            <div className="flex items-center gap-4">
+              <MagneticButton>
+                {event.registration_url ? (
+                  <a href={event.registration_url} target="_blank" rel="noreferrer" className="flex items-center gap-2">
+                    Register Now <ArrowRight className="w-4 h-4" />
+                  </a>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    Coming Soon <ArrowRight className="w-4 h-4" />
+                  </span>
+                )}
+              </MagneticButton>
+              <a 
+                href={`/events/${event.id}`} 
+                className="px-6 py-3 rounded-lg border border-border-default text-text-primary font-bold hover:bg-bg-surface transition-all text-sm"
+              >
+                Know More
+              </a>
+            </div>
           </div>
 
           {/* Timer */}
