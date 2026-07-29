@@ -26,7 +26,7 @@ export default function AdminTeamPage() {
     { name: "department", label: "Department (e.g., AIDS, COMP)", type: "text" as const },
     { name: "photo_url", label: "Photo URL", type: "url" as const },
     { name: "fun_fact", label: "Fun Fact", type: "text" as const, required: false },
-    { name: "social_links", label: "Social Links (JSON object)", type: "json" as const, required: false },
+    { name: "social_links", label: "Social Links", type: "social_links" as const, required: false },
     { name: "display_order", label: "Display Order (lower is first)", type: "number" as const },
   ];
 

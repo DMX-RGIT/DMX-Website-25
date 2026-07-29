@@ -92,7 +92,7 @@ export function FeaturedEvent() {
             <div className="inline-block px-3 py-1 rounded-full border border-brand-teal/30 bg-brand-teal/10 text-brand-teal text-xs font-bold uppercase tracking-wider mb-6">
               Flagship Event
             </div>
-            <h2 className="text-4xl md:text-5xl font-display font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-text-secondary">
+            <h2 className="text-4xl md:text-5xl font-display font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-text-primary to-text-secondary">
               {event.title}
             </h2>
             <p className="text-text-secondary text-lg mb-8 max-w-xl">

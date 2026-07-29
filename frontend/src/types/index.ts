@@ -4,7 +4,7 @@ export interface Event {
   id: string;
   title: string;
   description: string;
-  category: "hackathon" | "workshop" | "speaker_session";
+  category: string;
   date: string;
   end_date: string | null;
   venue: string;
@@ -12,6 +12,7 @@ export interface Event {
   image_url: string | null;
   is_flagship: boolean;
   is_upcoming: boolean;
+  interest_count: number;
   created_at: string;
   updated_at: string | null;
 }
@@ -21,7 +22,7 @@ export interface Project {
   title: string;
   description: string;
   long_description: string | null;
-  domain: "cv" | "nlp" | "genai" | "robotics" | "data_science";
+  domain: string;
   tech_stack: string[];
   github_url: string | null;
   demo_url: string | null;
@@ -76,7 +77,7 @@ export interface Stats {
 }
 
 // Filter types for the frontend
-export type EventCategory = "all" | Event["category"];
-export type ProjectDomain = "all" | Project["domain"];
+export type EventCategory = "all" | string;
+export type ProjectDomain = "all" | string;
 export type GalleryFilter = "all" | GalleryImage["category"];
 export type TeamTier = TeamMember["tier"];

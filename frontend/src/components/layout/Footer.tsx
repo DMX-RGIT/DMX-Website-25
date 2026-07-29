@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { MapPin, Mail } from "lucide-react";
 import { FaGithub, FaLinkedin, FaInstagram, FaXTwitter } from "react-icons/fa6";
 import { DMXLogo } from "./DMXLogo";
@@ -19,6 +22,11 @@ const socialLinks = [
 ];
 
 export function Footer() {
+  const pathname = usePathname();
+
+  // Hide the public footer on admin pages
+  if (pathname.startsWith("/admin")) return null;
+
   return (
     <footer className="border-t border-border-subtle">
       {/* Two-tone X divider */}
@@ -77,13 +85,17 @@ export function Footer() {
                 </a>
               ))}
             </div>
-            <a
-              href="mailto:dmx@rgit.ac.in"
-              className="flex items-center gap-2 text-sm text-text-secondary hover:text-brand-teal transition-colors"
+            <button
+              onClick={() => {
+                const user = "dmxrgit";
+                const domain = "gmail.com";
+                window.location.href = `mailto:${user}@${domain}`;
+              }}
+              className="flex items-center gap-2 text-sm text-text-secondary hover:text-brand-teal transition-colors cursor-pointer bg-transparent border-none p-0"
             >
               <Mail size={14} />
-              dmx@rgit.ac.in
-            </a>
+              <span>{"dmxrgit"}<span>{"@"}</span>{"gmail.com"}</span>
+            </button>
           </div>
 
           {/* Location */}
@@ -91,15 +103,28 @@ export function Footer() {
             <h3 className="text-sm font-semibold text-text-primary tracking-wide uppercase">
               Location
             </h3>
-            <div className="flex items-start gap-2 text-sm text-text-secondary">
-              <MapPin size={14} className="mt-1 shrink-0" />
-              <p>
-                MCT&apos;s Rajiv Gandhi Institute of Technology,
-                <br />
-                Versova, Andheri (W),
-                <br />
-                Mumbai 400053
-              </p>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-start gap-2 text-sm text-text-secondary">
+                <MapPin size={14} className="mt-1 shrink-0" />
+                <p>
+                  MCT&apos;s Rajiv Gandhi Institute of Technology,
+                  <br />
+                  Versova, Andheri (W),
+                  <br />
+                  Mumbai 400053
+                </p>
+              </div>
+              <div className="overflow-hidden rounded-md border border-border-default/50 w-[150px]">
+                <iframe 
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3808.956645592734!2d72.8211393752515!3d19.12129248209263!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c9e13ef12003%3A0x5767a74a751ccaf9!2sRajiv%20Gandhi%20Institute%20of%20Technology!5e1!3m2!1sen!2sin!4v1785337976538!5m2!1sen!2sin" 
+                  width="150" 
+                  height="100" 
+                  style={{ border: 0 }} 
+                  allowFullScreen={false} 
+                  loading="lazy" 
+                  referrerPolicy="no-referrer-when-downgrade"
+                ></iframe>
+              </div>
             </div>
           </div>
         </div>

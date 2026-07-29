@@ -56,6 +56,7 @@ class Event(Base):
     image_url = Column(String(500), nullable=True)
     is_flagship = Column(Boolean, default=False)
     is_upcoming = Column(Boolean, default=True)
+    interest_count = Column(Integer, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
@@ -142,4 +143,5 @@ class SiteContent(Base):
     about_text = Column(Text, nullable=True)
     terminal_code = Column(Text, nullable=True)
     testimonials = Column(JSONB, default=[])
+    team_photo_url = Column(String(500), nullable=True)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

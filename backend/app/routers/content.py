@@ -15,5 +15,5 @@ async def get_content(db: AsyncSession = Depends(get_db)):
     content = result.scalar_one_or_none()
     if not content:
         # Return default if not seeded
-        return {"id": 1, "stats": {"members": 0, "projects": 0, "events": 0, "papers": 0}, "about_text": None, "terminal_code": None, "testimonials": []}
+        return {"id": 1, "stats": {"members": 0, "projects": 0, "events": 0, "papers": 0}, "about_text": None, "terminal_code": None, "testimonials": [], "team_photo_url": None}
     return content

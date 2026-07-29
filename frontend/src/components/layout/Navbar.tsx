@@ -32,6 +32,9 @@ export function Navbar() {
     setMobileOpen(false);
   }, [pathname]);
 
+  // Hide the public navbar on admin pages (admin has its own sidebar)
+  if (pathname.startsWith("/admin")) return null;
+
   return (
     <header
       className={cn(
@@ -73,8 +76,12 @@ export function Navbar() {
           })}
         </div>
 
-        {/* Right side: Theme toggle + CTA */}
+        {/* Right side: Search hint, Theme toggle + CTA */}
         <div className="hidden md:flex items-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-default bg-bg-surface/50 text-text-muted text-sm cursor-default hover:bg-bg-surface hover:text-text-secondary transition-colors mr-2">
+            <span className="opacity-70">Search</span>
+            <kbd className="font-mono text-xs px-1.5 py-0.5 rounded bg-bg-secondary border border-border-subtle opacity-70">Ctrl K</kbd>
+          </div>
           <ThemeToggle />
           <Link
             href="/join"

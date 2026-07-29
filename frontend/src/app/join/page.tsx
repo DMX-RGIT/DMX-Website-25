@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Send, CheckCircle2, Terminal, Code2, Brain } from "lucide-react";
 import { SectionDivider } from "@/components/shared/SectionDivider";
 import { MagneticButton } from "@/components/shared/MagneticButton";
@@ -36,6 +36,36 @@ export default function JoinPage() {
     github: "",
     why: ""
   });
+
+  const [testimonials, setTestimonials] = useState<any[]>([]);
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+
+  useEffect(() => {
+    async function fetchTestimonials() {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/content`);
+        const data = await res.json();
+        if (data.testimonials && data.testimonials.length > 0) {
+          setTestimonials(data.testimonials);
+        }
+      } catch (err) {
+        console.error("Failed to fetch testimonials", err);
+      }
+    }
+    fetchTestimonials();
+  }, []);
+
+  useEffect(() => {
+    if (testimonials.length <= 1) return;
+    const interval = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [testimonials]);
+
+  const requiredFields = ["firstName", "lastName", "email", "role", "why"];
+  const filledFields = requiredFields.filter((key) => !!(formData as any)[key].trim()).length;
+  const progress = (filledFields / requiredFields.length) * 100;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,6 +144,31 @@ export default function JoinPage() {
                 </motion.div>
               ))}
             </div>
+
+            {/* Testimonials */}
+            {testimonials.length > 0 && (
+              <div className="pt-8 border-t border-border-default relative min-h-[160px]">
+                <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-6">From the Team</h3>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeTestimonial}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute"
+                  >
+                    <p className="text-lg text-text-primary italic mb-4">"{testimonials[activeTestimonial].quote}"</p>
+                    <div className="flex items-center gap-3">
+                      <div>
+                        <div className="text-sm font-bold text-text-primary">{testimonials[activeTestimonial].name}</div>
+                        <div className="text-xs text-text-secondary">{testimonials[activeTestimonial].role}</div>
+                      </div>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            )}
           </div>
 
           {/* Right Column: Application Form */}
@@ -139,6 +194,23 @@ export default function JoinPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
+                
+                {/* Progress Bar */}
+                <div className="space-y-2 mb-6">
+                  <div className="flex justify-between text-xs font-semibold text-text-secondary">
+                    <span>Application Progress</span>
+                    <span>{Math.round(progress)}%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-bg-primary rounded-full overflow-hidden">
+                    <motion.div 
+                      className="h-full bg-brand-teal" 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${progress}%` }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">

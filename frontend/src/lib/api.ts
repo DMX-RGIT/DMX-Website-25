@@ -20,6 +20,11 @@ export const api = {
     list: (params?: { category?: string; upcoming?: string }) =>
       fetchApi<Event[]>("/events", params),
     get: (id: string) => fetchApi<Event>(`/events/${id}`),
+    registerInterest: async (id: string) => {
+      const res = await fetch(`${API_BASE}/events/${id}/interest`, { method: "POST" });
+      if (!res.ok) throw new Error("Failed to register interest");
+      return res.json();
+    },
   },
   projects: {
     list: (params?: { domain?: string }) =>

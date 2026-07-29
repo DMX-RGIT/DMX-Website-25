@@ -51,7 +51,7 @@ export default function EventDetailPage() {
   const isHackathon = event.category === "hackathon";
 
   return (
-    <div className="min-h-screen pt-24 pb-20">
+    <div className="min-h-screen pt-4 pb-20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <button 
           onClick={() => router.back()}
@@ -73,7 +73,7 @@ export default function EventDetailPage() {
           )}
           
           <div className="pt-4">
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
               <div>
                 <div className="flex items-center gap-3 mb-4">
                   <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-md border ${
@@ -89,7 +89,7 @@ export default function EventDetailPage() {
                     </span>
                   )}
                 </div>
-                <h1 className="text-3xl md:text-5xl font-display font-bold text-text-primary mb-4">
+                <h1 className="text-3xl md:text-5xl font-display font-bold text-text-primary">
                   {event.title}
                 </h1>
               </div>

@@ -1,0 +1,39 @@
+{
+  "stats": {
+    "events": 3,
+    "papers": 1,
+    "members": 100,
+    "projects": 4
+  },
+  "about_text": "",
+  "terminal_code": "$ python inference.py\n\nLoading checkpoint...\nUsing CUDA Device: RTX\n\nInput:\n\"I have an idea.\"\n\nThinking...\n\nConfidence: 99.98%\n\nPrediction:\n\"Build it with DMX.\"\n\ndmx workshop launch\n\nCountdown: T-1 DAY\n\nLoading workshop assets... \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588 100%\n\n\u25b6 CYBERSECURITY: BEHIND THE BREACH \u276f//\n\nSee you tomorrow.",
+  "testimonials": [
+    {
+      "name": "Aarav Patel",
+      "role": "3rd Year, Computer Engineering",
+      "quote": "DMX gave me the confidence to submit my first ML research paper. The mentorship here is unreal.",
+      "initiative": "NLP Research Lead"
+    },
+    {
+      "name": "Sneha Iyer",
+      "role": "2nd Year, Data Science",
+      "quote": "Hack2Infinity was a turning point for me. 36 hours of pure building \u2014 I learned more there than in an entire semester.",
+      "initiative": "Hackathon Participant"
+    },
+    {
+      "name": "Rohan Mehta",
+      "role": "4th Year, AI & ML",
+      "quote": "The workshops don't just teach you theory. You walk out with a deployed model. That's the DMX difference.",
+      "initiative": "Workshop Instructor"
+    },
+    {
+      "name": "Priya Sharma",
+      "role": "3rd Year, Computer Engineering",
+      "quote": "Being part of the core committee taught me more about leadership and project management than any course ever could.",
+      "initiative": "Core Committee Member"
+    }
+  ],
+  "team_photo_url": "https://res.cloudinary.com/dmx/image/upload/v123/team.jpg",
+  "id": 1,
+  "updated_at": "2026-07-29T14:44:12.655874Z"
+}

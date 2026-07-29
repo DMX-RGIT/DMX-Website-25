@@ -30,6 +30,13 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, [theme, mounted]);
 
+  // Listen for theme toggle events from CommandPalette (which can't use the hook directly)
+  useEffect(() => {
+    const handleToggleEvent = () => setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+    window.addEventListener("dmx-toggle-theme", handleToggleEvent);
+    return () => window.removeEventListener("dmx-toggle-theme", handleToggleEvent);
+  }, []);
+
   const toggleTheme = useCallback(() => {
     setTheme((prev) => (prev === "dark" ? "light" : "dark"));
   }, []);

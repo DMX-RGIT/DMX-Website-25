@@ -98,15 +98,16 @@ export function CommandPalette() {
                 </Command.Item>
                 <Command.Item
                   onSelect={() => {
-                    const theme = document.documentElement.getAttribute("data-theme");
-                    const newTheme = theme === "dark" ? "light" : "dark";
-                    document.documentElement.setAttribute("data-theme", newTheme);
-                    localStorage.setItem("dmx-theme", newTheme);
-                    runCommand(() => window.dispatchEvent(new Event("storage"))); // Optional depending on how ThemeProvider listens
+                    runCommand(() => {
+                      // Intentionally empty — toggle happens via onSelect
+                    });
+                    // Use the ThemeProvider context instead of direct DOM manipulation
+                    const event = new CustomEvent("dmx-toggle-theme");
+                    window.dispatchEvent(event);
                   }}
                   className="flex items-center gap-2 px-2 py-3 rounded-lg text-sm text-text-secondary cursor-pointer aria-selected:bg-bg-surface aria-selected:text-text-primary transition-colors"
                 >
-                  <span className="w-4 h-4 text-brand-teal flex items-center justify-center">🌓</span>
+                  <span className="w-4 h-4 text-brand-teal flex items-center justify-center text-xs">T</span>
                   <span>Toggle Theme</span>
                 </Command.Item>
             </Command.Group>

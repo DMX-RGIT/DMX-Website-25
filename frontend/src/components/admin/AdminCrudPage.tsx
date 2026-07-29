@@ -33,7 +33,7 @@ async function adminFetch(path: string, options?: RequestInit) {
 interface Field {
   name: string;
   label: string;
-  type: "text" | "textarea" | "select" | "url" | "datetime" | "number" | "boolean" | "tags" | "json";
+  type: "text" | "textarea" | "select" | "url" | "datetime" | "number" | "boolean" | "tags" | "json" | "social_links";
   required?: boolean;
   options?: { label: string; value: string }[];
   placeholder?: string;
@@ -83,7 +83,8 @@ export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns }
       if (f.type === "boolean") defaults[f.name] = false;
       else if (f.type === "number") defaults[f.name] = 0;
       else if (f.type === "tags") defaults[f.name] = [];
-      else if (f.type === "json") defaults[f.name] = [];
+      else if (f.type === "json") defaults[f.name] = f.name.includes("link") ? {} : [];
+      else if (f.type === "social_links") defaults[f.name] = [];
       else defaults[f.name] = "";
     });
     setFormData(defaults);
@@ -95,7 +96,10 @@ export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns }
     setEditing(item);
     const data: Record<string, any> = {};
     fields.forEach((f) => {
-      if (f.type === "tags" || f.type === "json") {
+      if (f.type === "social_links") {
+        const raw = item[f.name] || {};
+        data[f.name] = Object.entries(raw).map(([k, v]) => ({ key: k, value: v }));
+      } else if (f.type === "tags" || f.type === "json") {
         data[f.name] = item[f.name] || [];
       } else if (f.type === "datetime") {
         data[f.name] = item[f.name] ? new Date(item[f.name]).toISOString().slice(0, 16) : "";
@@ -121,6 +125,17 @@ export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns }
         }
         if (f.type === "json" && typeof payload[f.name] === "string") {
           try { payload[f.name] = JSON.parse(payload[f.name]); } catch { /* keep as-is */ }
+        }
+        if (f.type === "social_links") {
+          // Convert the array of {key, value} back to a clean object
+          const arr = payload[f.name] || [];
+          const cleaned: Record<string, string> = {};
+          arr.forEach((item: any) => {
+            if (item.key?.trim() && item.value?.trim()) {
+              cleaned[item.key.trim().toLowerCase()] = item.value.trim();
+            }
+          });
+          payload[f.name] = cleaned;
         }
         if (f.type === "datetime" && payload[f.name]) {
           payload[f.name] = new Date(payload[f.name]).toISOString();
@@ -327,6 +342,56 @@ export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns }
                       className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary text-sm"
                       placeholder="Comma separated values"
                     />
+                  ) : field.type === "social_links" ? (
+                    <div className="space-y-3">
+                      {(formData[field.name] || []).map((social: any, idx: number) => (
+                        <div key={idx} className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={social.key}
+                            onChange={(e) => {
+                              const newArr = [...formData[field.name]];
+                              newArr[idx].key = e.target.value;
+                              setFormData({ ...formData, [field.name]: newArr });
+                            }}
+                            className="w-1/3 px-4 py-2.5 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary text-sm"
+                            placeholder="Platform (e.g. github)"
+                          />
+                          <input
+                            type="url"
+                            value={social.value}
+                            onChange={(e) => {
+                              const newArr = [...formData[field.name]];
+                              newArr[idx].value = e.target.value;
+                              setFormData({ ...formData, [field.name]: newArr });
+                            }}
+                            className="flex-1 px-4 py-2.5 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary text-sm"
+                            placeholder="URL"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newArr = [...formData[field.name]];
+                              newArr.splice(idx, 1);
+                              setFormData({ ...formData, [field.name]: newArr });
+                            }}
+                            className="p-2 text-text-muted hover:text-red-400 transition-colors"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newArr = [...(formData[field.name] || []), { key: "", value: "" }];
+                          setFormData({ ...formData, [field.name]: newArr });
+                        }}
+                        className="text-sm text-brand-teal hover:text-brand-teal-light transition-colors"
+                      >
+                        + Add Social Link
+                      </button>
+                    </div>
                   ) : field.type === "json" ? (
                     <textarea
                       value={typeof formData[field.name] === "string" ? formData[field.name] : JSON.stringify(formData[field.name], null, 2)}

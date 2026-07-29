@@ -4,7 +4,7 @@ from functools import lru_cache
 
 class Settings(BaseSettings):
     database_url: str = "postgresql+asyncpg://dmx:dmx_dev_2026@localhost:5432/dmx_db"
-    secret_key: str = "dmx-dev-secret-key-change-in-production"
+    secret_key: str  # Required — must be set in .env
     cors_origins: str = "http://localhost:3000"
     debug: bool = True
 
@@ -13,7 +13,7 @@ class Settings(BaseSettings):
 
     # Admin
     admin_username: str = "admin"
-    admin_password: str = "dmx-secure-admin-99!"
+    admin_password: str  # Required — must be set in .env
 
     # Cloudinary
     cloudinary_cloud_name: str = ""

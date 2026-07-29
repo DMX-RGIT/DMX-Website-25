@@ -1,8 +1,10 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Calendar, MapPin } from "lucide-react";
+import { ArrowUpRight, Calendar, MapPin, Heart } from "lucide-react";
 import { Event } from "@/types";
+import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { TiltCard } from "@/components/shared/TiltCard";
 
@@ -14,6 +16,33 @@ interface EventCardProps {
 
 export function EventCard({ event, index, onClick }: EventCardProps) {
   const isHackathon = event.category === "hackathon";
+  const [interestCount, setInterestCount] = useState(event.interest_count || 0);
+  const [hasLiked, setHasLiked] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setHasLiked(localStorage.getItem(`liked_${event.id}`) === "true");
+    }
+  }, [event.id]);
+
+  const handleInterest = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (hasLiked) return;
+
+    // Optimistic update
+    setHasLiked(true);
+    setInterestCount(prev => prev + 1);
+    localStorage.setItem(`liked_${event.id}`, "true");
+
+    try {
+      await api.events.registerInterest(event.id);
+    } catch (err) {
+      // Revert on failure
+      setHasLiked(false);
+      setInterestCount(prev => prev - 1);
+      localStorage.removeItem(`liked_${event.id}`);
+    }
+  };
 
   return (
     <TiltCard className="h-full">
@@ -84,17 +113,37 @@ export function EventCard({ event, index, onClick }: EventCardProps) {
             </div>
           </div>
 
-          {/* Action Link */}
-          <div className="mt-auto pt-4 border-t border-border-subtle" style={{ transform: "translateZ(40px)" }}>
+          {/* Action Link & Interest */}
+          <div className="mt-auto pt-4 border-t border-border-subtle flex items-center justify-between" style={{ transform: "translateZ(40px)" }}>
             <a
               href={event.registration_url || "#"}
               target="_blank"
               rel="noreferrer"
+              onClick={(e) => e.stopPropagation()}
               className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-teal group-hover:text-brand-teal-light transition-colors"
             >
               {event.is_upcoming ? "Register Now" : "View Details"}
               <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </a>
+
+            <button
+              onClick={(e) => { 
+                e.preventDefault();
+                e.stopPropagation(); 
+                handleInterest(e); 
+              }}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 relative z-20 cursor-pointer",
+                hasLiked 
+                  ? "bg-red-500/10 text-red-500" 
+                  : "bg-bg-primary text-text-muted hover:bg-bg-surface hover:text-red-400 border border-border-subtle"
+              )}
+            >
+              <Heart 
+                className={cn("w-3.5 h-3.5 transition-transform", hasLiked && "fill-current scale-110")} 
+              />
+              <span>{interestCount}</span>
+            </button>
           </div>
         </div>
       </motion.div>

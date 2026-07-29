@@ -1,7 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr, model_validator
 
 
 # --- Event Schemas ---
@@ -16,15 +16,22 @@ class EventBase(BaseModel):
     registration_url: str | None = None
     image_url: str | None = None
     is_flagship: bool = False
-    is_upcoming: bool = True
+    is_upcoming: bool = True  # Kept for admin form; overridden in response
 
 
 class EventResponse(EventBase):
     id: UUID
+    interest_count: int
     created_at: datetime
     updated_at: datetime | None = None
 
     model_config = ConfigDict(from_attributes=True)
+
+    @model_validator(mode="after")
+    def compute_upcoming(self) -> "EventResponse":
+        """Override the stored is_upcoming with a date-based computation."""
+        self.is_upcoming = self.date.replace(tzinfo=timezone.utc) >= datetime.now(timezone.utc) if self.date.tzinfo is None else self.date >= datetime.now(timezone.utc)
+        return self
 
 
 # --- Project Schemas ---
@@ -108,7 +115,7 @@ class SponsorResponse(SponsorBase):
 class JoinRequestBase(BaseModel):
     first_name: str
     last_name: str
-    email: str
+    email: EmailStr
     role_interest: str
     github_url: str | None = None
     reason: str
@@ -137,6 +144,7 @@ class SiteContentBase(BaseModel):
     about_text: str | None = None
     terminal_code: str | None = None
     testimonials: list[dict] = []
+    team_photo_url: str | None = None
 
 
 class SiteContentResponse(SiteContentBase):

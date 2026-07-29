@@ -85,13 +85,24 @@ export default function AdminGalleryPage() {
     }
   };
 
-  const toggleImageSelection = (id: string) => {
+  const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(null);
+
+  const toggleImageSelection = (id: string, index: number, isShiftPressed: boolean) => {
     setSelectedImages((prev) => {
       const newSet = new Set(prev);
-      if (newSet.has(id)) newSet.delete(id);
-      else newSet.add(id);
+      if (isShiftPressed && lastSelectedIndex !== null) {
+        const start = Math.min(lastSelectedIndex, index);
+        const end = Math.max(lastSelectedIndex, index);
+        for (let i = start; i <= end; i++) {
+          newSet.add(images[i].id);
+        }
+      } else {
+        if (newSet.has(id)) newSet.delete(id);
+        else newSet.add(id);
+      }
       return newSet;
     });
+    setLastSelectedIndex(index);
   };
 
   const handleBulkUpload = async () => {
@@ -184,10 +195,10 @@ export default function AdminGalleryPage() {
         <div>Loading...</div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {images.map((img) => (
+          {images.map((img, idx) => (
             <div 
               key={img.id} 
-              onClick={() => selectMode ? toggleImageSelection(img.id) : undefined}
+              onClick={(e) => selectMode ? toggleImageSelection(img.id, idx, e.shiftKey) : undefined}
               className={`relative group bg-bg-surface border rounded-xl overflow-hidden aspect-video ${selectMode ? "cursor-pointer" : ""} ${selectedImages.has(img.id) ? "border-red-500 border-2" : "border-border-default"}`}
             >
               <img src={img.image_url} alt={img.caption || ""} className="w-full h-full object-cover" />

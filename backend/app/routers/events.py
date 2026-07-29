@@ -20,9 +20,12 @@ async def list_events(
     query = select(Event).order_by(Event.date.desc())
 
     if category:
-        query = query.where(Event.category == category)
+        query = query.where(func.lower(Event.category) == category.lower())
     if upcoming is not None:
-        query = query.where(Event.is_upcoming == upcoming)
+        if upcoming:
+            query = query.where(Event.date >= func.now())
+        else:
+            query = query.where(Event.date < func.now())
 
     result = await db.execute(query)
     return result.scalars().all()
@@ -36,3 +39,17 @@ async def get_event(event_id: UUID, db: AsyncSession = Depends(get_db)):
         from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="Event not found")
     return event
+
+
+@router.post("/{event_id}/interest")
+async def register_interest(event_id: UUID, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Event).where(Event.id == event_id))
+    event = result.scalar_one_or_none()
+    if not event:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Event not found")
+    
+    event.interest_count = (event.interest_count or 0) + 1
+    await db.commit()
+    await db.refresh(event)
+    return {"status": "success", "interest_count": event.interest_count}

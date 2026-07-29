@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Maximize2 } from "lucide-react";
 import { TeamMember, GalleryImage } from "@/types";
 import { api } from "@/lib/api";
 import { FlipCard } from "@/components/team/FlipCard";
@@ -15,19 +16,26 @@ export default function TeamPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<TeamFilter>("all");
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
+  const [teamPhotoUrl, setTeamPhotoUrl] = useState<string>("");
 
   useEffect(() => {
-    async function fetchTeam() {
+    async function fetchTeamAndContent() {
       try {
-        const data = await api.team.list();
-        setMembers(data);
+        const [teamData, contentData] = await Promise.all([
+          api.team.list(),
+          api.stats.get().catch(() => ({})), // Fallback if content fetch fails
+        ]);
+        setMembers(teamData);
+        if (contentData?.team_photo_url) {
+          setTeamPhotoUrl(contentData.team_photo_url);
+        }
       } catch (error) {
-        console.error("Failed to fetch team", error);
+        console.error("Failed to fetch team data", error);
       } finally {
         setLoading(false);
       }
     }
-    fetchTeam();
+    fetchTeamAndContent();
   }, []);
 
   const filterOptions = [
@@ -60,11 +68,32 @@ export default function TeamPage() {
       const leads = filtered.filter(m => m.tier === "lead");
       const other = filtered.filter(m => m.tier === "member");
       return (
-        <>
+        <div className="space-y-12">
           {renderGroup(core, "Core Committee")}
           {renderGroup(leads, "Domain Leads")}
           {renderGroup(other, "Members")}
-        </>
+          
+          {teamPhotoUrl && (
+            <div className="mt-16 text-center">
+              <h2 className="text-2xl font-display font-bold text-text-primary mb-8 text-center">The DMX Team</h2>
+              <div 
+                className="w-full max-w-[90vw] mx-auto h-[40vh] sm:h-[50vh] md:h-[70vh] rounded-2xl overflow-hidden border border-border-default shadow-xl relative cursor-pointer group"
+                onClick={() => setSelectedMemberId("team-photo")}
+              >
+                <img 
+                  src={teamPhotoUrl} 
+                  alt="DMX Team" 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-bg-primary/80 via-bg-primary/20 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-8">
+                  <span className="px-6 py-3 bg-brand-navy/80 backdrop-blur-md border border-brand-navy-light/30 rounded-full text-white text-sm font-semibold flex items-center gap-2">
+                    <Maximize2 className="w-4 h-4" /> View Full Photo
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       );
     }
     return (
@@ -87,6 +116,17 @@ export default function TeamPage() {
       event_id: null,
       created_at: m.created_at,
     }));
+
+  if (teamPhotoUrl) {
+    lightboxImages.push({
+      id: "team-photo",
+      image_url: teamPhotoUrl,
+      caption: "The DMX Team",
+      category: "social",
+      event_id: null,
+      created_at: new Date().toISOString(),
+    });
+  }
 
   return (
     <div className="min-h-screen pt-24 pb-20">

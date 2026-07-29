@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { DMXLogo } from "@/components/layout/DMXLogo";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { cn } from "@/lib/utils";
 import {
   CalendarDays,
@@ -26,7 +27,11 @@ const sidebarLinks = [
   { href: "/admin/content", label: "Site Content", icon: LayoutDashboard },
 ];
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const [authed, setAuthed] = useState(false);
@@ -47,7 +52,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
 
     // Verify token
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+    const API_BASE =
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
     fetch(`${API_BASE}/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -83,12 +89,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (!authed) return null;
 
   return (
-    <div className="min-h-screen flex bg-bg-primary">
+    <div className="h-screen flex bg-bg-primary overflow-hidden">
       {/* Sidebar */}
       <aside className="w-64 shrink-0 border-r border-border-default bg-bg-secondary flex flex-col">
         <div className="p-6 border-b border-border-default">
-          <DMXLogo className="h-7 w-auto" />
-          <p className="text-xs text-text-secondary mt-2 font-mono">Admin Panel</p>
+          <Link href="/">
+            <DMXLogo className="h-7 w-auto" />
+          </Link>
+          <p className="text-xs text-text-secondary mt-2 font-mono">
+            Admin Panel
+          </p>
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
@@ -102,7 +112,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   "flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors",
                   isActive
                     ? "bg-brand-navy/20 text-brand-teal border border-brand-navy-light/30"
-                    : "text-text-secondary hover:text-text-primary hover:bg-bg-surface"
+                    : "text-text-secondary hover:text-text-primary hover:bg-bg-surface",
                 )}
               >
                 <link.icon className="w-4 h-4" />
@@ -112,7 +122,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           })}
         </nav>
 
-        <div className="p-4 border-t border-border-default">
+        <div className="p-4 border-t border-border-default space-y-2">
+          <div className="px-4 py-2 flex items-center justify-between text-sm text-text-secondary">
+            <span>Theme</span>
+            <ThemeToggle />
+          </div>
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-text-secondary hover:text-red-400 hover:bg-red-500/10 transition-colors w-full"
@@ -125,9 +139,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
-        <div className="p-8">
-          {children}
-        </div>
+        <div className="p-8">{children}</div>
       </main>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Project, ProjectDomain } from "@/types";
 import { api } from "@/lib/api";
@@ -9,7 +9,7 @@ import { ProjectCard } from "@/components/projects/ProjectCard";
 import { SectionDivider } from "@/components/shared/SectionDivider";
 
 export default function ProjectsPage() {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [domain, setDomain] = useState<ProjectDomain>("all");
   const router = useRouter();
@@ -18,8 +18,9 @@ export default function ProjectsPage() {
     async function fetchProjects() {
       setLoading(true);
       try {
-        const data = await api.projects.list(domain !== "all" ? { domain } : undefined);
-        setProjects(data);
+        // Always fetch all projects so we can derive available domains
+        const data = await api.projects.list();
+        setAllProjects(data);
       } catch (error) {
         console.error("Failed to fetch projects", error);
       } finally {
@@ -27,13 +28,22 @@ export default function ProjectsPage() {
       }
     }
     fetchProjects();
-  }, [domain]);
+  }, []);
+
+  // Extract unique domain values from actual data
+  const availableDomains = useMemo(() => {
+    const domains = new Set(allProjects.map((p) => p.domain));
+    return Array.from(domains).sort();
+  }, [allProjects]);
+
+  // Client-side filtering
+  const projects = domain === "all" ? allProjects : allProjects.filter((p) => p.domain === domain);
 
   return (
     <div className="min-h-screen pt-24 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl md:text-6xl font-display font-bold tracking-tight mb-4 text-center">
-          Research & Projects
+          Research &amp; Projects
         </h1>
         <p className="text-lg text-text-secondary max-w-2xl mx-auto text-center mb-12">
           Exploring the frontiers of AI. Browse our members&apos; work across computer vision, NLP, and robotics.
@@ -42,7 +52,7 @@ export default function ProjectsPage() {
         <SectionDivider />
 
         <div className="mt-12">
-          <ProjectFilters currentDomain={domain} onDomainChange={setDomain} />
+          <ProjectFilters currentDomain={domain} onDomainChange={setDomain} availableDomains={availableDomains} />
 
           {loading ? (
             <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
