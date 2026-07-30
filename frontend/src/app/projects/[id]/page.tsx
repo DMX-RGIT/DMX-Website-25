@@ -6,6 +6,7 @@ import { ArrowLeft, Code2, ExternalLink, Users } from "lucide-react";
 import { Project } from "@/types";
 import { api } from "@/lib/api";
 import { SectionDivider } from "@/components/shared/SectionDivider";
+import { MarkdownRenderer } from "@/components/shared/MarkdownRenderer";
 
 export default function ProjectDetailPage() {
   const params = useParams();
@@ -108,11 +109,9 @@ export default function ProjectDetailPage() {
           <SectionDivider />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 my-12">
-            <div className="md:col-span-2 space-y-6">
-              <h2 className="text-2xl font-display font-bold text-text-primary">About the Project</h2>
-              <div className="text-text-secondary leading-relaxed space-y-4 whitespace-pre-wrap">
-                {project.long_description || project.description}
-              </div>
+            <div className="md:col-span-2 space-y-4">
+              <h2 className="text-2xl font-display font-bold text-text-primary mb-2">About the Project</h2>
+              <MarkdownRenderer content={project.long_description || project.description} />
             </div>
 
             <div className="space-y-8">

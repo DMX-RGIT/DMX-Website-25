@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Code2, ExternalLink, Users } from "lucide-react";
 import { Project } from "@/types";
+import { MarkdownRenderer } from "@/components/shared/MarkdownRenderer";
 
 interface ProjectModalProps {
   project: Project | null;
@@ -47,9 +48,9 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
           </div>
 
           <div className="p-6 overflow-y-auto scrollbar-thin flex-1">
-            <p className="text-text-secondary text-base md:text-lg mb-8 leading-relaxed">
-              {project.long_description || project.description}
-            </p>
+            <div className="mb-8">
+              <MarkdownRenderer content={project.long_description || project.description} />
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Tech Stack */}
