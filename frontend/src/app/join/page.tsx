@@ -32,6 +32,7 @@ export default function JoinPage() {
     firstName: "",
     lastName: "",
     email: "",
+    mobileNumber: "",
     role: "",
     github: "",
     why: ""
@@ -63,7 +64,7 @@ export default function JoinPage() {
     return () => clearInterval(interval);
   }, [testimonials]);
 
-  const requiredFields = ["firstName", "lastName", "email", "role", "why"];
+  const requiredFields = ["firstName", "lastName", "email", "mobileNumber", "role", "why"];
   const filledFields = requiredFields.filter((key) => !!(formData as any)[key].trim()).length;
   const progress = (filledFields / requiredFields.length) * 100;
 
@@ -80,6 +81,7 @@ export default function JoinPage() {
           first_name: formData.firstName,
           last_name: formData.lastName,
           email: formData.email,
+          mobile_number: formData.mobileNumber,
           role_interest: formData.role,
           github_url: formData.github || null,
           reason: formData.why
@@ -237,17 +239,34 @@ export default function JoinPage() {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <label htmlFor="email" className="text-sm font-medium text-text-secondary">Email Address</label>
-                    <input 
-                      id="email"
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                      className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary"
-                      placeholder="ada@example.com"
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label htmlFor="email" className="text-sm font-medium text-text-secondary">Email Address</label>
+                      <input 
+                        id="email"
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                        className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary"
+                        placeholder="ada@example.com"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label htmlFor="mobileNumber" className="text-sm font-medium text-text-secondary">Mobile Number</label>
+                      <input 
+                        id="mobileNumber"
+                        type="tel"
+                        required
+                        pattern="[0-9]{10}"
+                        title="Please enter a valid 10-digit mobile number"
+                        value={formData.mobileNumber}
+                        onChange={e => setFormData(prev => ({ ...prev, mobileNumber: e.target.value }))}
+                        className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary"
+                        placeholder="9876543210"
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -260,7 +279,7 @@ export default function JoinPage() {
                       className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary appearance-none"
                     >
                       <option value="">Select a role...</option>
-                      <option value="machine_learning">Machine Learning / AI</option>
+                      <option value="project">Project</option>
                       <option value="web_development">Web Development</option>
                       <option value="technical">Technical</option>
                       <option value="marketing">Marketing</option>

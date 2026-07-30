@@ -116,6 +116,7 @@ class JoinRequestBase(BaseModel):
     first_name: str
     last_name: str
     email: EmailStr
+    mobile_number: str
     role_interest: str
     github_url: str | None = None
     reason: str

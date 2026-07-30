@@ -128,6 +128,7 @@ class JoinRequest(Base):
     first_name = Column(String(100), nullable=False)
     last_name = Column(String(100), nullable=False)
     email = Column(String(255), nullable=False)
+    mobile_number = Column(String(20), nullable=False, server_default="")
     role_interest = Column(String(255), nullable=False)
     github_url = Column(String(500), nullable=True)
     reason = Column(Text, nullable=False)

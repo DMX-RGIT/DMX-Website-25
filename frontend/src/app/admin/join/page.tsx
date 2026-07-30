@@ -12,6 +12,7 @@ export default function JoinAdminPage() {
         { name: "first_name", label: "First Name", type: "text", required: true },
         { name: "last_name", label: "Last Name", type: "text", required: true },
         { name: "email", label: "Email", type: "text", required: true },
+        { name: "mobile_number", label: "Mobile Number", type: "text", required: true },
         { name: "role_interest", label: "Role Interest", type: "text", required: true },
         { name: "github_url", label: "GitHub URL", type: "url" },
         { name: "reason", label: "Reason", type: "textarea", required: true },
@@ -31,6 +32,7 @@ export default function JoinAdminPage() {
       columns={[
         { key: "first_name", label: "First Name" },
         { key: "last_name", label: "Last Name" },
+        { key: "mobile_number", label: "Mobile" },
         { key: "role_interest", label: "Role" },
         { 
           key: "status", 
