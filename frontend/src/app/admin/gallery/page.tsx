@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Trash2, X, Upload, Save } from "lucide-react";
+import { Plus, Trash2, X, Upload, Save, Info } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
@@ -191,6 +193,22 @@ export default function AdminGalleryPage() {
         </div>
       </div>
 
+      {/* Info Card */}
+      <div className="mb-6 p-4 rounded-xl border border-brand-navy-light/30 bg-brand-navy/10">
+        <div className="flex gap-3">
+          <Info className="w-5 h-5 text-brand-teal shrink-0 mt-0.5" />
+          <div className="text-sm text-text-secondary space-y-1">
+            <p className="font-semibold text-text-primary">Tips for gallery management</p>
+            <ul className="list-disc pl-4 space-y-0.5">
+              <li><strong>Bulk Upload:</strong> Select multiple images and assign a common caption, category, and linked event.</li>
+              <li><strong>Select Mode:</strong> Hold Shift+Click to select a range of images for bulk deletion.</li>
+              <li>Link images to an <strong>event</strong> so they appear on that event&apos;s &quot;View Photos&quot; page.</li>
+              <li>Use <strong>high-quality images</strong> (at least 1200px wide) for best results in the masonry grid.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       {loading ? (
         <div>Loading...</div>
       ) : (
@@ -249,40 +267,41 @@ export default function AdminGalleryPage() {
 
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-text-secondary">Common Caption</label>
-                <input
+                <Input
                   type="text"
                   value={caption}
                   onChange={(e) => setCaption(e.target.value)}
-                  className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg text-sm text-text-primary focus:outline-none focus:border-brand-teal"
                   placeholder="e.g., Hack2Infinity 2026 Opening Ceremony"
                 />
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-text-secondary">Category</label>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg text-sm text-text-primary focus:outline-none focus:border-brand-teal"
-                >
-                  <option value="hackathon">Hackathon</option>
-                  <option value="workshop">Workshop</option>
-                  <option value="social">Social</option>
-                </select>
+                <Select value={category} onValueChange={(v) => setCategory(v || "")}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="hackathon">Hackathon</SelectItem>
+                    <SelectItem value="workshop">Workshop</SelectItem>
+                    <SelectItem value="social">Social</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-text-secondary">Link to Event (Optional)</label>
-                <select
-                  value={eventId}
-                  onChange={(e) => setEventId(e.target.value)}
-                  className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg text-sm text-text-primary focus:outline-none focus:border-brand-teal"
-                >
-                  <option value="">None</option>
-                  {events.map(e => (
-                    <option key={e.id} value={e.id}>{e.title}</option>
-                  ))}
-                </select>
+                <Select value={eventId} onValueChange={(v) => setEventId(v || "")}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="None" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    {events.map(e => (
+                      <SelectItem key={e.id} value={e.id}>{e.title}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 

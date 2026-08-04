@@ -27,9 +27,25 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
         style={{ transformStyle: "preserve-3d" }}
       >
         <div className="flex justify-between items-start mb-4" style={{ transform: "translateZ(40px)" }}>
-          <h3 className="text-lg font-bold text-text-primary group-hover:text-brand-teal transition-colors">
-            {project.title}
-          </h3>
+          <div className="flex-1 pr-4">
+            {project.level && (
+              <div 
+                className="mb-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[10px] font-bold uppercase tracking-wider shadow-sm transition-shadow"
+                style={{ 
+                  backgroundColor: `${project.level_color || '#34D9A6'}15`,
+                  borderColor: `${project.level_color || '#34D9A6'}40`,
+                  color: project.level_color || '#34D9A6',
+                  boxShadow: `0 0 10px ${project.level_color || '#34D9A6'}30`
+                }}
+              >
+                {project.level_emoji && <span>{project.level_emoji}</span>}
+                {project.level}
+              </div>
+            )}
+            <h3 className="text-lg font-bold text-text-primary group-hover:text-brand-teal transition-colors leading-tight">
+              {project.title}
+            </h3>
+          </div>
           <div className="flex items-center gap-2 text-text-secondary">
             {project.github_url && (
               <a href={project.github_url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="hover:text-text-primary transition-colors">

@@ -15,6 +15,7 @@ class EventBase(BaseModel):
     venue: str
     registration_url: str | None = None
     image_url: str | None = None
+    poster_url: str | None = None
     is_flagship: bool = False
     is_upcoming: bool = True  # Kept for admin form; overridden in response
 
@@ -47,6 +48,10 @@ class ProjectBase(BaseModel):
     image_url: str | None = None
     contributors: list[dict] = []
     is_featured: bool = False
+    level: str | None = None
+    level_color: str | None = "#34D9A6"
+    level_emoji: str | None = None
+    show_sidebar: bool = True
 
 
 class ProjectResponse(ProjectBase):
@@ -69,6 +74,8 @@ class TeamMemberBase(BaseModel):
     fun_fact: str | None = None
     social_links: dict = {}
     display_order: int = 0
+    is_alumni: bool = False
+    batch_year: str | None = None
 
 
 class TeamMemberResponse(TeamMemberBase):
@@ -146,6 +153,7 @@ class SiteContentBase(BaseModel):
     terminal_code: str | None = None
     testimonials: list[dict] = []
     team_photo_url: str | None = None
+    show_timeline: bool = False
 
 
 class SiteContentResponse(SiteContentBase):

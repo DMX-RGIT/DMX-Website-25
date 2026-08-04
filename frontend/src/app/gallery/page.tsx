@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import { Lightbox } from "@/components/gallery/Lightbox";
 import { SectionDivider } from "@/components/shared/SectionDivider";
 import { FilterPills } from "@/components/shared/FilterPills";
+import { CustomSelect } from "@/components/shared/CustomSelect";
 
 import { useSearchParams } from "next/navigation";
 
@@ -59,14 +60,12 @@ function GalleryContent() {
   return (
     <div className="min-h-screen pt-24 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-6xl font-display font-bold tracking-tight mb-4">
-            Gallery
-          </h1>
-          <p className="text-lg text-text-secondary max-w-2xl mx-auto">
-            Moments captured from our hackathons, workshops, and team socials.
-          </p>
-        </div>
+        <h1 className="text-4xl md:text-6xl font-display font-bold tracking-tight mb-4 text-center">
+          Gallery
+        </h1>
+        <p className="text-lg text-text-secondary max-w-2xl mx-auto text-center mb-12">
+          Moments captured from our hackathons, workshops, and team socials.
+        </p>
 
         <SectionDivider />
 
@@ -76,18 +75,19 @@ function GalleryContent() {
             value={category}
             onChange={setCategory}
           />
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-medium text-text-secondary">Filter by Event:</span>
-            <select
-              value={eventId}
-              onChange={(e) => setEventId(e.target.value)}
-              className="px-4 py-2 bg-bg-surface border border-border-default rounded-lg focus:outline-none focus:border-brand-teal text-text-primary text-sm appearance-none min-w-[200px]"
-            >
-              <option value="all">All Events</option>
-              {events.map((e) => (
-                <option key={e.id} value={e.id}>{e.title}</option>
-              ))}
-            </select>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <span className="text-sm font-medium text-text-secondary whitespace-nowrap">Filter by Event:</span>
+            <div className="w-full sm:w-[220px]">
+              <CustomSelect
+                value={eventId}
+                onChange={(v) => setEventId(v || "all")}
+                options={[
+                  { label: "All Events", value: "all" },
+                  ...events.map(e => ({ label: e.title, value: e.id }))
+                ]}
+                className="h-10 text-sm"
+              />
+            </div>
           </div>
         </div>
 

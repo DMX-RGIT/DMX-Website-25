@@ -10,6 +10,7 @@ export interface Event {
   venue: string;
   registration_url: string | null;
   image_url: string | null;
+  poster_url: string | null;
   is_flagship: boolean;
   is_upcoming: boolean;
   interest_count: number;
@@ -29,6 +30,10 @@ export interface Project {
   image_url: string | null;
   contributors: Contributor[];
   is_featured: boolean;
+  level: string | null;
+  level_color: string | null;
+  level_emoji: string | null;
+  show_sidebar: boolean;
   created_at: string;
   updated_at: string | null;
 }
@@ -48,6 +53,8 @@ export interface TeamMember {
   fun_fact: string | null;
   social_links: Record<string, string>;
   display_order: number;
+  is_alumni: boolean;
+  batch_year: string | null;
   created_at: string;
 }
 

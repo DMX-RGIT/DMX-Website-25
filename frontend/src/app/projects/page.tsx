@@ -37,7 +37,10 @@ export default function ProjectsPage() {
   }, [allProjects]);
 
   // Client-side filtering
-  const projects = domain === "all" ? allProjects : allProjects.filter((p) => p.domain === domain);
+  const projects =
+    domain === "all"
+      ? allProjects
+      : allProjects.filter((p) => p.domain === domain);
 
   return (
     <div className="min-h-screen pt-24 pb-20">
@@ -46,32 +49,44 @@ export default function ProjectsPage() {
           Research &amp; Projects
         </h1>
         <p className="text-lg text-text-secondary max-w-2xl mx-auto text-center mb-12">
-          Exploring the frontiers of AI. Browse our members&apos; work across computer vision, NLP, and robotics.
+          Exploring the frontiers of AI. Browse our members&apos; work across
+          computer vision, NLP, and robotics.
         </p>
 
         <SectionDivider />
 
         <div className="mt-12">
-          <ProjectFilters currentDomain={domain} onDomainChange={setDomain} availableDomains={availableDomains} />
+          <ProjectFilters
+            currentDomain={domain}
+            onDomainChange={setDomain}
+            availableDomains={availableDomains}
+          />
 
           {loading ? (
             <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="h-64 rounded-xl bg-bg-surface animate-pulse break-inside-avoid" />
+                <div
+                  key={i}
+                  className="h-64 rounded-xl bg-bg-surface animate-pulse break-inside-avoid"
+                />
               ))}
             </div>
           ) : projects.length === 0 ? (
             <div className="text-center py-32">
-              <h3 className="text-xl font-bold text-text-primary mb-2">No projects found</h3>
-              <p className="text-text-secondary">Try selecting a different domain filter.</p>
+              <h3 className="text-xl font-bold text-text-primary mb-2">
+                No projects found
+              </h3>
+              <p className="text-text-secondary">
+                Try selecting a different domain filter.
+              </p>
             </div>
           ) : (
             <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
               {projects.map((project) => (
                 <div key={project.id} className="break-inside-avoid">
-                  <ProjectCard 
-                    project={project} 
-                    onClick={() => router.push(`/projects/${project.id}`)} 
+                  <ProjectCard
+                    project={project}
+                    onClick={() => router.push(`/projects/${project.id}`)}
                   />
                 </div>
               ))}

@@ -3,6 +3,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { Plus, Pencil, Trash2, X, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CustomSelect } from "@/components/shared/CustomSelect";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
@@ -33,7 +37,7 @@ async function adminFetch(path: string, options?: RequestInit) {
 interface Field {
   name: string;
   label: string;
-  type: "text" | "textarea" | "select" | "url" | "datetime" | "number" | "boolean" | "tags" | "json" | "social_links";
+  type: "text" | "textarea" | "select" | "url" | "datetime" | "number" | "boolean" | "tags" | "json" | "social_links" | "color";
   required?: boolean;
   options?: { label: string; value: string }[];
   placeholder?: string;
@@ -272,43 +276,34 @@ export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns }
                   <label className="text-sm font-medium text-text-secondary">{field.label}</label>
 
                   {field.type === "textarea" ? (
-                    <textarea
+                    <Textarea
                       value={formData[field.name] || ""}
                       onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
                       rows={3}
                       required={field.required}
-                      className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary text-sm resize-none"
                       placeholder={field.placeholder}
                     />
                   ) : field.type === "select" ? (
-                    <select
+                    <CustomSelect
                       value={formData[field.name] || ""}
-                      onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
+                      onChange={(val) => setFormData({ ...formData, [field.name]: val })}
+                      options={field.options || []}
                       required={field.required}
-                      className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary text-sm appearance-none"
-                    >
-                      <option value="">Select...</option>
-                      {field.options?.map((opt) => (
-                        <option key={opt.value} value={opt.value}>{opt.label}</option>
-                      ))}
-                    </select>
+                    />
                   ) : field.type === "boolean" ? (
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <Checkbox
                         checked={!!formData[field.name]}
-                        onChange={(e) => setFormData({ ...formData, [field.name]: e.target.checked })}
-                        className="w-4 h-4 accent-brand-teal"
+                        onCheckedChange={(checked) => setFormData({ ...formData, [field.name]: checked })}
                       />
-                      <span className="text-sm text-text-primary">Enabled</span>
+                      <span className="text-sm font-medium text-text-primary">Enabled</span>
                     </label>
                   ) : field.type === "url" ? (
                     <div className="space-y-2">
-                      <input
+                      <Input
                         type="url"
                         value={formData[field.name] || ""}
                         onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
-                        className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary text-sm"
                         placeholder={field.placeholder || "https://..."}
                       />
                       { (field.name.includes("image") || field.name.includes("photo")) && (
@@ -335,39 +330,40 @@ export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns }
                       )}
                     </div>
                   ) : field.type === "tags" ? (
-                    <input
+                    <Input
                       type="text"
                       value={Array.isArray(formData[field.name]) ? formData[field.name].join(", ") : formData[field.name] || ""}
                       onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
-                      className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary text-sm"
                       placeholder="Comma separated values"
                     />
                   ) : field.type === "social_links" ? (
                     <div className="space-y-3">
                       {(formData[field.name] || []).map((social: any, idx: number) => (
                         <div key={idx} className="flex items-center gap-2">
-                          <input
-                            type="text"
-                            value={social.key}
-                            onChange={(e) => {
-                              const newArr = [...formData[field.name]];
-                              newArr[idx].key = e.target.value;
-                              setFormData({ ...formData, [field.name]: newArr });
-                            }}
-                            className="w-1/3 px-4 py-2.5 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary text-sm"
-                            placeholder="Platform (e.g. github)"
-                          />
-                          <input
-                            type="url"
-                            value={social.value}
-                            onChange={(e) => {
-                              const newArr = [...formData[field.name]];
-                              newArr[idx].value = e.target.value;
-                              setFormData({ ...formData, [field.name]: newArr });
-                            }}
-                            className="flex-1 px-4 py-2.5 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary text-sm"
-                            placeholder="URL"
-                          />
+                          <div className="w-1/3">
+                            <Input
+                              type="text"
+                              value={social.key}
+                              onChange={(e) => {
+                                const newArr = [...formData[field.name]];
+                                newArr[idx].key = e.target.value;
+                                setFormData({ ...formData, [field.name]: newArr });
+                              }}
+                              placeholder="Platform (e.g. github)"
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <Input
+                              type="url"
+                              value={social.value}
+                              onChange={(e) => {
+                                const newArr = [...formData[field.name]];
+                                newArr[idx].value = e.target.value;
+                                setFormData({ ...formData, [field.name]: newArr });
+                              }}
+                              placeholder="URL"
+                            />
+                          </div>
                           <button
                             type="button"
                             onClick={() => {
@@ -393,20 +389,20 @@ export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns }
                       </button>
                     </div>
                   ) : field.type === "json" ? (
-                    <textarea
+                    <Textarea
                       value={typeof formData[field.name] === "string" ? formData[field.name] : JSON.stringify(formData[field.name], null, 2)}
                       onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
                       rows={3}
-                      className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary text-sm font-mono resize-none"
+                      className="font-mono"
                       placeholder='[{"name": "...", "github": "..."}]'
                     />
                   ) : (
-                    <input
+                    <Input
                       type={field.type === "datetime" ? "datetime-local" : field.type}
                       value={formData[field.name] ?? ""}
                       onChange={(e) => setFormData({ ...formData, [field.name]: field.type === "number" ? Number(e.target.value) : e.target.value })}
                       required={field.required}
-                      className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary text-sm"
+                      className={field.type === "color" ? "h-12 p-1 cursor-pointer" : ""}
                       placeholder={field.placeholder}
                     />
                   )}

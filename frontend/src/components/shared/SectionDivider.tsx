@@ -10,7 +10,7 @@ export function SectionDivider() {
   return (
     <div ref={ref} className="flex items-center justify-center py-12 px-4">
       <motion.div
-        className="h-px flex-1"
+        className="h-[2px] opacity-70 flex-1"
         style={{
           background: "linear-gradient(90deg, transparent, var(--brand-navy))",
         }}
@@ -45,7 +45,7 @@ export function SectionDivider() {
         />
       </svg>
       <motion.div
-        className="h-px flex-1"
+        className="h-[2px] opacity-70 flex-1"
         style={{
           background: "linear-gradient(90deg, var(--brand-teal), transparent)",
         }}

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Inter, Space_Grotesk, JetBrains_Mono, Geist } from "next/font/google";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -7,6 +7,9 @@ import { CommandPalette } from "@/components/shared/CommandPalette";
 import { InitialLoader } from "@/components/layout/InitialLoader";
 import { AuroraBackground } from "@/components/layout/AuroraBackground";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({
   variable: "--font-inter",
@@ -63,7 +66,7 @@ export default function RootLayout({
       lang="en"
       data-theme="dark"
       data-scroll-behavior="smooth"
-      className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}
+      className={cn(inter.variable, spaceGrotesk.variable, jetbrainsMono.variable, "font-sans", geist.variable)}
       suppressHydrationWarning
     >
       <body className="min-h-screen flex flex-col antialiased">

@@ -89,7 +89,7 @@ export default function AdminLayout({
   if (!authed) return null;
 
   return (
-    <div className="h-screen flex bg-bg-primary overflow-hidden">
+    <div className="h-screen flex bg-bg-primary overflow-hidden -mt-16">
       {/* Sidebar */}
       <aside className="w-64 shrink-0 border-r border-border-default bg-bg-secondary flex flex-col">
         <div className="p-6 border-b border-border-default">
@@ -139,7 +139,7 @@ export default function AdminLayout({
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
-        <div className="p-8">{children}</div>
+        <div className="p-6">{children}</div>
       </main>
     </div>
   );

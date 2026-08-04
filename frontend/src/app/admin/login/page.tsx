@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Lock, ArrowRight, ShieldCheck, Terminal } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { DMXLogo } from "@/components/layout/DMXLogo";
 
 export default function AdminLoginPage() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -64,43 +64,40 @@ export default function AdminLoginPage() {
           <form onSubmit={handleLogin} className="space-y-5">
             {error && (
               <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
-                <AlertCircle className="w-4 h-4 shrink-0" />
+                <Terminal className="w-4 h-4 shrink-0" />
                 {error}
               </div>
             )}
 
             <div className="space-y-2">
               <label htmlFor="username" className="text-sm font-medium text-text-secondary">Username</label>
-              <input
-                id="username"
-                type="text"
-                required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary"
-                placeholder="admin"
-              />
+              <div className="relative">
+                <Input
+                  id="username"
+                  type="text"
+                  required
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="admin"
+                  className="pl-10"
+                />
+                <ShieldCheck className="w-5 h-5 text-text-muted absolute left-3 top-2.5" />
+              </div>
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium text-text-secondary">Password</label>
+              <label htmlFor="password" className="text-sm font-medium text-text-secondary">Access Token</label>
               <div className="relative">
-                <input
+                <Input
                   id="password"
-                  type={showPassword ? "text" : "password"}
+                  type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 pr-12 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary"
-                  placeholder="Enter password"
+                  placeholder="Enter admin token..."
+                  className="pl-10"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary transition-colors"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
+                <Lock className="w-5 h-5 text-text-muted absolute left-3 top-2.5" />
               </div>
             </div>
 

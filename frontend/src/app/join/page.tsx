@@ -6,6 +6,9 @@ import { Send, CheckCircle2, Terminal, Code2, Brain } from "lucide-react";
 import { SectionDivider } from "@/components/shared/SectionDivider";
 import { MagneticButton } from "@/components/shared/MagneticButton";
 import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const benefits = [
   {
@@ -217,23 +220,21 @@ export default function JoinPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label htmlFor="firstName" className="text-sm font-medium text-text-secondary">First Name</label>
-                      <input 
+                      <Input 
                         id="firstName"
                         required
                         value={formData.firstName}
                         onChange={e => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
-                        className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary"
                         placeholder="Ada"
                       />
                     </div>
                     <div className="space-y-2">
                       <label htmlFor="lastName" className="text-sm font-medium text-text-secondary">Last Name</label>
-                      <input 
+                      <Input 
                         id="lastName"
                         required
                         value={formData.lastName}
                         onChange={e => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
-                        className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary"
                         placeholder="Lovelace"
                       />
                     </div>
@@ -242,20 +243,19 @@ export default function JoinPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label htmlFor="email" className="text-sm font-medium text-text-secondary">Email Address</label>
-                      <input 
+                      <Input 
                         id="email"
                         type="email"
                         required
                         value={formData.email}
                         onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                        className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary"
                         placeholder="ada@example.com"
                       />
                     </div>
                     
                     <div className="space-y-2">
                       <label htmlFor="mobileNumber" className="text-sm font-medium text-text-secondary">Mobile Number</label>
-                      <input 
+                      <Input 
                         id="mobileNumber"
                         type="tel"
                         required
@@ -263,7 +263,6 @@ export default function JoinPage() {
                         title="Please enter a valid 10-digit mobile number"
                         value={formData.mobileNumber}
                         onChange={e => setFormData(prev => ({ ...prev, mobileNumber: e.target.value }))}
-                        className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary"
                         placeholder="9876543210"
                       />
                     </div>
@@ -271,47 +270,46 @@ export default function JoinPage() {
 
                   <div className="space-y-2">
                     <label htmlFor="role" className="text-sm font-medium text-text-secondary">Role Interest</label>
-                    <select 
-                      id="role"
-                      required
+                    <Select 
                       value={formData.role}
-                      onChange={e => setFormData(prev => ({ ...prev, role: e.target.value }))}
-                      className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary appearance-none"
+                      onValueChange={val => setFormData(prev => ({ ...prev, role: val || "" }))}
                     >
-                      <option value="">Select a role...</option>
-                      <option value="project">Project</option>
-                      <option value="web_development">Web Development</option>
-                      <option value="technical">Technical</option>
-                      <option value="marketing">Marketing</option>
-                      <option value="publicity">Publicity</option>
-                      <option value="event_management">Event Management</option>
-                      <option value="digital_creative">Digital Creative / UI UX</option>
-                      <option value="content_editorial">Content & Editorial</option>
-                      <option value="photography">Photography</option>
-                    </select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a role..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="project">Project</SelectItem>
+                        <SelectItem value="web_development">Web Development</SelectItem>
+                        <SelectItem value="technical">Technical</SelectItem>
+                        <SelectItem value="marketing">Marketing</SelectItem>
+                        <SelectItem value="publicity">Publicity</SelectItem>
+                        <SelectItem value="event_management">Event Management</SelectItem>
+                        <SelectItem value="digital_creative">Digital Creative / UI UX</SelectItem>
+                        <SelectItem value="content_editorial">Content & Editorial</SelectItem>
+                        <SelectItem value="photography">Photography</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="space-y-2">
                     <label htmlFor="github" className="text-sm font-medium text-text-secondary">GitHub / Portfolio URL (Optional)</label>
-                    <input 
+                    <Input 
                       id="github"
                       type="url"
                       value={formData.github}
                       onChange={e => setFormData(prev => ({ ...prev, github: e.target.value }))}
-                      className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary"
                       placeholder="https://..."
                     />
                   </div>
 
                   <div className="space-y-2">
                     <label htmlFor="why" className="text-sm font-medium text-text-secondary">Why do you want to join DMX?</label>
-                    <textarea 
+                    <Textarea 
                       id="why"
                       required
                       rows={4}
                       value={formData.why}
                       onChange={e => setFormData(prev => ({ ...prev, why: e.target.value }))}
-                      className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg focus:outline-none focus:border-brand-teal transition-colors text-text-primary resize-none"
                       placeholder="Tell us about your interests and what you hope to build..."
                     />
                   </div>

@@ -54,6 +54,7 @@ class Event(Base):
     venue = Column(String(255), nullable=False)
     registration_url = Column(String(500), nullable=True)
     image_url = Column(String(500), nullable=True)
+    poster_url = Column(String(500), nullable=True)
     is_flagship = Column(Boolean, default=False)
     is_upcoming = Column(Boolean, default=True)
     interest_count = Column(Integer, default=0)
@@ -77,6 +78,10 @@ class Project(Base):
     image_url = Column(String(500), nullable=True)
     contributors = Column(JSONB, default=[])
     is_featured = Column(Boolean, default=False)
+    level = Column(String(100), nullable=True)
+    level_color = Column(String(20), nullable=True, server_default="#34D9A6")
+    level_emoji = Column(String(10), nullable=True)
+    show_sidebar = Column(Boolean, default=True, server_default="true")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
@@ -94,6 +99,8 @@ class TeamMember(Base):
     fun_fact = Column(String(500), nullable=True)
     social_links = Column(JSONB, default={})
     display_order = Column(Integer, default=0)
+    is_alumni = Column(Boolean, default=False, server_default="false")
+    batch_year = Column(String(20), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
@@ -145,4 +152,5 @@ class SiteContent(Base):
     terminal_code = Column(Text, nullable=True)
     testimonials = Column(JSONB, default=[])
     team_photo_url = Column(String(500), nullable=True)
+    show_timeline = Column(Boolean, default=False, server_default="false")
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
