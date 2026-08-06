@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CommandPalette } from "@/components/shared/CommandPalette";
+import { ScrollToTop } from "@/components/shared/ScrollToTop";
 import { InitialLoader } from "@/components/layout/InitialLoader";
 import { AuroraBackground } from "@/components/layout/AuroraBackground";
 import "./globals.css";
@@ -75,6 +76,7 @@ export default function RootLayout({
           <InitialLoader />
           <Navbar />
           <CommandPalette />
+          <ScrollToTop />
           <main className="flex-1 pt-16">{children}</main>
           <Footer />
         </ThemeProvider>
