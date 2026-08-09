@@ -145,16 +145,14 @@ export function GameBanner() {
         <div className="relative overflow-hidden rounded-3xl border border-brand-teal/20 bg-bg-secondary w-full group"
           style={{ boxShadow: "0 0 60px rgba(52,217,166,0.06)" }}>
 
-          {/* Canvas preview */}
-          <div className="w-full relative h-[240px] sm:h-[300px]">
-            <canvas 
-              ref={canvasRef} 
-              className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-700" 
-            />
-          </div>
+          {/* Canvas preview - moved to background */}
+          <canvas 
+            ref={canvasRef} 
+            className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-700 pointer-events-none" 
+          />
 
           {/* Overlay content */}
-          <div className="absolute inset-0 flex flex-col sm:flex-row items-center justify-between gap-6 px-8 py-8 sm:px-12 sm:py-10"
+          <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6 px-6 py-10 sm:px-12 sm:py-12"
             style={{ background: "linear-gradient(90deg, rgba(7,9,13,0.95) 30%, rgba(7,9,13,0.8) 60%, rgba(7,9,13,0.1) 100%)" }}>
             <div className="max-w-[500px] w-full text-center sm:text-left z-10">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-teal/10 border border-brand-teal/20 text-[10px] font-mono text-brand-teal uppercase tracking-widest mb-4">
