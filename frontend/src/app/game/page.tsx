@@ -125,7 +125,7 @@ function NameEntry({ score, level, name, setName, onSubmit, onRetry }: {
   const [copied, setCopied] = useState(false);
 
   const handleShare = () => {
-    const text = `I just scored ${score} in DMX Snake! 🐍 Think you're built different? Beat my high score here: https://dmx.rgit.ac.in/game`;
+    const text = `I just scored ${score} in DMX Snake! 🐍 Think you're built different? Beat my high score here: https://dmxrgit.com/game`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
