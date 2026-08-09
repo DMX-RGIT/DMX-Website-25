@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trophy, RotateCcw, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Play, X, Pause } from "lucide-react";
+import { Trophy, RotateCcw, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Play, X, Pause, Share2 } from "lucide-react";
 import Link from "next/link";
 
 const COLS = 22, ROWS = 22;
@@ -29,11 +29,12 @@ function loadLB(): Entry[] {
 function saveLB(e: Entry[]) { localStorage.setItem("dmx_snake_v1", JSON.stringify(e)); }
 
 // DPR-aware render — all coords are logical, context is pre-scaled
-function render(canvas: HTMLCanvasElement, snake: Pt[], food: Pt, cs: number, tick: number) {
+function render(canvas: HTMLCanvasElement, snake: Pt[], food: Pt, now: number) {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
   const dpr = window.devicePixelRatio || 1;
-  const W = cs * COLS, H = cs * ROWS;
+  const W = canvas.width / dpr, H = canvas.height / dpr;
+  const cs = W / COLS;
 
   ctx.save();
   ctx.scale(dpr, dpr);
@@ -46,7 +47,7 @@ function render(canvas: HTMLCanvasElement, snake: Pt[], food: Pt, cs: number, ti
   for (let i = 0; i <= COLS; i++) { ctx.beginPath(); ctx.moveTo(i * cs, 0); ctx.lineTo(i * cs, H); ctx.stroke(); }
   for (let j = 0; j <= ROWS; j++) { ctx.beginPath(); ctx.moveTo(0, j * cs); ctx.lineTo(W, j * cs); ctx.stroke(); }
 
-  const pulse = 0.65 + 0.35 * Math.sin(tick * 0.22);
+  const pulse = 0.65 + 0.35 * Math.sin(now * 0.004);
   const fx = food.x * cs + cs / 2, fy = food.y * cs + cs / 2;
   const grd = ctx.createRadialGradient(fx, fy, 0, fx, fy, cs * 0.9);
   grd.addColorStop(0, "rgba(52,217,166,0.35)");
@@ -121,6 +122,15 @@ function NameEntry({ score, level, name, setName, onSubmit, onRetry }: {
   score: number; level: number; name: string;
   setName: (n: string) => void; onSubmit: () => void; onRetry: () => void;
 }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = () => {
+    const text = `I just scored ${score} in DMX Snake! 🐍 Think you're built different? Beat my high score here: https://dmx.rgit.ac.in/game`;
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div className="space-y-4">
       <div className="text-center">
@@ -144,15 +154,22 @@ function NameEntry({ score, level, name, setName, onSubmit, onRetry }: {
           className="w-full px-4 py-3 rounded-xl bg-bg-primary border border-border-default text-text-primary placeholder-text-muted outline-none focus:border-brand-teal transition-colors text-sm"
         />
       </div>
-      <div className="flex gap-3">
-        <button onClick={onRetry}
-          className="flex-1 py-2.5 rounded-xl border border-border-default text-text-secondary hover:text-text-primary transition-colors text-sm font-semibold flex items-center justify-center gap-1.5">
-          <RotateCcw className="w-3.5 h-3.5" /> Retry
-        </button>
-        <button onClick={onSubmit} disabled={!name.trim()}
-          className="flex-1 py-2.5 rounded-xl font-bold text-bg-primary transition-all disabled:opacity-35 text-sm"
-          style={{ background: "var(--brand-teal)" }}>
-          Save Score
+      <div className="flex flex-col gap-2">
+        <div className="flex gap-2">
+          <button onClick={onRetry}
+            className="flex-[0.5] py-2.5 rounded-xl border border-border-default text-text-secondary hover:text-text-primary transition-colors text-sm font-semibold flex items-center justify-center gap-1.5">
+            <RotateCcw className="w-3.5 h-3.5" /> Retry
+          </button>
+          <button onClick={onSubmit} disabled={!name.trim()}
+            className="flex-1 py-2.5 rounded-xl font-bold text-bg-primary transition-all disabled:opacity-35 text-sm"
+            style={{ background: "var(--brand-teal)" }}>
+            Save Score
+          </button>
+        </div>
+        <button onClick={handleShare}
+          className="w-full py-2.5 rounded-xl border border-brand-teal/20 text-brand-teal hover:bg-brand-teal/10 transition-colors text-sm font-semibold flex items-center justify-center gap-2 mt-1">
+          <Share2 className="w-3.5 h-3.5" /> 
+          {copied ? "Copied to clipboard!" : "Share Challenge Link"}
         </button>
       </div>
     </div>
@@ -172,7 +189,6 @@ export default function GamePage() {
   const levelR = useRef(1);
   const foodCountR = useRef(0);
   const tickR = useRef(0);
-  const csR = useRef(20);
   const speedR = useRef(BASE_MS);
   const lastTickTimeR = useRef(0);
   const rafR = useRef<number | null>(null);
@@ -196,20 +212,19 @@ export default function GamePage() {
   function calcCS() {
     if (!wrapRef.current) return;
     const dpr = window.devicePixelRatio || 1;
-    const logW = Math.min(wrapRef.current.clientWidth - 2, 640);
-    csR.current = Math.floor(logW / COLS);
+    const logW = wrapRef.current.clientWidth;
     const cv = canvasRef.current;
     if (cv) {
-      cv.width = csR.current * COLS * dpr;
-      cv.height = csR.current * ROWS * dpr;
-      cv.style.width = csR.current * COLS + "px";
-      cv.style.height = csR.current * ROWS + "px";
+      cv.width = logW * dpr;
+      cv.height = logW * dpr;
+      cv.style.width = "100%";
+      cv.style.height = "100%";
     }
   }
 
-  function redraw() {
+  function redraw(now = performance.now()) {
     const cv = canvasRef.current;
-    if (cv) render(cv, snakeR.current, foodR.current, csR.current, tickR.current);
+    if (cv) render(cv, snakeR.current, foodR.current, now);
   }
 
   function stopLoop() {
@@ -225,12 +240,12 @@ export default function GamePage() {
 
   function loop(now: number) {
     rafR.current = requestAnimationFrame(loop);
-    if (statusR.current !== "playing") { redraw(); return; }
+    if (statusR.current !== "playing") { redraw(now); return; }
     if (now - lastTickTimeR.current >= speedR.current) {
       lastTickTimeR.current = now;
       gameTick();
     } else {
-      redraw();
+      redraw(now);
     }
   }
 
@@ -406,10 +421,10 @@ export default function GamePage() {
             </div>
 
             {/* Canvas */}
-            <div ref={wrapRef} className="relative select-none">
+            <div ref={wrapRef} className="relative select-none w-full aspect-square max-w-[640px] mx-auto rounded-2xl border border-brand-teal/25 shadow-[0_0_50px_rgba(52,217,166,0.08)] overflow-hidden">
               <canvas
                 ref={canvasRef}
-                className="rounded-2xl border border-brand-teal/25 shadow-[0_0_50px_rgba(52,217,166,0.08)] block"
+                className="block w-full h-full"
                 onTouchStart={(e) => { touchR.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }; }}
                 onTouchEnd={(e) => {
                   if (!touchR.current) return;
