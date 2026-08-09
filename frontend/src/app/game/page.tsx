@@ -385,7 +385,7 @@ export default function GamePage() {
   const topEntry = lb[0];
 
   return (
-    <div className="min-h-screen bg-bg-primary pb-20">
+    <div className="min-h-screen bg-bg-primary pb-20 -mt-16">
       {/* Header */}
       <div className="sticky top-0 z-20 border-b border-border-subtle bg-bg-secondary/80 backdrop-blur-md px-4 py-3">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
