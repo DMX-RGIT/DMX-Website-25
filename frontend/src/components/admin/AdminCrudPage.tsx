@@ -306,7 +306,7 @@ export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns }
                         onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
                         placeholder={field.placeholder || "https://..."}
                       />
-                      { (field.name.includes("image") || field.name.includes("photo")) && (
+                      { (field.name.includes("image") || field.name.includes("photo") || field.name.includes("poster") || field.name.includes("banner") || field.name.includes("url")) && (
                         <div className="flex flex-col gap-2">
                           <label className="flex items-center gap-2 px-3 py-2 border border-dashed border-border-default rounded-lg cursor-pointer hover:border-brand-teal transition-colors text-text-secondary text-xs">
                             <Upload className="w-4 h-4" />
@@ -322,7 +322,10 @@ export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns }
                             />
                           </label>
                           {formData[field.name] && (
-                            <div className="w-24 h-24 rounded-lg overflow-hidden border border-border-default bg-bg-surface">
+                            <div className={cn(
+                              "overflow-hidden rounded-lg border border-border-default bg-bg-surface",
+                              field.name.includes("poster") ? "w-24 h-36" : "w-36 h-24"
+                            )}>
                               <img src={formData[field.name]} alt="Preview" className="w-full h-full object-cover" />
                             </div>
                           )}

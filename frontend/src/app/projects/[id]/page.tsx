@@ -109,7 +109,7 @@ export default function ProjectDetailPage() {
             Back to Projects
           </button>
 
-          <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div className="flex-1">
               <div className="flex items-center gap-2.5 mb-4 flex-wrap">
                 <span className="px-3 py-1 bg-brand-navy/30 text-brand-teal text-xs font-bold uppercase tracking-wider rounded-full border border-brand-teal/20">
@@ -141,7 +141,7 @@ export default function ProjectDetailPage() {
               <p className="text-lg text-text-secondary leading-relaxed max-w-2xl">{project.description}</p>
             </div>
 
-            <div className="flex items-center gap-3 shrink-0 pt-1">
+            <div className="flex items-center gap-3 shrink-0 flex-wrap">
               {project.github_url && (
                 <a href={project.github_url} target="_blank" rel="noreferrer"
                   className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-bg-surface border border-border-subtle hover:border-brand-navy-light text-text-secondary hover:text-text-primary transition-all text-sm font-medium">
@@ -176,7 +176,7 @@ export default function ProjectDetailPage() {
 
       {/* Body */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="flex gap-8">
+        <div className="flex flex-col md:flex-row gap-6 md:gap-8">
 
           {/* Docs Sidebar */}
           {showSidebar && (
@@ -282,7 +282,7 @@ export default function ProjectDetailPage() {
 
           {/* Right Meta Sidebar */}
           {(!isMultiPage || !showSidebar || currentPage === 0) && (
-            <div className="w-64 shrink-0 space-y-5">
+            <div className="w-full md:w-64 shrink-0 space-y-5">
               {project.tech_stack.length > 0 && (
                 <div className="border border-border-subtle rounded-xl p-5 bg-bg-surface/20">
                   <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-4 flex items-center gap-2">

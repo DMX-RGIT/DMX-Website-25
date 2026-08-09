@@ -9,6 +9,7 @@ import { TerminalMockup } from "@/components/home/TerminalMockup";
 import { Testimonials } from "@/components/home/Testimonials";
 import { TechMarquee } from "@/components/home/TechMarquee";
 import { TimelineSection } from "@/components/home/TimelineSection";
+import { GameBanner } from "@/components/home/GameBanner";
 
 export default function Home() {
   return (
@@ -62,6 +63,9 @@ export default function Home() {
       </div>
 
       <Testimonials />
+
+      {/* Game Banner */}
+      <GameBanner />
 
       {/* Sponsors */}
       <div className="py-20 border-t border-border-subtle bg-bg-secondary/50">
