@@ -9,8 +9,9 @@ import { InitialLoader } from "@/components/layout/InitialLoader";
 import { AuroraBackground } from "@/components/layout/AuroraBackground";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { Analytics } from "@vercel/analytics/next";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const inter = Inter({
   variable: "--font-inter",
@@ -67,7 +68,13 @@ export default function RootLayout({
       lang="en"
       data-theme="dark"
       data-scroll-behavior="smooth"
-      className={cn(inter.variable, spaceGrotesk.variable, jetbrainsMono.variable, "font-sans", geist.variable)}
+      className={cn(
+        inter.variable,
+        spaceGrotesk.variable,
+        jetbrainsMono.variable,
+        "font-sans",
+        geist.variable,
+      )}
       suppressHydrationWarning
     >
       <body className="min-h-screen flex flex-col antialiased">
@@ -77,6 +84,7 @@ export default function RootLayout({
           <Navbar />
           <CommandPalette />
           <ScrollToTop />
+          <Analytics />
           <main className="flex-1 pt-16">{children}</main>
           <Footer />
         </ThemeProvider>
