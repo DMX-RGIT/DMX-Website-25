@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRef, useEffect, useState } from "react";
 import { Trophy } from "lucide-react";
+import { api } from "@/lib/api";
 
 const MINI_SNAKE = [
   { x: 10, y: 5 }, { x: 9, y: 5 }, { x: 8, y: 5 },
@@ -22,12 +23,13 @@ export function GameBanner() {
   const [topPlayer, setTopPlayer] = useState<{name: string, score: number} | null>(null);
 
   useEffect(() => {
-    try {
-      const lb = JSON.parse(localStorage.getItem("dmx_snake_v1") || "[]");
-      if (lb && lb.length > 0) {
-        setTopPlayer(lb[0]);
-      }
-    } catch {}
+    api.gamescores.list({ limit: "1" })
+      .then(lb => {
+        if (lb && lb.length > 0) {
+          setTopPlayer({ name: lb[0].name, score: lb[0].score });
+        }
+      })
+      .catch(console.error);
   }, []);
 
   useEffect(() => {

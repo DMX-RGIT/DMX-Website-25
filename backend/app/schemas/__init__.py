@@ -161,3 +161,22 @@ class SiteContentResponse(SiteContentBase):
     updated_at: datetime | None = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+# --- Game Score Schemas ---
+
+class GameScoreBase(BaseModel):
+    name: str
+    score: int
+    level: int
+
+
+class GameScoreCreate(GameScoreBase):
+    pass
+
+
+class GameScoreResponse(GameScoreBase):
+    id: UUID
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)

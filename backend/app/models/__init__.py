@@ -154,3 +154,13 @@ class SiteContent(Base):
     team_photo_url = Column(String(500), nullable=True)
     show_timeline = Column(Boolean, default=False, server_default="false")
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class GameScore(Base):
+    __tablename__ = "game_scores"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(String(50), nullable=False)
+    score = Column(Integer, nullable=False)
+    level = Column(Integer, nullable=False, default=1)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

@@ -83,6 +83,14 @@ export interface Stats {
   papers: number;
 }
 
+export interface GameScore {
+  id: string;
+  name: string;
+  score: number;
+  level: number;
+  created_at: string;
+}
+
 // Filter types for the frontend
 export type EventCategory = "all" | string;
 export type ProjectDomain = "all" | string;

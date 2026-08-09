@@ -1,4 +1,4 @@
-import type { Event, Project, TeamMember, GalleryImage, Sponsor, Stats } from "@/types";
+import type { Event, Project, TeamMember, GalleryImage, Sponsor, Stats, GameScore } from "@/types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
@@ -43,5 +43,18 @@ export const api = {
   },
   stats: {
     get: () => fetchApi<any>("/content"),
+  },
+  gamescores: {
+    list: (params?: { limit?: string }) =>
+      fetchApi<GameScore[]>("/gamescores", params),
+    submit: async (data: { name: string; score: number; level: number }) => {
+      const res = await fetch(`${API_BASE}/gamescores`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("Failed to submit score");
+      return res.json() as Promise<GameScore>;
+    },
   },
 };

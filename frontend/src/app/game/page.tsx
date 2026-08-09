@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, RotateCcw, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Play, X, Pause, Share2 } from "lucide-react";
 import Link from "next/link";
+import { api } from "@/lib/api";
+import type { GameScore } from "@/types";
 
 const COLS = 22, ROWS = 22;
 const BASE_MS = 140, MIN_MS = 60, SPEED_DROP = 8, FOODS_PER_LEVEL = 5;
@@ -12,7 +14,6 @@ const RANK_COLORS = ["#FFD700", "#C0C0C0", "#CD7F32"];
 type Dir = "U" | "D" | "L" | "R";
 type Pt = { x: number; y: number };
 type Status = "idle" | "playing" | "paused" | "over";
-type Entry = { name: string; score: number; level: number; date: string };
 
 const OPP: Record<Dir, Dir> = { U: "D", D: "U", L: "R", R: "L" };
 
@@ -22,11 +23,6 @@ function rndFood(s: Pt[]): Pt {
   while (s.some((p) => p.x === f.x && p.y === f.y));
   return f;
 }
-function loadLB(): Entry[] {
-  try { return JSON.parse(localStorage.getItem("dmx_snake_v1") || "[]"); }
-  catch { return []; }
-}
-function saveLB(e: Entry[]) { localStorage.setItem("dmx_snake_v1", JSON.stringify(e)); }
 
 // DPR-aware render — all coords are logical, context is pre-scaled
 function render(canvas: HTMLCanvasElement, snake: Pt[], food: Pt, now: number) {
@@ -76,7 +72,7 @@ function render(canvas: HTMLCanvasElement, snake: Pt[], food: Pt, now: number) {
 }
 
 // ── Leaderboard panel (shared between sidebar and modal) ──
-function LBPanel({ lb, onPlay }: { lb: Entry[]; onPlay: () => void }) {
+function LBPanel({ lb, onPlay }: { lb: GameScore[]; onPlay: () => void }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-1">
@@ -118,9 +114,9 @@ function LBPanel({ lb, onPlay }: { lb: Entry[]; onPlay: () => void }) {
 }
 
 // ── Name entry form ──
-function NameEntry({ score, level, name, setName, onSubmit, onRetry }: {
+function NameEntry({ score, level, name, setName, onSubmit, onRetry, isSubmitting, isSaved }: {
   score: number; level: number; name: string;
-  setName: (n: string) => void; onSubmit: () => void; onRetry: () => void;
+  setName: (n: string) => void; onSubmit: () => void; onRetry: () => void; isSubmitting: boolean; isSaved: boolean;
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -160,10 +156,10 @@ function NameEntry({ score, level, name, setName, onSubmit, onRetry }: {
             className="flex-[0.5] py-2.5 rounded-xl border border-border-default text-text-secondary hover:text-text-primary transition-colors text-sm font-semibold flex items-center justify-center gap-1.5">
             <RotateCcw className="w-3.5 h-3.5" /> Retry
           </button>
-          <button onClick={onSubmit} disabled={!name.trim()}
+          <button onClick={onSubmit} disabled={!name.trim() || isSubmitting || isSaved}
             className="flex-1 py-2.5 rounded-xl font-bold text-bg-primary transition-all disabled:opacity-35 text-sm"
             style={{ background: "var(--brand-teal)" }}>
-            Save Score
+            {isSaved ? "Saved!" : isSubmitting ? "Saving..." : "Save Score"}
           </button>
         </div>
         <button onClick={handleShare}
@@ -197,15 +193,17 @@ export default function GamePage() {
   const isDesktopR = useRef(false);
 
   const [status, setStatus] = useState<Status>("idle");
+  const [lb, setLb] = useState<GameScore[]>([]);
+  const [highScore, setHighScore] = useState(0);
   const [uiScore, setUiScore] = useState(0);
   const [uiLevel, setUiLevel] = useState(1);
-  const [highScore, setHighScore] = useState(0);
-  const [lb, setLb] = useState<Entry[]>([]);
+  const [finalScore, setFinalScore] = useState(0);
+  const [finalLevel, setFinalLevel] = useState(1);
   const [showLBModal, setShowLBModal] = useState(false);
   const [showEntryModal, setShowEntryModal] = useState(false);
   const [name, setName] = useState("");
-  const [finalScore, setFinalScore] = useState(0);
-  const [finalLevel, setFinalLevel] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
   function setStatusBoth(s: Status) { statusR.current = s; setStatus(s); }
 
@@ -303,6 +301,7 @@ export default function GamePage() {
     speedR.current = BASE_MS;
     setUiScore(0); setUiLevel(1);
     setShowEntryModal(false); setShowLBModal(false);
+    setIsSaved(false);
     setStatusBoth("playing");
     startLoop(BASE_MS);
   }
@@ -326,19 +325,22 @@ export default function GamePage() {
     }
   }
 
-  function submitScore() {
+  async function submitScore() {
     const n = name.trim().slice(0, 20);
-    if (!n) return;
-    const entry: Entry = {
-      name: n, score: finalScore, level: finalLevel,
-      date: new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short" }),
-    };
-    const updated = [...loadLB(), entry].sort((a, b) => b.score - a.score).slice(0, 10);
-    saveLB(updated);
-    setLb(updated);
-    setHighScore(updated[0]?.score || 0);
-    setShowEntryModal(false);
-    setName("");
+    if (!n || isSubmitting || isSaved) return;
+    setIsSubmitting(true);
+    try {
+      await api.gamescores.submit({ name: n, score: finalScore, level: finalLevel });
+      const updated = await api.gamescores.list({ limit: "10" });
+      setLb(updated);
+      setHighScore(updated[0]?.score || 0);
+      setIsSaved(true);
+    } catch (e) {
+      console.error(e);
+      alert("Failed to save score. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   useEffect(() => {
@@ -347,9 +349,13 @@ export default function GamePage() {
     };
     checkDesktop();
     calcCS(); redraw();
-    const data = loadLB();
-    setLb(data);
-    setHighScore(data[0]?.score || 0);
+    
+    api.gamescores.list({ limit: "10" })
+      .then((data) => {
+        setLb(data);
+        setHighScore(data[0]?.score || 0);
+      })
+      .catch(console.error);
 
     const ro = new ResizeObserver(() => { checkDesktop(); calcCS(); redraw(); });
     if (wrapRef.current) ro.observe(wrapRef.current);
@@ -483,6 +489,8 @@ export default function GamePage() {
                       name={name} setName={setName}
                       onSubmit={submitScore}
                       onRetry={startGame}
+                      isSubmitting={isSubmitting}
+                      isSaved={isSaved}
                     />
                   </div>
                 </div>

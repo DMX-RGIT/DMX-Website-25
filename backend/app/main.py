@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.database import engine, Base
-from app.routers import events, projects, team, gallery, sponsors, content, auth, admin, join
+from app.routers import events, projects, team, gallery, sponsors, content, auth, admin, join, gamescores
 
 settings = get_settings()
 
@@ -44,6 +44,7 @@ app.include_router(content.router, prefix="/api/v1")
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(admin.router, prefix="/api/v1")
 app.include_router(join.router, prefix="/api/v1")
+app.include_router(gamescores.router, prefix="/api/v1")
 
 
 @app.get("/")

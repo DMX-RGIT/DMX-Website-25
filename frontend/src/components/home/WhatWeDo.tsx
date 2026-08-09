@@ -150,6 +150,11 @@ export function WhatWeDo() {
   const [activeTab, setActiveTab] = useState(0);
   const active = features[activeTab];
 
+  const handleNext = () => setActiveTab((prev) => (prev + 1) % features.length);
+  const handlePrev = () => setActiveTab((prev) => (prev - 1 + features.length) % features.length);
+  const swipeConfidenceThreshold = 10000;
+  const swipePower = (offset: number, velocity: number) => Math.abs(offset) * velocity;
+
   return (
     <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
       {/* Header */}
@@ -204,20 +209,22 @@ export function WhatWeDo() {
       <AnimatePresence mode="wait">
         <motion.div
           key={active.id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.35 }}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-stretch"
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.2}
+          onDragEnd={(e, { offset, velocity }) => {
+            const swipe = swipePower(offset.x, velocity.x);
+            if (swipe < -swipeConfidenceThreshold) handleNext();
+            else if (swipe > swipeConfidenceThreshold) handlePrev();
+          }}
+          className="flex flex-col lg:grid lg:grid-cols-2 gap-6 lg:gap-10 items-stretch"
         >
-          {/* Visual side */}
-          <div className="order-1 lg:order-none">
-            <VisualPanel visual={active.visual} accent={active.accent} icon={active.icon} />
-          </div>
-
-          {/* Text side */}
-          <div className="flex flex-col justify-center gap-6">
-            {/* Category badge */}
+          {/* Mobile Header */}
+          <div className="flex flex-col gap-4 lg:hidden">
             <div
               className="inline-flex items-center gap-2 w-fit px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border"
               style={{ color: active.accent, borderColor: `${active.accent}40`, background: `${active.accent}10` }}
@@ -225,11 +232,33 @@ export function WhatWeDo() {
               <active.icon className="w-3.5 h-3.5" />
               {active.title}
             </div>
+            <h3 className="text-2xl font-display font-bold text-text-primary leading-tight">
+              {active.tagline}
+            </h3>
+          </div>
 
-            <div>
-              <h3 className="text-2xl md:text-3xl font-display font-bold text-text-primary mb-2 leading-tight">
+          {/* Visual side */}
+          <div className="order-2 lg:order-none cursor-grab active:cursor-grabbing">
+            <VisualPanel visual={active.visual} accent={active.accent} icon={active.icon} />
+          </div>
+
+          {/* Text side */}
+          <div className="order-3 lg:order-none flex flex-col justify-center gap-6">
+            {/* Desktop Header */}
+            <div className="hidden lg:flex flex-col gap-6">
+              <div
+                className="inline-flex items-center gap-2 w-fit px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border"
+                style={{ color: active.accent, borderColor: `${active.accent}40`, background: `${active.accent}10` }}
+              >
+                <active.icon className="w-3.5 h-3.5" />
+                {active.title}
+              </div>
+              <h3 className="text-2xl md:text-3xl font-display font-bold text-text-primary leading-tight">
                 {active.tagline}
               </h3>
+            </div>
+
+            <div>
               <p className="text-base text-text-secondary leading-relaxed">
                 {active.description}
               </p>
