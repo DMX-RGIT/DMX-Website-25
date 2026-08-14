@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import { Event } from "@/types";
 import { useCountdown } from "@/hooks/useCountdown";
 import { MagneticButton } from "@/components/shared/MagneticButton";
+import { stripMarkdown } from "@/lib/utils";
 
 export function FeaturedEvent() {
   const [event, setEvent] = useState<Event | null>(null);
@@ -96,7 +97,7 @@ export function FeaturedEvent() {
               {event.title}
             </h2>
             <div className="text-text-secondary text-lg mb-8 max-w-xl line-clamp-3">
-              {event.description}
+              {stripMarkdown(event.description)}
             </div>
             
             <div className="flex flex-col sm:flex-row gap-6 mb-8 text-sm text-text-secondary">
