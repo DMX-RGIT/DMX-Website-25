@@ -8,6 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 
+/** Format a date string to local YYYY-MM-DDTHH:mm for datetime-local inputs */
+function formatToLocalDatetime(dateStr: string): string {
+  const d = new Date(dateStr);
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
 function getToken(): string {
@@ -106,7 +113,7 @@ export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns }
       } else if (f.type === "tags" || f.type === "json") {
         data[f.name] = item[f.name] || [];
       } else if (f.type === "datetime") {
-        data[f.name] = item[f.name] ? new Date(item[f.name]).toISOString().slice(0, 16) : "";
+        data[f.name] = item[f.name] ? formatToLocalDatetime(item[f.name]) : "";
       } else {
         data[f.name] = item[f.name] ?? "";
       }
@@ -306,7 +313,7 @@ export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns }
                         onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
                         placeholder={field.placeholder || "https://..."}
                       />
-                      { (field.name.includes("image") || field.name.includes("photo") || field.name.includes("poster") || field.name.includes("banner") || field.name.includes("url")) && (
+                      { (field.name.includes("image") || field.name.includes("photo") || field.name.includes("poster") || field.name.includes("banner")) && (
                         <div className="flex flex-col gap-2">
                           <label className="flex items-center gap-2 px-3 py-2 border border-dashed border-border-default rounded-lg cursor-pointer hover:border-brand-teal transition-colors text-text-secondary text-xs">
                             <Upload className="w-4 h-4" />

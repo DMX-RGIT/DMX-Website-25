@@ -39,6 +39,7 @@ alembic.ini
 .gemini/
 brain/
 artifacts/
+skills-lock.json
 
 # OS / Editor
 .DS_Store
