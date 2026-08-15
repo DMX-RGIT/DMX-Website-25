@@ -254,7 +254,6 @@ function ProjectsBento() {
   ];
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-      <VisualPanel id="projects" icon={Layers} className="lg:col-span-12 lg:h-56 min-h-[160px]" />
       <BentoCell className="lg:col-span-6">
         <TitleBlock
           icon={Layers}
@@ -264,27 +263,26 @@ function ProjectsBento() {
           href="/projects"
         />
       </BentoCell>
-      <div className="lg:col-span-6 grid grid-rows-2 gap-5">
-        {repos.map((repo) => (
-          <BentoCell key={repo.name} className="!p-6 justify-center group" glow={true}>
-            <div className="flex items-center gap-2.5 mb-2.5">
-              <GitBranch className="w-4 h-4 opacity-70" style={{ color: ACCENT }} />
-              <p className="text-sm font-bold text-text-primary font-mono group-hover:text-brand-teal transition-colors">{repo.name}</p>
+      <VisualPanel id="projects" icon={Layers} className="lg:col-span-6 min-h-[220px] order-first lg:order-none" />
+      {repos.map((repo) => (
+        <BentoCell key={repo.name} className="lg:col-span-6 !p-6 justify-center group" glow={true}>
+          <div className="flex items-center gap-2.5 mb-2.5">
+            <GitBranch className="w-4 h-4 opacity-70" style={{ color: ACCENT }} />
+            <p className="text-sm font-bold text-text-primary font-mono group-hover:text-brand-teal transition-colors">{repo.name}</p>
+          </div>
+          <p className="text-sm text-text-secondary mb-4 leading-relaxed">{repo.desc}</p>
+          <div className="flex items-center justify-between mt-auto">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: ACCENT, color: ACCENT }} />
+              <span className="text-xs font-medium text-text-muted">{repo.lang}</span>
             </div>
-            <p className="text-sm text-text-secondary mb-4 leading-relaxed">{repo.desc}</p>
-            <div className="flex items-center justify-between mt-auto">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: ACCENT, color: ACCENT }} />
-                <span className="text-xs font-medium text-text-muted">{repo.lang}</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-text-muted bg-white/5 px-2 py-1 rounded-md">
-                <Star className="w-3.5 h-3.5" />
-                <span className="text-xs font-semibold">{repo.stars}</span>
-              </div>
+            <div className="flex items-center gap-1.5 text-text-muted bg-white/5 px-2 py-1 rounded-md">
+              <Star className="w-3.5 h-3.5" />
+              <span className="text-xs font-semibold">{repo.stars}</span>
             </div>
-          </BentoCell>
-        ))}
-      </div>
+          </div>
+        </BentoCell>
+      ))}
     </div>
   );
 }
@@ -298,7 +296,7 @@ function WorkshopsBento() {
   ];
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-      <BentoCell className="lg:col-span-7">
+      <BentoCell className="lg:col-span-8">
         <TitleBlock
           icon={BookOpen}
           title="Workshops"
@@ -307,23 +305,17 @@ function WorkshopsBento() {
           href="/events?category=workshop"
         />
       </BentoCell>
-      <VisualPanel id="workshops" icon={BookOpen} className="lg:col-span-5 lg:row-span-2 min-h-[250px] lg:min-h-full order-first lg:order-none" />
-      <BentoCell className="lg:col-span-7">
-        <p className="text-xs font-bold uppercase tracking-wider text-text-muted mb-5">Workshop Topics</p>
-        <div className="space-y-3">
-          {topics.map((topic) => (
-            <div key={topic.title} className="flex items-center gap-4 p-4 rounded-2xl bg-bg-surface/30 border border-white/5 transition-colors hover:border-white/10 hover:bg-bg-surface/50">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: `color-mix(in srgb, ${ACCENT} 10%, transparent)` }}>
-                <CheckCircle2 className="w-5 h-5" style={{ color: ACCENT }} />
-              </div>
-              <div>
-                <p className="text-sm font-bold text-text-primary mb-0.5">{topic.title}</p>
-                <p className="text-xs font-medium text-text-muted">{topic.level}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </BentoCell>
+      <VisualPanel id="workshops" icon={BookOpen} className="lg:col-span-4 min-h-[220px] order-first lg:order-none" />
+      
+      {topics.map((topic) => (
+        <BentoCell key={topic.title} className="lg:col-span-4 !p-5 justify-center text-center">
+          <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 mb-4 mx-auto" style={{ background: `color-mix(in srgb, ${ACCENT} 10%, transparent)` }}>
+            <CheckCircle2 className="w-6 h-6" style={{ color: ACCENT }} />
+          </div>
+          <p className="text-sm font-bold text-text-primary mb-1">{topic.title}</p>
+          <p className="text-xs font-medium text-text-muted">{topic.level}</p>
+        </BentoCell>
+      ))}
     </div>
   );
 }
