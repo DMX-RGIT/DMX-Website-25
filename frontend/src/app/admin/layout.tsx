@@ -23,7 +23,7 @@ const ALL_LINKS = [
   { href: "/admin/events", label: "Events", icon: CalendarDays, roles: ["superadmin", "events"] },
   { href: "/admin/projects", label: "Projects", icon: FolderKanban, roles: ["superadmin"] },
   { href: "/admin/team", label: "Team", icon: Users, roles: ["superadmin"] },
-  { href: "/admin/gallery", label: "Gallery", icon: Image, roles: ["superadmin"] },
+  { href: "/admin/gallery", label: "Gallery", icon: Image, roles: ["superadmin", "events"] },
   { href: "/admin/sponsors", label: "Sponsors", icon: Handshake, roles: ["superadmin"] },
   { href: "/admin/content", label: "Site Content", icon: LayoutDashboard, roles: ["superadmin"] },
 ];

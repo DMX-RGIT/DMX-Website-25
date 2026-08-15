@@ -130,7 +130,7 @@ async def delete_member(member_id: UUID, db: AsyncSession = Depends(get_db), _: 
 # ─── Gallery CRUD ───
 
 @router.post("/gallery", response_model=GalleryImageResponse)
-async def create_gallery_image(image: GalleryImageBase, db: AsyncSession = Depends(get_db), _: str = Depends(get_current_admin)):
+async def create_gallery_image(image: GalleryImageBase, db: AsyncSession = Depends(get_db), _: str = Depends(require_events_or_super_admin)):
     db_image = GalleryImage(**image.model_dump())
     db.add(db_image)
     await db.commit()
@@ -139,7 +139,7 @@ async def create_gallery_image(image: GalleryImageBase, db: AsyncSession = Depen
 
 
 @router.delete("/gallery/{image_id}")
-async def delete_gallery_image(image_id: UUID, db: AsyncSession = Depends(get_db), _: str = Depends(get_current_admin)):
+async def delete_gallery_image(image_id: UUID, db: AsyncSession = Depends(get_db), _: str = Depends(require_events_or_super_admin)):
     result = await db.execute(select(GalleryImage).where(GalleryImage.id == image_id))
     db_image = result.scalar_one_or_none()
     if not db_image:
