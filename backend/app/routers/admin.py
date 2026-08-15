@@ -17,15 +17,15 @@ from app.schemas import (
     JoinRequestResponse, JoinRequestUpdate,
     SiteContentBase, SiteContentResponse
 )
-from app.routers.auth import get_current_admin
+from app.routers.auth import get_current_admin, require_events_or_super_admin
 
-router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(get_current_admin)])
+router = APIRouter(prefix="/admin", tags=["admin"])
 
 
 # ─── Events CRUD ───
 
 @router.post("/events", response_model=EventResponse)
-async def create_event(event: EventBase, db: AsyncSession = Depends(get_db)):
+async def create_event(event: EventBase, db: AsyncSession = Depends(get_db), _: str = Depends(require_events_or_super_admin)):
     db_event = Event(**event.model_dump())
     db.add(db_event)
     await db.commit()
@@ -34,7 +34,7 @@ async def create_event(event: EventBase, db: AsyncSession = Depends(get_db)):
 
 
 @router.put("/events/{event_id}", response_model=EventResponse)
-async def update_event(event_id: UUID, event: EventBase, db: AsyncSession = Depends(get_db)):
+async def update_event(event_id: UUID, event: EventBase, db: AsyncSession = Depends(get_db), _: str = Depends(require_events_or_super_admin)):
     result = await db.execute(select(Event).where(Event.id == event_id))
     db_event = result.scalar_one_or_none()
     if not db_event:
@@ -47,7 +47,7 @@ async def update_event(event_id: UUID, event: EventBase, db: AsyncSession = Depe
 
 
 @router.delete("/events/{event_id}")
-async def delete_event(event_id: UUID, db: AsyncSession = Depends(get_db)):
+async def delete_event(event_id: UUID, db: AsyncSession = Depends(get_db), _: str = Depends(get_current_admin)):
     result = await db.execute(select(Event).where(Event.id == event_id))
     db_event = result.scalar_one_or_none()
     if not db_event:
@@ -60,7 +60,7 @@ async def delete_event(event_id: UUID, db: AsyncSession = Depends(get_db)):
 # ─── Projects CRUD ───
 
 @router.post("/projects", response_model=ProjectResponse)
-async def create_project(project: ProjectBase, db: AsyncSession = Depends(get_db)):
+async def create_project(project: ProjectBase, db: AsyncSession = Depends(get_db), _: str = Depends(get_current_admin)):
     db_project = Project(**project.model_dump())
     db.add(db_project)
     await db.commit()
@@ -69,7 +69,7 @@ async def create_project(project: ProjectBase, db: AsyncSession = Depends(get_db
 
 
 @router.put("/projects/{project_id}", response_model=ProjectResponse)
-async def update_project(project_id: UUID, project: ProjectBase, db: AsyncSession = Depends(get_db)):
+async def update_project(project_id: UUID, project: ProjectBase, db: AsyncSession = Depends(get_db), _: str = Depends(get_current_admin)):
     result = await db.execute(select(Project).where(Project.id == project_id))
     db_project = result.scalar_one_or_none()
     if not db_project:
@@ -82,7 +82,7 @@ async def update_project(project_id: UUID, project: ProjectBase, db: AsyncSessio
 
 
 @router.delete("/projects/{project_id}")
-async def delete_project(project_id: UUID, db: AsyncSession = Depends(get_db)):
+async def delete_project(project_id: UUID, db: AsyncSession = Depends(get_db), _: str = Depends(get_current_admin)):
     result = await db.execute(select(Project).where(Project.id == project_id))
     db_project = result.scalar_one_or_none()
     if not db_project:
@@ -95,7 +95,7 @@ async def delete_project(project_id: UUID, db: AsyncSession = Depends(get_db)):
 # ─── Team CRUD ───
 
 @router.post("/team", response_model=TeamMemberResponse)
-async def create_member(member: TeamMemberBase, db: AsyncSession = Depends(get_db)):
+async def create_member(member: TeamMemberBase, db: AsyncSession = Depends(get_db), _: str = Depends(get_current_admin)):
     db_member = TeamMember(**member.model_dump())
     db.add(db_member)
     await db.commit()
@@ -104,7 +104,7 @@ async def create_member(member: TeamMemberBase, db: AsyncSession = Depends(get_d
 
 
 @router.put("/team/{member_id}", response_model=TeamMemberResponse)
-async def update_member(member_id: UUID, member: TeamMemberBase, db: AsyncSession = Depends(get_db)):
+async def update_member(member_id: UUID, member: TeamMemberBase, db: AsyncSession = Depends(get_db), _: str = Depends(get_current_admin)):
     result = await db.execute(select(TeamMember).where(TeamMember.id == member_id))
     db_member = result.scalar_one_or_none()
     if not db_member:
@@ -117,7 +117,7 @@ async def update_member(member_id: UUID, member: TeamMemberBase, db: AsyncSessio
 
 
 @router.delete("/team/{member_id}")
-async def delete_member(member_id: UUID, db: AsyncSession = Depends(get_db)):
+async def delete_member(member_id: UUID, db: AsyncSession = Depends(get_db), _: str = Depends(get_current_admin)):
     result = await db.execute(select(TeamMember).where(TeamMember.id == member_id))
     db_member = result.scalar_one_or_none()
     if not db_member:
@@ -130,7 +130,7 @@ async def delete_member(member_id: UUID, db: AsyncSession = Depends(get_db)):
 # ─── Gallery CRUD ───
 
 @router.post("/gallery", response_model=GalleryImageResponse)
-async def create_gallery_image(image: GalleryImageBase, db: AsyncSession = Depends(get_db)):
+async def create_gallery_image(image: GalleryImageBase, db: AsyncSession = Depends(get_db), _: str = Depends(get_current_admin)):
     db_image = GalleryImage(**image.model_dump())
     db.add(db_image)
     await db.commit()
@@ -139,7 +139,7 @@ async def create_gallery_image(image: GalleryImageBase, db: AsyncSession = Depen
 
 
 @router.delete("/gallery/{image_id}")
-async def delete_gallery_image(image_id: UUID, db: AsyncSession = Depends(get_db)):
+async def delete_gallery_image(image_id: UUID, db: AsyncSession = Depends(get_db), _: str = Depends(get_current_admin)):
     result = await db.execute(select(GalleryImage).where(GalleryImage.id == image_id))
     db_image = result.scalar_one_or_none()
     if not db_image:
@@ -152,7 +152,7 @@ async def delete_gallery_image(image_id: UUID, db: AsyncSession = Depends(get_db
 # ─── Sponsors CRUD ───
 
 @router.post("/sponsors", response_model=SponsorResponse)
-async def create_sponsor(sponsor: SponsorBase, db: AsyncSession = Depends(get_db)):
+async def create_sponsor(sponsor: SponsorBase, db: AsyncSession = Depends(get_db), _: str = Depends(get_current_admin)):
     db_sponsor = Sponsor(**sponsor.model_dump())
     db.add(db_sponsor)
     await db.commit()
@@ -161,7 +161,7 @@ async def create_sponsor(sponsor: SponsorBase, db: AsyncSession = Depends(get_db
 
 
 @router.put("/sponsors/{sponsor_id}", response_model=SponsorResponse)
-async def update_sponsor(sponsor_id: UUID, sponsor: SponsorBase, db: AsyncSession = Depends(get_db)):
+async def update_sponsor(sponsor_id: UUID, sponsor: SponsorBase, db: AsyncSession = Depends(get_db), _: str = Depends(get_current_admin)):
     result = await db.execute(select(Sponsor).where(Sponsor.id == sponsor_id))
     db_sponsor = result.scalar_one_or_none()
     if not db_sponsor:
@@ -174,7 +174,7 @@ async def update_sponsor(sponsor_id: UUID, sponsor: SponsorBase, db: AsyncSessio
 
 
 @router.delete("/sponsors/{sponsor_id}")
-async def delete_sponsor(sponsor_id: UUID, db: AsyncSession = Depends(get_db)):
+async def delete_sponsor(sponsor_id: UUID, db: AsyncSession = Depends(get_db), _: str = Depends(get_current_admin)):
     result = await db.execute(select(Sponsor).where(Sponsor.id == sponsor_id))
     db_sponsor = result.scalar_one_or_none()
     if not db_sponsor:
@@ -187,13 +187,13 @@ async def delete_sponsor(sponsor_id: UUID, db: AsyncSession = Depends(get_db)):
 # ─── Join Requests CRUD ───
 
 @router.get("/join", response_model=list[JoinRequestResponse])
-async def list_join_requests(db: AsyncSession = Depends(get_db)):
+async def list_join_requests(db: AsyncSession = Depends(get_db), _: str = Depends(get_current_admin)):
     result = await db.execute(select(JoinRequest).order_by(JoinRequest.created_at.desc()))
     return list(result.scalars().all())
 
 
 @router.put("/join/{request_id}", response_model=JoinRequestResponse)
-async def update_join_request_status(request_id: UUID, update: JoinRequestUpdate, db: AsyncSession = Depends(get_db)):
+async def update_join_request_status(request_id: UUID, update: JoinRequestUpdate, db: AsyncSession = Depends(get_db), _: str = Depends(get_current_admin)):
     result = await db.execute(select(JoinRequest).where(JoinRequest.id == request_id))
     db_request = result.scalar_one_or_none()
     if not db_request:
@@ -206,7 +206,7 @@ async def update_join_request_status(request_id: UUID, update: JoinRequestUpdate
 
 
 @router.delete("/join/{request_id}")
-async def delete_join_request(request_id: UUID, db: AsyncSession = Depends(get_db)):
+async def delete_join_request(request_id: UUID, db: AsyncSession = Depends(get_db), _: str = Depends(get_current_admin)):
     result = await db.execute(select(JoinRequest).where(JoinRequest.id == request_id))
     db_request = result.scalar_one_or_none()
     if not db_request:
@@ -219,17 +219,16 @@ async def delete_join_request(request_id: UUID, db: AsyncSession = Depends(get_d
 # ─── Site Content CRUD ───
 
 @router.put("/content", response_model=SiteContentResponse)
-async def update_site_content(content: SiteContentBase, db: AsyncSession = Depends(get_db)):
+async def update_site_content(content: SiteContentBase, db: AsyncSession = Depends(get_db), _: str = Depends(get_current_admin)):
     result = await db.execute(select(SiteContent).where(SiteContent.id == 1))
     db_content = result.scalar_one_or_none()
     if not db_content:
-        # Create it if it doesn't exist
         db_content = SiteContent(**content.model_dump(), id=1)
         db.add(db_content)
     else:
         for key, value in content.model_dump().items():
             setattr(db_content, key, value)
-    
+
     await db.commit()
     await db.refresh(db_content)
     return db_content

@@ -40,6 +40,7 @@ alembic.ini
 brain/
 artifacts/
 skills-lock.json
+frontend/package-lock.json
 
 # OS / Editor
 .DS_Store
