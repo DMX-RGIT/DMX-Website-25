@@ -6,6 +6,8 @@ import { Code2, Layers, BookOpen, Mic, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
+const ACCENT = "var(--brand-teal)";
+
 const features = [
   {
     id: "hackathons",
@@ -14,7 +16,6 @@ const features = [
     description: "Our flagship Hack2Infinity gathers students from across Mumbai to compete, collaborate, and build working products in a single weekend. Open to all streams — CS, IT, EXTC, and more.",
     icon: Code2,
     href: "/events?category=hackathon",
-    accent: "#3B82F6",
     stats: [
       { value: "Annual", label: "Flagship Event" },
       { value: "Open", label: "To All Branches" },
@@ -30,7 +31,6 @@ const features = [
     description: "DMX members collaborate on real software projects — web apps, tools, dashboards, and more. Projects are open source, team-driven, and documented so anyone can contribute or learn from them.",
     icon: Layers,
     href: "/projects",
-    accent: "#38BDF8",
     stats: [
       { value: "Open", label: "Source" },
       { value: "Team", label: "Driven" },
@@ -46,7 +46,6 @@ const features = [
     description: "Hands-on technical sessions where you build something by the end. Topics span web development, data science, cloud, DevOps, and more — run by seniors, alumni, and invited experts.",
     icon: BookOpen,
     href: "/events?category=workshop",
-    accent: "#2DD4BF",
     stats: [
       { value: "Hands-on", label: "Format" },
       { value: "Free", label: "For Members" },
@@ -62,7 +61,6 @@ const features = [
     description: "Guest speakers — working professionals, alumni, and researchers — share their journeys, insights, and the things no textbook covers. Followed by open Q&A so you can ask what actually matters.",
     icon: Mic,
     href: "/events?category=seminar",
-    accent: "#34D9A6",
     stats: [
       { value: "Guest", label: "Speakers" },
       { value: "Live Q&A", label: "Every Session" },
@@ -73,75 +71,137 @@ const features = [
   },
 ];
 
-function VisualPanel({ visual, accent, icon: Icon }: { visual: string; accent: string; icon: any }) {
+/* ─── Unique SVG visual patterns per tab ─── */
+
+function HackathonVisual() {
+  return (
+    <svg viewBox="0 0 280 280" fill="none" className="w-full h-full">
+      {/* Circuit board pattern */}
+      <path d="M40 140h60l20-20h40l20 20h60" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
+      <path d="M40 160h40l20 20h80l20-20h40" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.2" />
+      <path d="M140 40v40l-20 20v60l20 20v40" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.25" />
+      <path d="M160 60v30l20 20v60l-20 20v30" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.15" />
+      {/* Nodes */}
+      <circle cx="100" cy="140" r="4" fill="var(--brand-teal)" opacity="0.5" />
+      <circle cx="180" cy="140" r="4" fill="var(--brand-teal)" opacity="0.5" />
+      <circle cx="140" cy="100" r="4" fill="var(--brand-teal)" opacity="0.4" />
+      <circle cx="140" cy="180" r="4" fill="var(--brand-teal)" opacity="0.4" />
+      <circle cx="60" cy="140" r="2.5" fill="var(--brand-teal)" opacity="0.3" />
+      <circle cx="220" cy="140" r="2.5" fill="var(--brand-teal)" opacity="0.3" />
+      {/* Center bracket symbol */}
+      <text x="140" y="148" textAnchor="middle" fill="var(--brand-teal)" fontSize="36" fontFamily="monospace" opacity="0.6">{"{ }"}</text>
+    </svg>
+  );
+}
+
+function ProjectsVisual() {
+  return (
+    <svg viewBox="0 0 280 280" fill="none" className="w-full h-full">
+      {/* Layered hexagons */}
+      <polygon points="140,60 190,85 190,135 140,160 90,135 90,85" stroke="var(--brand-teal)" strokeWidth="1.5" fill="none" opacity="0.15" />
+      <polygon points="140,75 180,95 180,130 140,150 100,130 100,95" stroke="var(--brand-teal)" strokeWidth="1.5" fill="none" opacity="0.25" />
+      <polygon points="140,90 170,105 170,125 140,140 110,125 110,105" stroke="var(--brand-teal)" strokeWidth="1.5" fill="var(--brand-teal)" fillOpacity="0.08" opacity="0.4" />
+      {/* Connection lines going outward */}
+      <line x1="90" y1="85" x2="55" y2="65" stroke="var(--brand-teal)" strokeWidth="1" opacity="0.2" />
+      <line x1="190" y1="85" x2="225" y2="65" stroke="var(--brand-teal)" strokeWidth="1" opacity="0.2" />
+      <line x1="90" y1="135" x2="55" y2="155" stroke="var(--brand-teal)" strokeWidth="1" opacity="0.2" />
+      <line x1="190" y1="135" x2="225" y2="155" stroke="var(--brand-teal)" strokeWidth="1" opacity="0.2" />
+      {/* Branch dots */}
+      <circle cx="55" cy="65" r="3" fill="var(--brand-teal)" opacity="0.3" />
+      <circle cx="225" cy="65" r="3" fill="var(--brand-teal)" opacity="0.3" />
+      <circle cx="55" cy="155" r="3" fill="var(--brand-teal)" opacity="0.3" />
+      <circle cx="225" cy="155" r="3" fill="var(--brand-teal)" opacity="0.3" />
+      {/* Git branch lines below */}
+      <path d="M100 180h80M120 180v25M160 180v25" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.2" />
+      <circle cx="120" cy="205" r="3" fill="var(--brand-teal)" opacity="0.3" />
+      <circle cx="160" cy="205" r="3" fill="var(--brand-teal)" opacity="0.3" />
+    </svg>
+  );
+}
+
+function WorkshopsVisual() {
+  return (
+    <svg viewBox="0 0 280 280" fill="none" className="w-full h-full">
+      {/* Open book shape */}
+      <path d="M140 100c-30-15-60-10-80-5v100c20-5 50-10 80 5" stroke="var(--brand-teal)" strokeWidth="1.5" fill="var(--brand-teal)" fillOpacity="0.04" opacity="0.4" />
+      <path d="M140 100c30-15 60-10 80-5v100c-20-5-50-10-80 5" stroke="var(--brand-teal)" strokeWidth="1.5" fill="var(--brand-teal)" fillOpacity="0.04" opacity="0.4" />
+      {/* Page lines — left */}
+      <line x1="75" y1="115" x2="130" y2="122" stroke="var(--brand-teal)" strokeWidth="1" opacity="0.15" />
+      <line x1="75" y1="130" x2="130" y2="137" stroke="var(--brand-teal)" strokeWidth="1" opacity="0.15" />
+      <line x1="75" y1="145" x2="130" y2="152" stroke="var(--brand-teal)" strokeWidth="1" opacity="0.15" />
+      <line x1="75" y1="160" x2="130" y2="167" stroke="var(--brand-teal)" strokeWidth="1" opacity="0.15" />
+      {/* Page lines — right */}
+      <line x1="150" y1="122" x2="205" y2="115" stroke="var(--brand-teal)" strokeWidth="1" opacity="0.15" />
+      <line x1="150" y1="137" x2="205" y2="130" stroke="var(--brand-teal)" strokeWidth="1" opacity="0.15" />
+      <line x1="150" y1="152" x2="205" y2="145" stroke="var(--brand-teal)" strokeWidth="1" opacity="0.15" />
+      <line x1="150" y1="167" x2="205" y2="160" stroke="var(--brand-teal)" strokeWidth="1" opacity="0.15" />
+      {/* Spine */}
+      <line x1="140" y1="95" x2="140" y2="205" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
+      {/* Floating knowledge particles */}
+      <circle cx="100" cy="75" r="2" fill="var(--brand-teal)" opacity="0.3" />
+      <circle cx="180" cy="70" r="2" fill="var(--brand-teal)" opacity="0.25" />
+      <circle cx="85" cy="60" r="1.5" fill="var(--brand-teal)" opacity="0.2" />
+      <circle cx="195" cy="80" r="1.5" fill="var(--brand-teal)" opacity="0.2" />
+      {/* Arrow rising from book */}
+      <path d="M140 80l-6 10h12z" fill="var(--brand-teal)" opacity="0.3" />
+      <line x1="140" y1="90" x2="140" y2="65" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
+    </svg>
+  );
+}
+
+function SeminarsVisual() {
+  return (
+    <svg viewBox="0 0 280 280" fill="none" className="w-full h-full">
+      {/* Microphone body */}
+      <rect x="125" y="100" width="30" height="55" rx="15" stroke="var(--brand-teal)" strokeWidth="1.5" fill="var(--brand-teal)" fillOpacity="0.06" opacity="0.5" />
+      {/* Mic arc */}
+      <path d="M110 140c0 25 13 40 30 40s30-15 30-40" stroke="var(--brand-teal)" strokeWidth="1.5" fill="none" opacity="0.3" />
+      {/* Stand */}
+      <line x1="140" y1="180" x2="140" y2="200" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
+      <line x1="120" y1="200" x2="160" y2="200" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
+      {/* Sound waves */}
+      <path d="M170 115c10 8 10 30 0 40" stroke="var(--brand-teal)" strokeWidth="1" fill="none" opacity="0.2" />
+      <path d="M182 105c15 15 15 50 0 60" stroke="var(--brand-teal)" strokeWidth="1" fill="none" opacity="0.15" />
+      <path d="M194 95c20 20 20 65 0 80" stroke="var(--brand-teal)" strokeWidth="1" fill="none" opacity="0.1" />
+      <path d="M110 115c-10 8-10 30 0 40" stroke="var(--brand-teal)" strokeWidth="1" fill="none" opacity="0.2" />
+      <path d="M98 105c-15 15-15 50 0 60" stroke="var(--brand-teal)" strokeWidth="1" fill="none" opacity="0.15" />
+      <path d="M86 95c-20 20-20 65 0 80" stroke="var(--brand-teal)" strokeWidth="1" fill="none" opacity="0.1" />
+      {/* Audience dots */}
+      <circle cx="90" cy="230" r="4" fill="var(--brand-teal)" opacity="0.15" />
+      <circle cx="120" cy="235" r="4" fill="var(--brand-teal)" opacity="0.15" />
+      <circle cx="150" cy="232" r="4" fill="var(--brand-teal)" opacity="0.15" />
+      <circle cx="180" cy="237" r="4" fill="var(--brand-teal)" opacity="0.15" />
+    </svg>
+  );
+}
+
+const visualComponents: Record<string, React.FC> = {
+  hackathon: HackathonVisual,
+  projects: ProjectsVisual,
+  workshops: WorkshopsVisual,
+  seminars: SeminarsVisual,
+};
+
+function VisualPanel({ visual, icon: Icon }: { visual: string; icon: any }) {
+  const VisualSvg = visualComponents[visual];
   return (
     <div className="relative w-full h-full min-h-[280px] overflow-hidden rounded-2xl bg-bg-primary border border-border-subtle flex items-center justify-center">
-      {/* Radial gradient background */}
+      {/* Subtle radial glow */}
       <div
-        className="absolute inset-0 opacity-[0.08]"
-        style={{ background: `radial-gradient(ellipse 70% 70% at 50% 50%, ${accent}, transparent)` }}
+        className="absolute inset-0 opacity-[0.06]"
+        style={{ background: `radial-gradient(ellipse 60% 60% at 50% 50%, var(--brand-teal), transparent)` }}
       />
 
-      {/* Grid pattern */}
-      <div
-        className="absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage: `linear-gradient(${accent}40 1px, transparent 1px), linear-gradient(90deg, ${accent}40 1px, transparent 1px)`,
-          backgroundSize: "40px 40px",
-        }}
-      />
-
-      {/* Corner decorations */}
-      <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 rounded-tl-md opacity-30" style={{ borderColor: accent }} />
-      <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 rounded-tr-md opacity-30" style={{ borderColor: accent }} />
-      <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 rounded-bl-md opacity-30" style={{ borderColor: accent }} />
-      <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 rounded-br-md opacity-30" style={{ borderColor: accent }} />
-
-      {/* Center icon with glow */}
-      <div className="relative flex flex-col items-center gap-4">
-        <div
-          className="w-24 h-24 rounded-3xl flex items-center justify-center"
-          style={{
-            background: `${accent}15`,
-            border: `1px solid ${accent}30`,
-            boxShadow: `0 0 40px ${accent}20, inset 0 0 20px ${accent}08`,
-          }}
-        >
-          <Icon className="w-12 h-12" style={{ color: accent }} />
-        </div>
-
-        {/* Pulsing ring */}
-        <motion.div
-          className="absolute inset-0 rounded-3xl"
-          style={{ border: `1px solid ${accent}40` }}
-          animate={{ scale: [1, 1.4, 1], opacity: [0.6, 0, 0.6] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-        />
+      {/* SVG illustration */}
+      <div className="absolute inset-0 flex items-center justify-center p-8">
+        {VisualSvg && <VisualSvg />}
       </div>
 
-      {/* Floating dots */}
-      {[...Array(6)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1.5 h-1.5 rounded-full"
-          style={{
-            backgroundColor: accent,
-            top: `${20 + (i * 13) % 60}%`,
-            left: `${10 + (i * 17) % 80}%`,
-            opacity: 0.3,
-          }}
-          animate={{
-            y: [0, -8, 0],
-            opacity: [0.2, 0.5, 0.2],
-          }}
-          transition={{
-            duration: 2.5 + i * 0.4,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: i * 0.3,
-          }}
-        />
-      ))}
+      {/* Corner decorations */}
+      <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 rounded-tl-md opacity-20" style={{ borderColor: ACCENT }} />
+      <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 rounded-tr-md opacity-20" style={{ borderColor: ACCENT }} />
+      <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 rounded-bl-md opacity-20" style={{ borderColor: ACCENT }} />
+      <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 rounded-br-md opacity-20" style={{ borderColor: ACCENT }} />
     </div>
   );
 }
@@ -196,7 +256,7 @@ export function WhatWeDo() {
                   ? "text-bg-primary border-transparent shadow-lg"
                   : "text-text-secondary border-border-subtle hover:border-border-default hover:text-text-primary bg-transparent"
               )}
-              style={activeTab === i ? { background: f.accent, boxShadow: `0 0 20px ${f.accent}40` } : {}}
+              style={activeTab === i ? { background: ACCENT, boxShadow: `0 0 20px color-mix(in srgb, var(--brand-teal) 25%, transparent)` } : {}}
             >
               <Icon className="w-3.5 h-3.5" />
               {f.title}
@@ -227,7 +287,7 @@ export function WhatWeDo() {
           <div className="flex flex-col gap-4 lg:hidden">
             <div
               className="inline-flex items-center gap-2 w-fit px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border"
-              style={{ color: active.accent, borderColor: `${active.accent}40`, background: `${active.accent}10` }}
+              style={{ color: ACCENT, borderColor: `color-mix(in srgb, var(--brand-teal) 25%, transparent)`, background: `color-mix(in srgb, var(--brand-teal) 6%, transparent)` }}
             >
               <active.icon className="w-3.5 h-3.5" />
               {active.title}
@@ -239,7 +299,7 @@ export function WhatWeDo() {
 
           {/* Visual side */}
           <div className="order-2 lg:order-none cursor-grab active:cursor-grabbing">
-            <VisualPanel visual={active.visual} accent={active.accent} icon={active.icon} />
+            <VisualPanel visual={active.visual} icon={active.icon} />
           </div>
 
           {/* Text side */}
@@ -248,7 +308,7 @@ export function WhatWeDo() {
             <div className="hidden lg:flex flex-col gap-6">
               <div
                 className="inline-flex items-center gap-2 w-fit px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border"
-                style={{ color: active.accent, borderColor: `${active.accent}40`, background: `${active.accent}10` }}
+                style={{ color: ACCENT, borderColor: `color-mix(in srgb, var(--brand-teal) 25%, transparent)`, background: `color-mix(in srgb, var(--brand-teal) 6%, transparent)` }}
               >
                 <active.icon className="w-3.5 h-3.5" />
                 {active.title}
@@ -269,10 +329,9 @@ export function WhatWeDo() {
               {active.stats.map((stat) => (
                 <div
                   key={stat.label}
-                  className="p-3 rounded-xl border bg-bg-surface/50 text-center"
-                  style={{ borderColor: `${active.accent}25` }}
+                  className="p-3 rounded-xl border border-border-subtle bg-bg-surface/50 text-center"
                 >
-                  <p className="text-lg font-bold font-display" style={{ color: active.accent }}>
+                  <p className="text-lg font-bold font-display text-brand-teal">
                     {stat.value}
                   </p>
                   <p className="text-xs text-text-muted mt-0.5">{stat.label}</p>
@@ -295,11 +354,10 @@ export function WhatWeDo() {
             {/* CTA */}
             <Link
               href={active.href}
-              className="inline-flex items-center gap-2 w-fit px-5 py-2.5 rounded-lg text-sm font-bold transition-all hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 w-fit px-5 py-2.5 rounded-lg text-sm font-bold text-brand-teal transition-all hover:-translate-y-0.5"
               style={{
-                background: `${active.accent}18`,
-                color: active.accent,
-                border: `1px solid ${active.accent}35`,
+                background: `color-mix(in srgb, var(--brand-teal) 10%, transparent)`,
+                border: `1px solid color-mix(in srgb, var(--brand-teal) 20%, transparent)`,
               }}
             >
               Explore {active.title}
@@ -318,7 +376,7 @@ export function WhatWeDo() {
             className="transition-all duration-300 rounded-full h-1.5"
             style={{
               width: activeTab === i ? "24px" : "6px",
-              background: activeTab === i ? f.accent : "var(--border-default)",
+              background: activeTab === i ? ACCENT : "var(--border-default)",
             }}
           />
         ))}
