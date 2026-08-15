@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Code2, Layers, BookOpen, Mic, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
@@ -69,156 +69,187 @@ const features = [
   },
 ];
 
-/* ─── Circuit Node Strip ─── */
-function CircuitStrip({
-  activeIndex,
-  onSelect,
-}: {
-  activeIndex: number;
-  onSelect: (i: number) => void;
-}) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const nodeRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const [positions, setPositions] = useState<{ x: number; y: number }[]>([]);
+/* ─── Dense Circuit Board Panel ─── */
 
-  useEffect(() => {
-    const update = () => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      const pos = nodeRefs.current.map((el) => {
-        if (!el) return { x: 0, y: 0 };
-        const r = el.getBoundingClientRect();
-        return { x: r.left - rect.left + r.width / 2, y: r.top - rect.top + r.height / 2 };
-      });
-      setPositions(pos);
-    };
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, []);
+// Each tab has a unique set of PCB trace paths so the visual clearly changes
+const circuitPaths: Record<string, string[]> = {
+  hackathons: [
+    // Dense radial layout — traces fanning out from center like a star
+    "M140,140 L140,20", "M140,140 L260,20", "M140,140 L280,140", "M140,140 L260,260",
+    "M140,140 L140,280", "M140,140 L20,260", "M140,140 L0,140", "M140,140 L20,20",
+    // Cross-connections
+    "M60,60 L220,60", "M60,60 L60,220", "M220,60 L220,220", "M60,220 L220,220",
+    // Diagonal branches
+    "M80,40 L80,100", "M200,40 L200,100", "M40,80 L100,80", "M180,80 L240,80",
+    "M80,180 L80,240", "M200,180 L200,240", "M40,200 L100,200", "M180,200 L240,200",
+  ],
+  projects: [
+    // Layered horizontal traces — like a printed circuit board
+    "M0,50 L80,50 L100,70 L180,70 L200,50 L280,50",
+    "M0,90 L60,90 L80,110 L200,110 L220,90 L280,90",
+    "M0,140 L40,140 L60,120 L220,120 L240,140 L280,140",
+    "M0,180 L60,180 L80,160 L200,160 L220,180 L280,180",
+    "M0,220 L80,220 L100,200 L180,200 L200,220 L280,220",
+    // Vertical connections between layers
+    "M80,50 L80,90", "M200,50 L200,90", "M60,90 L60,140", "M220,90 L220,140",
+    "M80,160 L80,220", "M200,160 L200,220", "M140,70 L140,120", "M140,160 L140,200",
+    // Short stubs
+    "M120,50 L120,30", "M160,50 L160,30", "M120,220 L120,250", "M160,220 L160,250",
+  ],
+  workshops: [
+    // Tree/branching structure — knowledge spreading
+    "M140,260 L140,180", "M140,180 L80,130", "M140,180 L200,130",
+    "M80,130 L50,80", "M80,130 L110,80",
+    "M200,130 L170,80", "M200,130 L230,80",
+    "M50,80 L30,40", "M50,80 L70,40", "M110,80 L90,40", "M110,80 L130,40",
+    "M170,80 L150,40", "M170,80 L190,40", "M230,80 L210,40", "M230,80 L250,40",
+    // Horizontal cross-bars
+    "M30,40 L250,40", "M50,80 L230,80", "M80,130 L200,130",
+    // Root extensions
+    "M140,260 L100,280", "M140,260 L180,280",
+  ],
+  seminars: [
+    // Concentric rings with spokes — like a broadcast signal
+    "M140,140 L140,40", "M140,140 L230,70", "M140,140 L260,140",
+    "M140,140 L230,210", "M140,140 L140,240", "M140,140 L50,210",
+    "M140,140 L20,140", "M140,140 L50,70",
+    // Inner ring connections (octagon)
+    "M140,80 L190,95 L210,140 L190,185 L140,200 L90,185 L70,140 L90,95 Z",
+    // Outer ring connections
+    "M140,50 L215,75 L240,140 L215,205 L140,230 L65,205 L40,140 L65,75 Z",
+    // Radial ticks
+    "M140,40 L140,25", "M230,70 L242,58", "M260,140 L275,140",
+    "M230,210 L242,222", "M140,240 L140,258", "M50,210 L38,222",
+    "M20,140 L5,140", "M50,70 L38,58",
+  ],
+};
+
+// Solder-point positions per tab
+const solderPoints: Record<string, [number, number][]> = {
+  hackathons: [
+    [60,60],[220,60],[60,220],[220,220],[140,20],[280,140],[140,280],[0,140],
+    [80,40],[200,40],[80,240],[200,240],[40,80],[240,80],[40,200],[240,200],
+  ],
+  projects: [
+    [80,50],[200,50],[60,90],[220,90],[40,140],[240,140],[60,180],[220,180],
+    [80,220],[200,220],[140,70],[140,120],[140,160],[140,200],
+    [120,30],[160,30],[120,250],[160,250],
+  ],
+  workshops: [
+    [140,180],[80,130],[200,130],[50,80],[110,80],[170,80],[230,80],
+    [30,40],[70,40],[90,40],[130,40],[150,40],[190,40],[210,40],[250,40],
+    [140,260],[100,280],[180,280],
+  ],
+  seminars: [
+    [140,80],[190,95],[210,140],[190,185],[140,200],[90,185],[70,140],[90,95],
+    [140,50],[215,75],[240,140],[215,205],[140,230],[65,205],[40,140],[65,75],
+    [140,25],[275,140],[140,258],[5,140],
+  ],
+};
+
+function CircuitPanel({ visual, icon: Icon }: { visual: string; icon: any }) {
+  const paths = circuitPaths[visual] || circuitPaths.hackathons;
+  const points = solderPoints[visual] || solderPoints.hackathons;
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-3xl mx-auto mb-14">
-      {/* SVG traces + data flow */}
-      {positions.length === features.length && (
-        <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible" style={{ zIndex: 0 }}>
-          {/* Circuit trace lines between nodes */}
-          {positions.slice(0, -1).map((from, i) => {
-            const to = positions[i + 1];
-            return (
-              <line
-                key={`trace-${i}`}
-                x1={from.x}
-                y1={from.y}
-                x2={to.x}
-                y2={to.y}
-                stroke="var(--brand-teal)"
-                strokeWidth="2"
-                opacity="0.15"
-              />
-            );
-          })}
+    <div className="relative w-full h-full min-h-[320px] overflow-hidden rounded-2xl bg-bg-primary border border-border-subtle">
+      {/* Background glow */}
+      <div
+        className="absolute inset-0 opacity-[0.07]"
+        style={{ background: "radial-gradient(ellipse 50% 50% at 50% 50%, var(--brand-teal), transparent)" }}
+      />
 
-          {/* Glowing active trace segment */}
-          {positions.slice(0, -1).map((from, i) => {
-            const to = positions[i + 1];
-            const isActiveSegment = i === activeIndex || i + 1 === activeIndex;
-            if (!isActiveSegment) return null;
-            return (
-              <motion.line
-                key={`glow-${i}-${activeIndex}`}
-                x1={from.x}
-                y1={from.y}
-                x2={to.x}
-                y2={to.y}
-                stroke="var(--brand-teal)"
-                strokeWidth="2"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0.3, 0.6, 0.3] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              />
-            );
-          })}
+      {/* Circuit SVG */}
+      <svg viewBox="0 0 280 280" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid meet">
+        {/* Traces */}
+        {paths.map((d, i) => (
+          <path
+            key={`path-${i}`}
+            d={d}
+            stroke="var(--brand-teal)"
+            strokeWidth="1.2"
+            fill="none"
+            opacity={0.12 + (i % 3) * 0.04}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        ))}
 
-          {/* Data packet dots flowing along ALL traces */}
-          {positions.slice(0, -1).map((from, i) => {
-            const to = positions[i + 1];
-            return (
-              <motion.circle
-                key={`packet-${i}`}
-                r="3"
-                fill="var(--brand-teal)"
-                initial={{ cx: from.x, cy: from.y, opacity: 0 }}
-                animate={{
-                  cx: [from.x, to.x],
-                  cy: [from.y, to.y],
-                  opacity: [0, 0.7, 0],
-                }}
-                transition={{
-                  duration: 2.5,
-                  repeat: Infinity,
-                  delay: i * 0.8,
-                  ease: "easeInOut",
-                }}
-              />
-            );
-          })}
+        {/* Solder points */}
+        {points.map(([cx, cy], i) => (
+          <circle
+            key={`pt-${i}`}
+            cx={cx}
+            cy={cy}
+            r="2.5"
+            fill="var(--brand-teal)"
+            opacity={0.2 + (i % 3) * 0.08}
+          />
+        ))}
 
-          {/* Active node glow ring */}
-          {positions[activeIndex] && (
-            <motion.circle
-              cx={positions[activeIndex].x}
-              cy={positions[activeIndex].y}
-              r="30"
-              fill="none"
-              stroke="var(--brand-teal)"
-              strokeWidth="1"
-              initial={{ opacity: 0, r: 24 }}
-              animate={{ opacity: [0, 0.3, 0], r: [24, 34, 24] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            />
-          )}
-        </svg>
-      )}
+        {/* Center chip housing */}
+        <rect
+          x="108" y="108" width="64" height="64" rx="12"
+          fill="var(--brand-teal)"
+          fillOpacity="0.06"
+          stroke="var(--brand-teal)"
+          strokeWidth="1.5"
+          opacity="0.4"
+        />
+        {/* Chip pins — left */}
+        <line x1="108" y1="124" x2="94" y2="124" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
+        <line x1="108" y1="140" x2="94" y2="140" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
+        <line x1="108" y1="156" x2="94" y2="156" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
+        {/* Chip pins — right */}
+        <line x1="172" y1="124" x2="186" y2="124" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
+        <line x1="172" y1="140" x2="186" y2="140" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
+        <line x1="172" y1="156" x2="186" y2="156" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
+        {/* Chip pins — top */}
+        <line x1="124" y1="108" x2="124" y2="94" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
+        <line x1="140" y1="108" x2="140" y2="94" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
+        <line x1="156" y1="108" x2="156" y2="94" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
+        {/* Chip pins — bottom */}
+        <line x1="124" y1="172" x2="124" y2="186" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
+        <line x1="140" y1="172" x2="140" y2="186" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
+        <line x1="156" y1="172" x2="156" y2="186" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
+      </svg>
 
-      {/* Node buttons */}
-      <div className="relative z-10 flex items-center justify-between px-4 sm:px-0">
-        {features.map((f, i) => {
-          const Icon = f.icon;
-          const isActive = i === activeIndex;
-          return (
-            <button
-              key={f.id}
-              ref={(el) => { nodeRefs.current[i] = el; }}
-              onClick={() => onSelect(i)}
-              className="flex flex-col items-center gap-2 group"
-            >
-              <div
-                className={cn(
-                  "w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center transition-all duration-300 border",
-                  isActive
-                    ? "bg-brand-teal/15 border-brand-teal/40 shadow-[0_0_20px_rgba(52,217,166,0.2)]"
-                    : "bg-bg-surface/50 border-border-subtle group-hover:border-brand-teal/30 group-hover:bg-brand-teal/5"
-                )}
-              >
-                <Icon
-                  className={cn(
-                    "w-5 h-5 sm:w-6 sm:h-6 transition-colors duration-300",
-                    isActive ? "text-brand-teal" : "text-text-muted group-hover:text-text-secondary"
-                  )}
-                />
-              </div>
-              <span
-                className={cn(
-                  "text-xs font-semibold transition-colors duration-300",
-                  isActive ? "text-brand-teal" : "text-text-muted group-hover:text-text-secondary"
-                )}
-              >
-                {f.title}
-              </span>
-            </button>
-          );
-        })}
+      {/* Animated data pulses along traces */}
+      <svg viewBox="0 0 280 280" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid meet">
+        {paths.slice(0, 6).map((d, i) => (
+          <motion.circle
+            key={`pulse-${i}`}
+            r="3"
+            fill="var(--brand-teal)"
+            filter="url(#glow)"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0.8, 0] }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              delay: i * 0.5,
+              ease: "easeInOut",
+            }}
+          >
+            <animateMotion dur={`${3 + i * 0.5}s`} repeatCount="indefinite" path={d} />
+          </motion.circle>
+        ))}
+        <defs>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+      </svg>
+
+      {/* Center icon */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-16 h-16 rounded-xl flex items-center justify-center bg-brand-teal/10 backdrop-blur-sm">
+          <Icon className="w-8 h-8 text-brand-teal" />
+        </div>
       </div>
     </div>
   );
@@ -244,27 +275,49 @@ export function WhatWeDo() {
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
       >
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-teal mb-4">
-          Our Activities
-        </p>
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-teal mb-4">Our Activities</p>
         <h2 className="text-3xl md:text-5xl font-display font-bold mb-6">What We Do</h2>
         <p className="text-lg text-text-secondary max-w-2xl mx-auto">
-          We bridge the gap between theoretical knowledge and practical implementation
-          in the world of Artificial Intelligence.
+          We bridge the gap between theoretical knowledge and practical implementation in the world of Artificial Intelligence.
         </p>
       </motion.div>
 
-      {/* Circuit Strip Navigation */}
-      <CircuitStrip activeIndex={activeTab} onSelect={setActiveTab} />
+      {/* Tab Pills */}
+      <motion.div
+        className="flex flex-wrap justify-center gap-2 mb-12"
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
+        {features.map((f, i) => {
+          const Icon = f.icon;
+          return (
+            <button
+              key={f.id}
+              onClick={() => setActiveTab(i)}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 border",
+                activeTab === i
+                  ? "text-bg-primary border-transparent bg-brand-teal"
+                  : "text-text-secondary border-border-subtle hover:border-border-default hover:text-text-primary bg-transparent"
+              )}
+            >
+              <Icon className="w-3.5 h-3.5" />
+              {f.title}
+            </button>
+          );
+        })}
+      </motion.div>
 
-      {/* Content Panel */}
+      {/* Main Content */}
       <AnimatePresence mode="wait">
         <motion.div
           key={active.id}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -12 }}
-          transition={{ duration: 0.3 }}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.35 }}
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
           dragElastic={0.2}
@@ -273,55 +326,57 @@ export function WhatWeDo() {
             if (swipe < -swipeConfidenceThreshold) handleNext();
             else if (swipe > swipeConfidenceThreshold) handlePrev();
           }}
-          className="rounded-2xl border border-border-subtle bg-bg-secondary/60 backdrop-blur-sm overflow-hidden"
+          className="flex flex-col lg:grid lg:grid-cols-2 gap-6 lg:gap-10 items-stretch"
         >
-          {/* Content */}
-          <div className="p-6 sm:p-8">
-            <p className="text-xs font-bold uppercase tracking-wider text-brand-teal mb-2">
+          {/* Circuit Panel */}
+          <div className="order-2 lg:order-none cursor-grab active:cursor-grabbing">
+            <CircuitPanel visual={active.id} icon={active.icon} />
+          </div>
+
+          {/* Text side */}
+          <div className="order-1 lg:order-none flex flex-col justify-center gap-5">
+            <div
+              className="inline-flex items-center gap-2 w-fit px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-brand-teal border border-brand-teal/25 bg-brand-teal/5"
+            >
+              <active.icon className="w-3.5 h-3.5" />
               {active.title}
-            </p>
-            <h3 className="text-2xl sm:text-3xl font-display font-bold text-text-primary leading-tight mb-4">
+            </div>
+
+            <h3 className="text-2xl md:text-3xl font-display font-bold text-text-primary leading-tight">
               {active.tagline}
             </h3>
-            <p className="text-base text-text-secondary leading-relaxed max-w-2xl mb-6">
+
+            <p className="text-base text-text-secondary leading-relaxed">
               {active.description}
             </p>
 
-            <div className="flex flex-col lg:flex-row lg:items-end gap-6 justify-between">
-              {/* Stats */}
-              <div className="flex gap-3 flex-wrap">
-                {active.stats.map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="px-5 py-3 rounded-xl border border-border-subtle bg-bg-surface/50 text-center min-w-[100px]"
-                  >
-                    <p className="text-base font-bold font-display text-brand-teal">{stat.value}</p>
-                    <p className="text-xs text-text-muted mt-0.5">{stat.label}</p>
-                  </div>
-                ))}
-              </div>
-
-              {/* Tags + CTA */}
-              <div className="flex flex-col items-start lg:items-end gap-3">
-                <div className="flex flex-wrap gap-2">
-                  {active.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-2.5 py-1 rounded-md text-xs font-mono text-text-secondary border border-border-subtle bg-bg-surface/30"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-3">
+              {active.stats.map((stat) => (
+                <div key={stat.label} className="p-3 rounded-xl border border-border-subtle bg-bg-surface/50 text-center">
+                  <p className="text-lg font-bold font-display text-brand-teal">{stat.value}</p>
+                  <p className="text-xs text-text-muted mt-0.5">{stat.label}</p>
                 </div>
-                <Link
-                  href={active.href}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold text-brand-teal bg-brand-teal/10 border border-brand-teal/20 transition-all hover:-translate-y-0.5 hover:bg-brand-teal/15"
-                >
-                  Explore {active.title}
-                  <ArrowUpRight className="w-4 h-4" />
-                </Link>
-              </div>
+              ))}
             </div>
+
+            {/* Tags */}
+            <div className="flex flex-wrap gap-2">
+              {active.tags.map((tag) => (
+                <span key={tag} className="px-2.5 py-1 rounded-md text-xs font-mono text-text-secondary border border-border-subtle bg-bg-surface/30">
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <Link
+              href={active.href}
+              className="inline-flex items-center gap-2 w-fit px-5 py-2.5 rounded-lg text-sm font-bold text-brand-teal bg-brand-teal/10 border border-brand-teal/20 transition-all hover:-translate-y-0.5 hover:bg-brand-teal/15"
+            >
+              Explore {active.title}
+              <ArrowUpRight className="w-4 h-4" />
+            </Link>
           </div>
         </motion.div>
       </AnimatePresence>
