@@ -256,7 +256,7 @@ function SeminarsBento() {
           </div>
         </div>
       </BentoCell>
-      <VisualPanel icon={Mic} className="lg:col-span-6 lg:h-48 min-h-[160px]" />
+      <VisualPanel icon={Mic} className="lg:col-span-6 lg:h-48 min-h-[160px] order-first lg:order-none" />
     </div>
   );
 }
