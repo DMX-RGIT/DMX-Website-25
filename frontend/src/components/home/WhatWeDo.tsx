@@ -35,22 +35,44 @@ function AbstractGraphic({ id }: { id: string }) {
     );
   }
   if (id === "projects") {
-    // Abstract cascading code blocks representing repos
+    // Abstract typing/compiling code blocks representing repos
     return (
-      <div className="absolute inset-0 flex flex-col justify-center gap-4 opacity-[0.08] p-8 pointer-events-none overflow-hidden">
-        {[...Array(6)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="flex gap-3"
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: i * 0.1 }}
-          >
-            <div className="h-3 rounded-full" style={{ backgroundColor: ACCENT, width: `${20 + (i * 17) % 40}%` }} />
-            <div className="h-3 rounded-full" style={{ backgroundColor: ACCENT, width: `${10 + (i * 23) % 30}%` }} />
-            {i % 2 === 0 && <div className="h-3 rounded-full" style={{ backgroundColor: ACCENT, width: "15%" }} />}
-          </motion.div>
-        ))}
+      <div className="absolute inset-0 flex flex-col justify-center gap-4 opacity-[0.12] p-8 pointer-events-none overflow-hidden">
+        {[...Array(6)].map((_, i) => {
+          const w1 = 20 + (i * 17) % 40;
+          const w2 = 10 + (i * 23) % 30;
+          const hasW3 = i % 2 === 0;
+          const w3 = 15;
+          return (
+            <div key={i} className="flex gap-3 items-center">
+              {/* Line number dot */}
+              <div className="w-1.5 h-1.5 rounded-full opacity-40 shrink-0" style={{ backgroundColor: ACCENT }} />
+              <motion.div
+                className="h-3 rounded-full"
+                style={{ backgroundColor: ACCENT }}
+                initial={{ width: 0 }}
+                animate={{ width: `${w1}%` }}
+                transition={{ duration: 2, repeat: Infinity, repeatType: "reverse", ease: "easeInOut", delay: i * 0.2 }}
+              />
+              <motion.div
+                className="h-3 rounded-full"
+                style={{ backgroundColor: ACCENT }}
+                initial={{ width: 0 }}
+                animate={{ width: `${w2}%` }}
+                transition={{ duration: 2.5, repeat: Infinity, repeatType: "reverse", ease: "easeInOut", delay: i * 0.2 + 0.5 }}
+              />
+              {hasW3 && (
+                <motion.div
+                  className="h-3 rounded-full"
+                  style={{ backgroundColor: ACCENT }}
+                  initial={{ width: 0 }}
+                  animate={{ width: `${w3}%` }}
+                  transition={{ duration: 1.8, repeat: Infinity, repeatType: "reverse", ease: "easeInOut", delay: i * 0.2 + 1 }}
+                />
+              )}
+            </div>
+          );
+        })}
       </div>
     );
   }
@@ -264,24 +286,32 @@ function ProjectsBento() {
         />
       </BentoCell>
       <VisualPanel id="projects" icon={Layers} className="lg:col-span-6 min-h-[220px] order-first lg:order-none" />
-      {repos.map((repo) => (
-        <BentoCell key={repo.name} className="lg:col-span-6 !p-6 justify-center group" glow={true}>
-          <div className="flex items-center gap-2.5 mb-2.5">
-            <GitBranch className="w-4 h-4 opacity-70" style={{ color: ACCENT }} />
-            <p className="text-sm font-bold text-text-primary font-mono group-hover:text-brand-teal transition-colors">{repo.name}</p>
-          </div>
-          <p className="text-sm text-text-secondary mb-4 leading-relaxed">{repo.desc}</p>
-          <div className="flex items-center justify-between mt-auto">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: ACCENT, color: ACCENT }} />
-              <span className="text-xs font-medium text-text-muted">{repo.lang}</span>
+      {repos.map((repo, i) => (
+        <motion.div
+          key={repo.name}
+          className="lg:col-span-6 h-full"
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: i * 0.15 }}
+        >
+          <BentoCell className="!p-6 justify-center group h-full cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl" glow={true}>
+            <div className="flex items-center gap-2.5 mb-2.5">
+              <GitBranch className="w-4 h-4 opacity-70 group-hover:scale-110 group-hover:rotate-3 transition-transform" style={{ color: ACCENT }} />
+              <p className="text-sm font-bold text-text-primary font-mono group-hover:text-brand-teal transition-colors">{repo.name}</p>
             </div>
-            <div className="flex items-center gap-1.5 text-text-muted bg-white/5 px-2 py-1 rounded-md">
-              <Star className="w-3.5 h-3.5" />
-              <span className="text-xs font-semibold">{repo.stars}</span>
+            <p className="text-sm text-text-secondary mb-4 leading-relaxed">{repo.desc}</p>
+            <div className="flex items-center justify-between mt-auto">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: ACCENT, color: ACCENT }} />
+                <span className="text-xs font-medium text-text-muted">{repo.lang}</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-text-muted bg-white/5 px-2 py-1 rounded-md transition-colors group-hover:bg-white/10 group-hover:text-text-primary">
+                <Star className="w-3.5 h-3.5" />
+                <span className="text-xs font-semibold">{repo.stars}</span>
+              </div>
             </div>
-          </div>
-        </BentoCell>
+          </BentoCell>
+        </motion.div>
       ))}
     </div>
   );
