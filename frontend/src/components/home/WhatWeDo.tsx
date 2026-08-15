@@ -1,367 +1,412 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Code2, Layers, BookOpen, Mic, ArrowUpRight } from "lucide-react";
+import {
+  Code2, Layers, BookOpen, Mic, ArrowUpRight,
+  Timer, Users, Trophy, GitBranch, Star, Globe,
+  GraduationCap, CheckCircle2, Award, Quote, MessageCircle, Radio
+} from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-const features = [
-  {
-    id: "hackathons",
-    title: "Hackathons",
-    tagline: "Build under pressure. Ship something real.",
-    description:
-      "Our flagship Hack2Infinity gathers students from across Mumbai to compete, collaborate, and build working products in a single weekend. Open to all streams — CS, IT, EXTC, and more.",
-    icon: Code2,
-    href: "/events?category=hackathon",
-    stats: [
-      { value: "Annual", label: "Flagship Event" },
-      { value: "Open", label: "To All Branches" },
-      { value: "Weekend", label: "Format" },
-    ],
-    tags: ["Hack2Infinity", "Team Event", "Open to All", "Prizes"],
-    // Binary / code characters
-    chars: "01{}()<>[];=+*/&|!?#$%^~_10",
-  },
-  {
-    id: "projects",
-    title: "Projects",
-    tagline: "From idea to deployed product.",
-    description:
-      "DMX members collaborate on real software projects — web apps, tools, dashboards, and more. Projects are open source, team-driven, and documented so anyone can contribute or learn from them.",
-    icon: Layers,
-    href: "/projects",
-    stats: [
-      { value: "Open", label: "Source" },
-      { value: "Team", label: "Driven" },
-      { value: "GitHub", label: "Published" },
-    ],
-    tags: ["Web Dev", "Data", "Tooling", "Open Source"],
-    // Git / version control characters
-    chars: "git push merge branch commit deploy ./src >>|",
-  },
-  {
-    id: "workshops",
-    title: "Workshops",
-    tagline: "Learn by doing, not just watching.",
-    description:
-      "Hands-on technical sessions where you build something by the end. Topics span web development, data science, cloud, DevOps, and more — run by seniors, alumni, and invited experts.",
-    icon: BookOpen,
-    href: "/events?category=workshop",
-    stats: [
-      { value: "Hands-on", label: "Format" },
-      { value: "Free", label: "For Members" },
-      { value: "Beginner", label: "Friendly" },
-    ],
-    tags: ["Technical", "Practical", "Beginner-Friendly", "Certificates"],
-    // Data / math symbols
-    chars: "∑∏∫∂Δλπσμ∞≈≠±√∈∉∪∩⊂⊃∀∃0123456789",
-  },
-  {
-    id: "seminars",
-    title: "Seminars",
-    tagline: "Real talk from people in the industry.",
-    description:
-      "Guest speakers — working professionals, alumni, and researchers — share their journeys, insights, and the things no textbook covers. Followed by open Q&A so you can ask what actually matters.",
-    icon: Mic,
-    href: "/events?category=seminar",
-    stats: [
-      { value: "Guest", label: "Speakers" },
-      { value: "Live Q&A", label: "Every Session" },
-      { value: "Alumni", label: "Network" },
-    ],
-    tags: ["Industry", "Career", "Alumni", "Open Q&A"],
-    // Katakana-inspired + data
-    chars: "ァイウエオカキクケコサシスセソタチツテトナニヌネノ01",
-  },
-];
-
-/* ─── Matrix Rain Canvas ─── */
-function MatrixRain({ chars, activeId }: { chars: string; activeId: string }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animFrameRef = useRef<number>(0);
-  const dropsRef = useRef<number[]>([]);
-  const charsRef = useRef(chars);
-
-  // Update chars without restarting animation
-  useEffect(() => {
-    charsRef.current = chars;
-  }, [chars]);
-
-  const draw = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const w = canvas.width;
-    const h = canvas.height;
-    const fontSize = 14;
-    const columns = Math.floor(w / fontSize);
-
-    // Initialize drops if needed
-    if (dropsRef.current.length !== columns) {
-      dropsRef.current = Array.from({ length: columns }, () =>
-        Math.random() * -100
-      );
-    }
-
-    // Fade effect — semi-transparent black overlay
-    ctx.fillStyle = "rgba(10, 15, 28, 0.06)";
-    ctx.fillRect(0, 0, w, h);
-
-    ctx.font = `${fontSize}px monospace`;
-
-    const currentChars = charsRef.current;
-
-    for (let i = 0; i < columns; i++) {
-      const charIndex = Math.floor(Math.random() * currentChars.length);
-      const char = currentChars[charIndex];
-      const x = i * fontSize;
-      const y = dropsRef.current[i] * fontSize;
-
-      // Brighter at the head, fading trail
-      const headBrightness = 0.9;
-      const normalBrightness = 0.25 + Math.random() * 0.15;
-      const isHead = Math.random() > 0.97;
-
-      if (isHead) {
-        ctx.fillStyle = `rgba(52, 217, 166, ${headBrightness})`;
-        ctx.shadowColor = "rgba(52, 217, 166, 0.8)";
-        ctx.shadowBlur = 8;
-      } else {
-        ctx.fillStyle = `rgba(52, 217, 166, ${normalBrightness})`;
-        ctx.shadowBlur = 0;
-      }
-
-      ctx.fillText(char, x, y);
-      ctx.shadowBlur = 0;
-
-      // Reset drop when it reaches bottom
-      if (y > h && Math.random() > 0.975) {
-        dropsRef.current[i] = 0;
-      }
-
-      dropsRef.current[i] += 0.5 + Math.random() * 0.5;
-    }
-
-    animFrameRef.current = requestAnimationFrame(draw);
-  }, []);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const resize = () => {
-      const parent = canvas.parentElement;
-      if (!parent) return;
-      const dpr = Math.min(window.devicePixelRatio, 2);
-      canvas.width = parent.offsetWidth * dpr;
-      canvas.height = parent.offsetHeight * dpr;
-      canvas.style.width = parent.offsetWidth + "px";
-      canvas.style.height = parent.offsetHeight + "px";
-      const ctx = canvas.getContext("2d");
-      if (ctx) ctx.scale(dpr, dpr);
-      // Reset drops on resize
-      dropsRef.current = [];
-    };
-
-    resize();
-    window.addEventListener("resize", resize);
-    animFrameRef.current = requestAnimationFrame(draw);
-
-    return () => {
-      window.removeEventListener("resize", resize);
-      cancelAnimationFrame(animFrameRef.current);
-    };
-  }, [draw]);
-
-  // Flash effect on tab change
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    // Bright teal flash
-    ctx.fillStyle = "rgba(52, 217, 166, 0.08)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Reset some drops to create a "surge" effect
-    for (let i = 0; i < dropsRef.current.length; i++) {
-      if (Math.random() > 0.6) dropsRef.current[i] = Math.random() * -20;
-    }
-  }, [activeId]);
-
+/* ─── Hackathon Card — Event / Competition style ─── */
+function HackathonCard() {
   return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full"
-      style={{ opacity: 1 }}
-    />
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 items-center">
+      {/* Left: hero text */}
+      <div className="space-y-5">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-teal/10 border border-brand-teal/20 text-brand-teal text-xs font-bold uppercase tracking-wider">
+          <Code2 className="w-3.5 h-3.5" />
+          Flagship Event
+        </div>
+
+        <h3 className="text-3xl sm:text-4xl font-display font-bold text-text-primary leading-[1.15]">
+          Build under pressure.<br />
+          <span className="text-brand-teal">Ship something real.</span>
+        </h3>
+
+        <p className="text-base text-text-secondary leading-relaxed max-w-xl">
+          Our flagship Hack2Infinity gathers students from across Mumbai to compete, collaborate,
+          and build working products in a single weekend. Open to all streams — CS, IT, EXTC, and more.
+        </p>
+
+        {/* Countdown-style stat blocks */}
+        <div className="flex gap-3">
+          {[
+            { icon: Timer, value: "48h", label: "Non-stop" },
+            { icon: Users, value: "200+", label: "Hackers" },
+            { icon: Trophy, value: "₹50K+", label: "Prizes" },
+          ].map((s) => (
+            <div key={s.label} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-bg-surface/60 border border-border-subtle">
+              <s.icon className="w-5 h-5 text-brand-teal shrink-0" />
+              <div>
+                <p className="text-lg font-bold font-display text-text-primary leading-none">{s.value}</p>
+                <p className="text-[11px] text-text-muted mt-0.5">{s.label}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <Link
+          href="/events?category=hackathon"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold text-bg-primary bg-brand-teal transition-all hover:-translate-y-0.5 hover:shadow-lg"
+        >
+          View Hackathons <ArrowUpRight className="w-4 h-4" />
+        </Link>
+      </div>
+
+      {/* Right: event poster style */}
+      <div className="hidden lg:flex flex-col items-center gap-3 p-6 rounded-2xl bg-bg-surface/40 border border-border-subtle min-w-[200px]">
+        <div className="w-20 h-20 rounded-2xl bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center">
+          <Code2 className="w-10 h-10 text-brand-teal" />
+        </div>
+        <p className="text-lg font-display font-bold text-text-primary">Hack2Infinity</p>
+        <div className="w-full h-px bg-border-subtle" />
+        <div className="flex flex-wrap justify-center gap-1.5">
+          {["Team Event", "Open to All", "Weekend", "Prizes"].map((t) => (
+            <span key={t} className="px-2 py-0.5 text-[10px] font-mono rounded bg-brand-teal/8 text-brand-teal/70 border border-brand-teal/10">
+              {t}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
+
+/* ─── Projects Card — GitHub repo style ─── */
+function ProjectsCard() {
+  const repos = [
+    { name: "dmx-website", desc: "Club website — Next.js, FastAPI", lang: "TypeScript", stars: 12 },
+    { name: "ai-workshop-kit", desc: "Starter templates for ML workshops", lang: "Python", stars: 8 },
+    { name: "event-dashboard", desc: "Internal analytics & event tracking", lang: "JavaScript", stars: 5 },
+  ];
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-teal/10 border border-brand-teal/20 text-brand-teal text-xs font-bold uppercase tracking-wider">
+            <Layers className="w-3.5 h-3.5" />
+            Open Source
+          </div>
+          <h3 className="text-3xl sm:text-4xl font-display font-bold text-text-primary leading-[1.15]">
+            From idea to<br /><span className="text-brand-teal">deployed product.</span>
+          </h3>
+          <p className="text-base text-text-secondary leading-relaxed max-w-xl">
+            DMX members collaborate on real software projects — web apps, tools, dashboards, and more.
+            Open source, team-driven, and documented.
+          </p>
+        </div>
+        <Link
+          href="/projects"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold text-bg-primary bg-brand-teal transition-all hover:-translate-y-0.5 hover:shadow-lg shrink-0"
+        >
+          All Projects <ArrowUpRight className="w-4 h-4" />
+        </Link>
+      </div>
+
+      {/* Repo cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {repos.map((repo) => (
+          <div key={repo.name} className="p-4 rounded-xl bg-bg-surface/50 border border-border-subtle hover:border-brand-teal/25 transition-colors group">
+            <div className="flex items-center gap-2 mb-2">
+              <GitBranch className="w-4 h-4 text-brand-teal" />
+              <p className="text-sm font-bold text-text-primary font-mono group-hover:text-brand-teal transition-colors">{repo.name}</p>
+            </div>
+            <p className="text-xs text-text-secondary mb-3 leading-relaxed">{repo.desc}</p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-brand-teal" />
+                <span className="text-[11px] text-text-muted">{repo.lang}</span>
+              </div>
+              <div className="flex items-center gap-1 text-text-muted">
+                <Star className="w-3 h-3" />
+                <span className="text-[11px]">{repo.stars}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex items-center gap-4 pt-1">
+        {[
+          { icon: Globe, label: "Published on GitHub" },
+          { icon: Users, label: "Team-driven" },
+          { icon: GitBranch, label: "Open to contributions" },
+        ].map((item) => (
+          <div key={item.label} className="flex items-center gap-2 text-xs text-text-muted">
+            <item.icon className="w-3.5 h-3.5 text-brand-teal/60" />
+            {item.label}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Workshops Card — Curriculum / learning style ─── */
+function WorkshopsCard() {
+  const topics = [
+    { title: "Web Development", level: "Beginner → Advanced", done: true },
+    { title: "Data Science & ML", level: "Intermediate", done: true },
+    { title: "Cloud & DevOps", level: "Beginner", done: false },
+    { title: "Open Source Contributions", level: "All Levels", done: false },
+  ];
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Left: text */}
+      <div className="space-y-5">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-teal/10 border border-brand-teal/20 text-brand-teal text-xs font-bold uppercase tracking-wider">
+          <BookOpen className="w-3.5 h-3.5" />
+          Hands-on Learning
+        </div>
+
+        <h3 className="text-3xl sm:text-4xl font-display font-bold text-text-primary leading-[1.15]">
+          Learn by doing,<br /><span className="text-brand-teal">not just watching.</span>
+        </h3>
+
+        <p className="text-base text-text-secondary leading-relaxed">
+          Hands-on technical sessions where you build something by the end.
+          Run by seniors, alumni, and invited experts.
+        </p>
+
+        <div className="flex gap-4">
+          {[
+            { icon: GraduationCap, value: "Free", sub: "For all members" },
+            { icon: Award, value: "Certs", sub: "On completion" },
+          ].map((s) => (
+            <div key={s.sub} className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-brand-teal/10 flex items-center justify-center">
+                <s.icon className="w-5 h-5 text-brand-teal" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-text-primary">{s.value}</p>
+                <p className="text-[11px] text-text-muted">{s.sub}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <Link
+          href="/events?category=workshop"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold text-bg-primary bg-brand-teal transition-all hover:-translate-y-0.5 hover:shadow-lg"
+        >
+          View Workshops <ArrowUpRight className="w-4 h-4" />
+        </Link>
+      </div>
+
+      {/* Right: topic checklist */}
+      <div className="space-y-2">
+        <p className="text-xs font-bold uppercase tracking-wider text-text-muted mb-3">Workshop Topics</p>
+        {topics.map((topic, i) => (
+          <div
+            key={topic.title}
+            className={cn(
+              "flex items-center gap-3 p-3.5 rounded-xl border transition-colors",
+              topic.done
+                ? "bg-brand-teal/5 border-brand-teal/15"
+                : "bg-bg-surface/30 border-border-subtle"
+            )}
+          >
+            <CheckCircle2
+              className={cn(
+                "w-5 h-5 shrink-0",
+                topic.done ? "text-brand-teal" : "text-border-default"
+              )}
+            />
+            <div className="flex-1 min-w-0">
+              <p className={cn(
+                "text-sm font-semibold",
+                topic.done ? "text-text-primary" : "text-text-secondary"
+              )}>
+                {topic.title}
+              </p>
+              <p className="text-[11px] text-text-muted">{topic.level}</p>
+            </div>
+            <span className={cn(
+              "text-[10px] font-mono px-2 py-0.5 rounded",
+              topic.done
+                ? "bg-brand-teal/10 text-brand-teal"
+                : "bg-bg-surface text-text-muted"
+            )}>
+              {topic.done ? "Completed" : "Upcoming"}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Seminars Card — Speaker / talk style ─── */
+function SeminarsCard() {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-teal/10 border border-brand-teal/20 text-brand-teal text-xs font-bold uppercase tracking-wider">
+            <Mic className="w-3.5 h-3.5" />
+            Industry Talks
+          </div>
+          <h3 className="text-3xl sm:text-4xl font-display font-bold text-text-primary leading-[1.15]">
+            Real talk from people<br /><span className="text-brand-teal">in the industry.</span>
+          </h3>
+        </div>
+        <Link
+          href="/events?category=seminar"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold text-bg-primary bg-brand-teal transition-all hover:-translate-y-0.5 hover:shadow-lg shrink-0"
+        >
+          View Seminars <ArrowUpRight className="w-4 h-4" />
+        </Link>
+      </div>
+
+      {/* Featured quote / testimonial style */}
+      <div className="relative p-6 sm:p-8 rounded-2xl bg-bg-surface/40 border border-border-subtle">
+        <Quote className="w-8 h-8 text-brand-teal/20 absolute top-5 left-6" />
+        <div className="relative pl-4 sm:pl-6">
+          <p className="text-lg sm:text-xl text-text-primary font-display italic leading-relaxed mb-4">
+            &ldquo;The things no textbook covers — career pivots, failed startups, the reality of tech interviews.
+            Followed by open Q&A so you can ask what actually matters.&rdquo;
+          </p>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center">
+              <Mic className="w-4 h-4 text-brand-teal" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-text-primary">Guest Speakers</p>
+              <p className="text-xs text-text-muted">Working professionals, alumni & researchers</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Feature strip */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { icon: Radio, label: "Live Sessions" },
+          { icon: MessageCircle, label: "Open Q&A" },
+          { icon: Users, label: "Alumni Network" },
+          { icon: Award, label: "Industry Insights" },
+        ].map((item) => (
+          <div key={item.label} className="flex items-center gap-2.5 p-3 rounded-xl bg-bg-surface/30 border border-border-subtle">
+            <item.icon className="w-4 h-4 text-brand-teal shrink-0" />
+            <span className="text-xs font-semibold text-text-secondary">{item.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Tab content mapping ─── */
+const tabContent: Record<string, React.FC> = {
+  hackathons: HackathonCard,
+  projects: ProjectsCard,
+  workshops: WorkshopsCard,
+  seminars: SeminarsCard,
+};
+
+const tabMeta = [
+  { id: "hackathons", title: "Hackathons", icon: Code2 },
+  { id: "projects", title: "Projects", icon: Layers },
+  { id: "workshops", title: "Workshops", icon: BookOpen },
+  { id: "seminars", title: "Seminars", icon: Mic },
+];
 
 /* ─── Main Component ─── */
 export function WhatWeDo() {
   const [activeTab, setActiveTab] = useState(0);
-  const active = features[activeTab];
+  const active = tabMeta[activeTab];
+  const ContentComponent = tabContent[active.id];
 
-  const handleNext = () => setActiveTab((prev) => (prev + 1) % features.length);
-  const handlePrev = () => setActiveTab((prev) => (prev - 1 + features.length) % features.length);
+  const handleNext = () => setActiveTab((prev) => (prev + 1) % tabMeta.length);
+  const handlePrev = () => setActiveTab((prev) => (prev - 1 + tabMeta.length) % tabMeta.length);
   const swipeConfidenceThreshold = 10000;
   const swipePower = (offset: number, velocity: number) => Math.abs(offset) * velocity;
 
   return (
-    <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      {/* Matrix Rain Background — spans the entire section */}
-      <div className="absolute inset-0">
-        <MatrixRain chars={active.chars} activeId={active.id} />
-        {/* Gradient overlays for readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-bg-primary via-transparent to-bg-primary" />
-        <div className="absolute inset-0 bg-bg-primary/40" />
-      </div>
+    <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+      {/* Header */}
+      <motion.div
+        className="mb-16 text-center"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-teal mb-4">Our Activities</p>
+        <h2 className="text-3xl md:text-5xl font-display font-bold mb-6">What We Do</h2>
+        <p className="text-lg text-text-secondary max-w-2xl mx-auto">
+          We bridge the gap between theoretical knowledge and practical implementation
+          in the world of Artificial Intelligence.
+        </p>
+      </motion.div>
 
-      <div className="relative z-10 max-w-6xl mx-auto">
-        {/* Header */}
-        <motion.div
-          className="mb-16 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-teal mb-4">
-            Our Activities
-          </p>
-          <h2 className="text-3xl md:text-5xl font-display font-bold mb-6">What We Do</h2>
-          <p className="text-lg text-text-secondary max-w-2xl mx-auto">
-            We bridge the gap between theoretical knowledge and practical implementation
-            in the world of Artificial Intelligence.
-          </p>
-        </motion.div>
-
-        {/* Tab Pills */}
-        <motion.div
-          className="flex flex-wrap justify-center gap-2 mb-12"
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          {features.map((f, i) => {
-            const Icon = f.icon;
-            return (
-              <button
-                key={f.id}
-                onClick={() => setActiveTab(i)}
-                className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 border backdrop-blur-sm",
-                  activeTab === i
-                    ? "text-bg-primary border-brand-teal bg-brand-teal shadow-[0_0_24px_rgba(52,217,166,0.3)]"
-                    : "text-text-secondary border-border-subtle hover:border-brand-teal/40 hover:text-text-primary bg-bg-primary/60"
-                )}
-              >
-                <Icon className="w-3.5 h-3.5" />
-                {f.title}
-              </button>
-            );
-          })}
-        </motion.div>
-
-        {/* Content Panel */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={active.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -16 }}
-            transition={{ duration: 0.35 }}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.2}
-            onDragEnd={(e, { offset, velocity }) => {
-              const swipe = swipePower(offset.x, velocity.x);
-              if (swipe < -swipeConfidenceThreshold) handleNext();
-              else if (swipe > swipeConfidenceThreshold) handlePrev();
-            }}
-            className="rounded-2xl border border-brand-teal/15 bg-bg-primary/70 backdrop-blur-xl overflow-hidden shadow-[0_0_60px_rgba(52,217,166,0.05)]"
-          >
-            <div className="p-6 sm:p-8 lg:p-10">
-              {/* Icon + Title row */}
-              <div className="flex items-start gap-5 mb-6">
-                <div className="shrink-0 w-14 h-14 rounded-xl flex items-center justify-center bg-brand-teal/10 border border-brand-teal/25 shadow-[0_0_20px_rgba(52,217,166,0.1)]">
-                  <active.icon className="w-7 h-7 text-brand-teal" />
-                </div>
-                <div>
-                  <p className="text-xs font-mono font-bold uppercase tracking-wider text-brand-teal mb-1.5">
-                    {`> ${active.id}`}
-                  </p>
-                  <h3 className="text-2xl sm:text-3xl font-display font-bold text-text-primary leading-tight">
-                    {active.tagline}
-                  </h3>
-                </div>
-              </div>
-
-              <p className="text-base text-text-secondary leading-relaxed max-w-3xl mb-8">
-                {active.description}
-              </p>
-
-              <div className="flex flex-col lg:flex-row lg:items-end gap-6 justify-between">
-                {/* Stats */}
-                <div className="flex gap-3 flex-wrap">
-                  {active.stats.map((stat) => (
-                    <div
-                      key={stat.label}
-                      className="px-5 py-3 rounded-xl border border-brand-teal/10 bg-brand-teal/5 text-center min-w-[100px]"
-                    >
-                      <p className="text-base font-bold font-display text-brand-teal">{stat.value}</p>
-                      <p className="text-xs text-text-muted mt-0.5">{stat.label}</p>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Tags + CTA */}
-                <div className="flex flex-col items-start lg:items-end gap-3">
-                  <div className="flex flex-wrap gap-2">
-                    {active.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2.5 py-1 rounded-md text-xs font-mono text-brand-teal/70 border border-brand-teal/15 bg-brand-teal/5"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <Link
-                    href={active.href}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold text-bg-primary bg-brand-teal transition-all hover:-translate-y-0.5 hover:shadow-[0_0_20px_rgba(52,217,166,0.3)]"
-                  >
-                    Explore {active.title}
-                    <ArrowUpRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Progress dots */}
-        <div className="flex justify-center gap-2 mt-10">
-          {features.map((f, i) => (
+      {/* Tab Pills */}
+      <motion.div
+        className="flex flex-wrap justify-center gap-2 mb-12"
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
+        {tabMeta.map((f, i) => {
+          const Icon = f.icon;
+          return (
             <button
               key={f.id}
               onClick={() => setActiveTab(i)}
               className={cn(
-                "transition-all duration-300 rounded-full h-1.5",
+                "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 border",
                 activeTab === i
-                  ? "w-6 bg-brand-teal shadow-[0_0_8px_rgba(52,217,166,0.5)]"
-                  : "w-1.5 bg-border-default"
+                  ? "text-bg-primary border-transparent bg-brand-teal"
+                  : "text-text-secondary border-border-subtle hover:border-border-default hover:text-text-primary bg-transparent"
               )}
-            />
-          ))}
-        </div>
+            >
+              <Icon className="w-3.5 h-3.5" />
+              {f.title}
+            </button>
+          );
+        })}
+      </motion.div>
+
+      {/* Content */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={active.id}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -16 }}
+          transition={{ duration: 0.3 }}
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.2}
+          onDragEnd={(e, { offset, velocity }) => {
+            const swipe = swipePower(offset.x, velocity.x);
+            if (swipe < -swipeConfidenceThreshold) handleNext();
+            else if (swipe > swipeConfidenceThreshold) handlePrev();
+          }}
+          className="rounded-2xl border border-border-subtle bg-bg-secondary/60 p-6 sm:p-8 lg:p-10"
+        >
+          <ContentComponent />
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Progress dots */}
+      <div className="flex justify-center gap-2 mt-10">
+        {tabMeta.map((f, i) => (
+          <button
+            key={f.id}
+            onClick={() => setActiveTab(i)}
+            className={cn(
+              "transition-all duration-300 rounded-full h-1.5",
+              activeTab === i ? "w-6 bg-brand-teal" : "w-1.5 bg-border-default"
+            )}
+          />
+        ))}
       </div>
     </section>
   );
