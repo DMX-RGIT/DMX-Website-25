@@ -14,7 +14,7 @@ const features = [
     description: "Our flagship Hack2Infinity gathers students from across Mumbai to compete, collaborate, and build working products in a single weekend. Open to all streams — CS, IT, EXTC, and more.",
     icon: Code2,
     href: "/events?category=hackathon",
-    accent: "var(--brand-teal)",
+    accent: "#2DD4BF",
     stats: [
       { value: "Annual", label: "Flagship Event" },
       { value: "Open", label: "To All Branches" },
@@ -30,7 +30,7 @@ const features = [
     description: "DMX members collaborate on real software projects — web apps, tools, dashboards, and more. Projects are open source, team-driven, and documented so anyone can contribute or learn from them.",
     icon: Layers,
     href: "/projects",
-    accent: "var(--brand-teal)",
+    accent: "#14B8A6",
     stats: [
       { value: "Open", label: "Source" },
       { value: "Team", label: "Driven" },
@@ -46,7 +46,7 @@ const features = [
     description: "Hands-on technical sessions where you build something by the end. Topics span web development, data science, cloud, DevOps, and more — run by seniors, alumni, and invited experts.",
     icon: BookOpen,
     href: "/events?category=workshop",
-    accent: "var(--brand-teal)",
+    accent: "#0D9488",
     stats: [
       { value: "Hands-on", label: "Format" },
       { value: "Free", label: "For Members" },
@@ -62,7 +62,7 @@ const features = [
     description: "Guest speakers — working professionals, alumni, and researchers — share their journeys, insights, and the things no textbook covers. Followed by open Q&A so you can ask what actually matters.",
     icon: Mic,
     href: "/events?category=seminar",
-    accent: "var(--brand-teal)",
+    accent: "#0F766E",
     stats: [
       { value: "Guest", label: "Speakers" },
       { value: "Live Q&A", label: "Every Session" },
