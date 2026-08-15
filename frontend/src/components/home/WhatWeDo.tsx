@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Code2, Layers, BookOpen, Mic, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
@@ -21,6 +21,8 @@ const features = [
       { value: "Weekend", label: "Format" },
     ],
     tags: ["Hack2Infinity", "Team Event", "Open to All", "Prizes"],
+    // Binary / code characters
+    chars: "01{}()<>[];=+*/&|!?#$%^~_10",
   },
   {
     id: "projects",
@@ -36,6 +38,8 @@ const features = [
       { value: "GitHub", label: "Published" },
     ],
     tags: ["Web Dev", "Data", "Tooling", "Open Source"],
+    // Git / version control characters
+    chars: "git push merge branch commit deploy ./src >>|",
   },
   {
     id: "workshops",
@@ -51,6 +55,8 @@ const features = [
       { value: "Beginner", label: "Friendly" },
     ],
     tags: ["Technical", "Practical", "Beginner-Friendly", "Certificates"],
+    // Data / math symbols
+    chars: "∑∏∫∂Δλπσμ∞≈≠±√∈∉∪∩⊂⊃∀∃0123456789",
   },
   {
     id: "seminars",
@@ -66,192 +72,134 @@ const features = [
       { value: "Alumni", label: "Network" },
     ],
     tags: ["Industry", "Career", "Alumni", "Open Q&A"],
+    // Katakana-inspired + data
+    chars: "ァイウエオカキクケコサシスセソタチツテトナニヌネノ01",
   },
 ];
 
-/* ─── Dense Circuit Board Panel ─── */
+/* ─── Matrix Rain Canvas ─── */
+function MatrixRain({ chars, activeId }: { chars: string; activeId: string }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animFrameRef = useRef<number>(0);
+  const dropsRef = useRef<number[]>([]);
+  const charsRef = useRef(chars);
 
-// Each tab has a unique set of PCB trace paths so the visual clearly changes
-const circuitPaths: Record<string, string[]> = {
-  hackathons: [
-    // Dense radial layout — traces fanning out from center like a star
-    "M140,140 L140,20", "M140,140 L260,20", "M140,140 L280,140", "M140,140 L260,260",
-    "M140,140 L140,280", "M140,140 L20,260", "M140,140 L0,140", "M140,140 L20,20",
-    // Cross-connections
-    "M60,60 L220,60", "M60,60 L60,220", "M220,60 L220,220", "M60,220 L220,220",
-    // Diagonal branches
-    "M80,40 L80,100", "M200,40 L200,100", "M40,80 L100,80", "M180,80 L240,80",
-    "M80,180 L80,240", "M200,180 L200,240", "M40,200 L100,200", "M180,200 L240,200",
-  ],
-  projects: [
-    // Layered horizontal traces — like a printed circuit board
-    "M0,50 L80,50 L100,70 L180,70 L200,50 L280,50",
-    "M0,90 L60,90 L80,110 L200,110 L220,90 L280,90",
-    "M0,140 L40,140 L60,120 L220,120 L240,140 L280,140",
-    "M0,180 L60,180 L80,160 L200,160 L220,180 L280,180",
-    "M0,220 L80,220 L100,200 L180,200 L200,220 L280,220",
-    // Vertical connections between layers
-    "M80,50 L80,90", "M200,50 L200,90", "M60,90 L60,140", "M220,90 L220,140",
-    "M80,160 L80,220", "M200,160 L200,220", "M140,70 L140,120", "M140,160 L140,200",
-    // Short stubs
-    "M120,50 L120,30", "M160,50 L160,30", "M120,220 L120,250", "M160,220 L160,250",
-  ],
-  workshops: [
-    // Tree/branching structure — knowledge spreading
-    "M140,260 L140,180", "M140,180 L80,130", "M140,180 L200,130",
-    "M80,130 L50,80", "M80,130 L110,80",
-    "M200,130 L170,80", "M200,130 L230,80",
-    "M50,80 L30,40", "M50,80 L70,40", "M110,80 L90,40", "M110,80 L130,40",
-    "M170,80 L150,40", "M170,80 L190,40", "M230,80 L210,40", "M230,80 L250,40",
-    // Horizontal cross-bars
-    "M30,40 L250,40", "M50,80 L230,80", "M80,130 L200,130",
-    // Root extensions
-    "M140,260 L100,280", "M140,260 L180,280",
-  ],
-  seminars: [
-    // Concentric rings with spokes — like a broadcast signal
-    "M140,140 L140,40", "M140,140 L230,70", "M140,140 L260,140",
-    "M140,140 L230,210", "M140,140 L140,240", "M140,140 L50,210",
-    "M140,140 L20,140", "M140,140 L50,70",
-    // Inner ring connections (octagon)
-    "M140,80 L190,95 L210,140 L190,185 L140,200 L90,185 L70,140 L90,95 Z",
-    // Outer ring connections
-    "M140,50 L215,75 L240,140 L215,205 L140,230 L65,205 L40,140 L65,75 Z",
-    // Radial ticks
-    "M140,40 L140,25", "M230,70 L242,58", "M260,140 L275,140",
-    "M230,210 L242,222", "M140,240 L140,258", "M50,210 L38,222",
-    "M20,140 L5,140", "M50,70 L38,58",
-  ],
-};
+  // Update chars without restarting animation
+  useEffect(() => {
+    charsRef.current = chars;
+  }, [chars]);
 
-// Solder-point positions per tab
-const solderPoints: Record<string, [number, number][]> = {
-  hackathons: [
-    [60,60],[220,60],[60,220],[220,220],[140,20],[280,140],[140,280],[0,140],
-    [80,40],[200,40],[80,240],[200,240],[40,80],[240,80],[40,200],[240,200],
-  ],
-  projects: [
-    [80,50],[200,50],[60,90],[220,90],[40,140],[240,140],[60,180],[220,180],
-    [80,220],[200,220],[140,70],[140,120],[140,160],[140,200],
-    [120,30],[160,30],[120,250],[160,250],
-  ],
-  workshops: [
-    [140,180],[80,130],[200,130],[50,80],[110,80],[170,80],[230,80],
-    [30,40],[70,40],[90,40],[130,40],[150,40],[190,40],[210,40],[250,40],
-    [140,260],[100,280],[180,280],
-  ],
-  seminars: [
-    [140,80],[190,95],[210,140],[190,185],[140,200],[90,185],[70,140],[90,95],
-    [140,50],[215,75],[240,140],[215,205],[140,230],[65,205],[40,140],[65,75],
-    [140,25],[275,140],[140,258],[5,140],
-  ],
-};
+  const draw = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-function CircuitPanel({ visual, icon: Icon }: { visual: string; icon: any }) {
-  const paths = circuitPaths[visual] || circuitPaths.hackathons;
-  const points = solderPoints[visual] || solderPoints.hackathons;
+    const w = canvas.width;
+    const h = canvas.height;
+    const fontSize = 14;
+    const columns = Math.floor(w / fontSize);
+
+    // Initialize drops if needed
+    if (dropsRef.current.length !== columns) {
+      dropsRef.current = Array.from({ length: columns }, () =>
+        Math.random() * -100
+      );
+    }
+
+    // Fade effect — semi-transparent black overlay
+    ctx.fillStyle = "rgba(10, 15, 28, 0.06)";
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.font = `${fontSize}px monospace`;
+
+    const currentChars = charsRef.current;
+
+    for (let i = 0; i < columns; i++) {
+      const charIndex = Math.floor(Math.random() * currentChars.length);
+      const char = currentChars[charIndex];
+      const x = i * fontSize;
+      const y = dropsRef.current[i] * fontSize;
+
+      // Brighter at the head, fading trail
+      const headBrightness = 0.9;
+      const normalBrightness = 0.25 + Math.random() * 0.15;
+      const isHead = Math.random() > 0.97;
+
+      if (isHead) {
+        ctx.fillStyle = `rgba(52, 217, 166, ${headBrightness})`;
+        ctx.shadowColor = "rgba(52, 217, 166, 0.8)";
+        ctx.shadowBlur = 8;
+      } else {
+        ctx.fillStyle = `rgba(52, 217, 166, ${normalBrightness})`;
+        ctx.shadowBlur = 0;
+      }
+
+      ctx.fillText(char, x, y);
+      ctx.shadowBlur = 0;
+
+      // Reset drop when it reaches bottom
+      if (y > h && Math.random() > 0.975) {
+        dropsRef.current[i] = 0;
+      }
+
+      dropsRef.current[i] += 0.5 + Math.random() * 0.5;
+    }
+
+    animFrameRef.current = requestAnimationFrame(draw);
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const resize = () => {
+      const parent = canvas.parentElement;
+      if (!parent) return;
+      const dpr = Math.min(window.devicePixelRatio, 2);
+      canvas.width = parent.offsetWidth * dpr;
+      canvas.height = parent.offsetHeight * dpr;
+      canvas.style.width = parent.offsetWidth + "px";
+      canvas.style.height = parent.offsetHeight + "px";
+      const ctx = canvas.getContext("2d");
+      if (ctx) ctx.scale(dpr, dpr);
+      // Reset drops on resize
+      dropsRef.current = [];
+    };
+
+    resize();
+    window.addEventListener("resize", resize);
+    animFrameRef.current = requestAnimationFrame(draw);
+
+    return () => {
+      window.removeEventListener("resize", resize);
+      cancelAnimationFrame(animFrameRef.current);
+    };
+  }, [draw]);
+
+  // Flash effect on tab change
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Bright teal flash
+    ctx.fillStyle = "rgba(52, 217, 166, 0.08)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Reset some drops to create a "surge" effect
+    for (let i = 0; i < dropsRef.current.length; i++) {
+      if (Math.random() > 0.6) dropsRef.current[i] = Math.random() * -20;
+    }
+  }, [activeId]);
 
   return (
-    <div className="relative w-full h-full min-h-[320px] overflow-hidden rounded-2xl bg-bg-primary border border-border-subtle">
-      {/* Background glow */}
-      <div
-        className="absolute inset-0 opacity-[0.07]"
-        style={{ background: "radial-gradient(ellipse 50% 50% at 50% 50%, var(--brand-teal), transparent)" }}
-      />
-
-      {/* Circuit SVG */}
-      <svg viewBox="0 0 280 280" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid meet">
-        {/* Traces */}
-        {paths.map((d, i) => (
-          <path
-            key={`path-${i}`}
-            d={d}
-            stroke="var(--brand-teal)"
-            strokeWidth="1.2"
-            fill="none"
-            opacity={0.12 + (i % 3) * 0.04}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        ))}
-
-        {/* Solder points */}
-        {points.map(([cx, cy], i) => (
-          <circle
-            key={`pt-${i}`}
-            cx={cx}
-            cy={cy}
-            r="2.5"
-            fill="var(--brand-teal)"
-            opacity={0.2 + (i % 3) * 0.08}
-          />
-        ))}
-
-        {/* Center chip housing */}
-        <rect
-          x="108" y="108" width="64" height="64" rx="12"
-          fill="var(--brand-teal)"
-          fillOpacity="0.06"
-          stroke="var(--brand-teal)"
-          strokeWidth="1.5"
-          opacity="0.4"
-        />
-        {/* Chip pins — left */}
-        <line x1="108" y1="124" x2="94" y2="124" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
-        <line x1="108" y1="140" x2="94" y2="140" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
-        <line x1="108" y1="156" x2="94" y2="156" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
-        {/* Chip pins — right */}
-        <line x1="172" y1="124" x2="186" y2="124" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
-        <line x1="172" y1="140" x2="186" y2="140" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
-        <line x1="172" y1="156" x2="186" y2="156" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
-        {/* Chip pins — top */}
-        <line x1="124" y1="108" x2="124" y2="94" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
-        <line x1="140" y1="108" x2="140" y2="94" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
-        <line x1="156" y1="108" x2="156" y2="94" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
-        {/* Chip pins — bottom */}
-        <line x1="124" y1="172" x2="124" y2="186" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
-        <line x1="140" y1="172" x2="140" y2="186" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
-        <line x1="156" y1="172" x2="156" y2="186" stroke="var(--brand-teal)" strokeWidth="1.5" opacity="0.3" />
-      </svg>
-
-      {/* Animated data pulses along traces */}
-      <svg viewBox="0 0 280 280" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid meet">
-        {paths.slice(0, 6).map((d, i) => (
-          <motion.circle
-            key={`pulse-${i}`}
-            r="3"
-            fill="var(--brand-teal)"
-            filter="url(#glow)"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: [0, 0.8, 0] }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              delay: i * 0.5,
-              ease: "easeInOut",
-            }}
-          >
-            <animateMotion dur={`${3 + i * 0.5}s`} repeatCount="indefinite" path={d} />
-          </motion.circle>
-        ))}
-        <defs>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-      </svg>
-
-      {/* Center icon */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-16 h-16 rounded-xl flex items-center justify-center bg-brand-teal/10 backdrop-blur-sm">
-          <Icon className="w-8 h-8 text-brand-teal" />
-        </div>
-      </div>
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full"
+      style={{ opacity: 1 }}
+    />
   );
 }
 
@@ -266,133 +214,154 @@ export function WhatWeDo() {
   const swipePower = (offset: number, velocity: number) => Math.abs(offset) * velocity;
 
   return (
-    <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-      {/* Header */}
-      <motion.div
-        className="mb-16 text-center"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-      >
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-teal mb-4">Our Activities</p>
-        <h2 className="text-3xl md:text-5xl font-display font-bold mb-6">What We Do</h2>
-        <p className="text-lg text-text-secondary max-w-2xl mx-auto">
-          We bridge the gap between theoretical knowledge and practical implementation in the world of Artificial Intelligence.
-        </p>
-      </motion.div>
+    <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      {/* Matrix Rain Background — spans the entire section */}
+      <div className="absolute inset-0">
+        <MatrixRain chars={active.chars} activeId={active.id} />
+        {/* Gradient overlays for readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-bg-primary via-transparent to-bg-primary" />
+        <div className="absolute inset-0 bg-bg-primary/40" />
+      </div>
 
-      {/* Tab Pills */}
-      <motion.div
-        className="flex flex-wrap justify-center gap-2 mb-12"
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
-        {features.map((f, i) => {
-          const Icon = f.icon;
-          return (
+      <div className="relative z-10 max-w-6xl mx-auto">
+        {/* Header */}
+        <motion.div
+          className="mb-16 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-teal mb-4">
+            Our Activities
+          </p>
+          <h2 className="text-3xl md:text-5xl font-display font-bold mb-6">What We Do</h2>
+          <p className="text-lg text-text-secondary max-w-2xl mx-auto">
+            We bridge the gap between theoretical knowledge and practical implementation
+            in the world of Artificial Intelligence.
+          </p>
+        </motion.div>
+
+        {/* Tab Pills */}
+        <motion.div
+          className="flex flex-wrap justify-center gap-2 mb-12"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          {features.map((f, i) => {
+            const Icon = f.icon;
+            return (
+              <button
+                key={f.id}
+                onClick={() => setActiveTab(i)}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 border backdrop-blur-sm",
+                  activeTab === i
+                    ? "text-bg-primary border-brand-teal bg-brand-teal shadow-[0_0_24px_rgba(52,217,166,0.3)]"
+                    : "text-text-secondary border-border-subtle hover:border-brand-teal/40 hover:text-text-primary bg-bg-primary/60"
+                )}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                {f.title}
+              </button>
+            );
+          })}
+        </motion.div>
+
+        {/* Content Panel */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={active.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.35 }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.2}
+            onDragEnd={(e, { offset, velocity }) => {
+              const swipe = swipePower(offset.x, velocity.x);
+              if (swipe < -swipeConfidenceThreshold) handleNext();
+              else if (swipe > swipeConfidenceThreshold) handlePrev();
+            }}
+            className="rounded-2xl border border-brand-teal/15 bg-bg-primary/70 backdrop-blur-xl overflow-hidden shadow-[0_0_60px_rgba(52,217,166,0.05)]"
+          >
+            <div className="p-6 sm:p-8 lg:p-10">
+              {/* Icon + Title row */}
+              <div className="flex items-start gap-5 mb-6">
+                <div className="shrink-0 w-14 h-14 rounded-xl flex items-center justify-center bg-brand-teal/10 border border-brand-teal/25 shadow-[0_0_20px_rgba(52,217,166,0.1)]">
+                  <active.icon className="w-7 h-7 text-brand-teal" />
+                </div>
+                <div>
+                  <p className="text-xs font-mono font-bold uppercase tracking-wider text-brand-teal mb-1.5">
+                    {`> ${active.id}`}
+                  </p>
+                  <h3 className="text-2xl sm:text-3xl font-display font-bold text-text-primary leading-tight">
+                    {active.tagline}
+                  </h3>
+                </div>
+              </div>
+
+              <p className="text-base text-text-secondary leading-relaxed max-w-3xl mb-8">
+                {active.description}
+              </p>
+
+              <div className="flex flex-col lg:flex-row lg:items-end gap-6 justify-between">
+                {/* Stats */}
+                <div className="flex gap-3 flex-wrap">
+                  {active.stats.map((stat) => (
+                    <div
+                      key={stat.label}
+                      className="px-5 py-3 rounded-xl border border-brand-teal/10 bg-brand-teal/5 text-center min-w-[100px]"
+                    >
+                      <p className="text-base font-bold font-display text-brand-teal">{stat.value}</p>
+                      <p className="text-xs text-text-muted mt-0.5">{stat.label}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Tags + CTA */}
+                <div className="flex flex-col items-start lg:items-end gap-3">
+                  <div className="flex flex-wrap gap-2">
+                    {active.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-2.5 py-1 rounded-md text-xs font-mono text-brand-teal/70 border border-brand-teal/15 bg-brand-teal/5"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <Link
+                    href={active.href}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold text-bg-primary bg-brand-teal transition-all hover:-translate-y-0.5 hover:shadow-[0_0_20px_rgba(52,217,166,0.3)]"
+                  >
+                    Explore {active.title}
+                    <ArrowUpRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Progress dots */}
+        <div className="flex justify-center gap-2 mt-10">
+          {features.map((f, i) => (
             <button
               key={f.id}
               onClick={() => setActiveTab(i)}
               className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 border",
+                "transition-all duration-300 rounded-full h-1.5",
                 activeTab === i
-                  ? "text-bg-primary border-transparent bg-brand-teal"
-                  : "text-text-secondary border-border-subtle hover:border-border-default hover:text-text-primary bg-transparent"
+                  ? "w-6 bg-brand-teal shadow-[0_0_8px_rgba(52,217,166,0.5)]"
+                  : "w-1.5 bg-border-default"
               )}
-            >
-              <Icon className="w-3.5 h-3.5" />
-              {f.title}
-            </button>
-          );
-        })}
-      </motion.div>
-
-      {/* Main Content */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={active.id}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.35 }}
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.2}
-          onDragEnd={(e, { offset, velocity }) => {
-            const swipe = swipePower(offset.x, velocity.x);
-            if (swipe < -swipeConfidenceThreshold) handleNext();
-            else if (swipe > swipeConfidenceThreshold) handlePrev();
-          }}
-          className="flex flex-col lg:grid lg:grid-cols-2 gap-6 lg:gap-10 items-stretch"
-        >
-          {/* Circuit Panel */}
-          <div className="order-2 lg:order-none cursor-grab active:cursor-grabbing">
-            <CircuitPanel visual={active.id} icon={active.icon} />
-          </div>
-
-          {/* Text side */}
-          <div className="order-1 lg:order-none flex flex-col justify-center gap-5">
-            <div
-              className="inline-flex items-center gap-2 w-fit px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-brand-teal border border-brand-teal/25 bg-brand-teal/5"
-            >
-              <active.icon className="w-3.5 h-3.5" />
-              {active.title}
-            </div>
-
-            <h3 className="text-2xl md:text-3xl font-display font-bold text-text-primary leading-tight">
-              {active.tagline}
-            </h3>
-
-            <p className="text-base text-text-secondary leading-relaxed">
-              {active.description}
-            </p>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-3">
-              {active.stats.map((stat) => (
-                <div key={stat.label} className="p-3 rounded-xl border border-border-subtle bg-bg-surface/50 text-center">
-                  <p className="text-lg font-bold font-display text-brand-teal">{stat.value}</p>
-                  <p className="text-xs text-text-muted mt-0.5">{stat.label}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Tags */}
-            <div className="flex flex-wrap gap-2">
-              {active.tags.map((tag) => (
-                <span key={tag} className="px-2.5 py-1 rounded-md text-xs font-mono text-text-secondary border border-border-subtle bg-bg-surface/30">
-                  {tag}
-                </span>
-              ))}
-            </div>
-
-            {/* CTA */}
-            <Link
-              href={active.href}
-              className="inline-flex items-center gap-2 w-fit px-5 py-2.5 rounded-lg text-sm font-bold text-brand-teal bg-brand-teal/10 border border-brand-teal/20 transition-all hover:-translate-y-0.5 hover:bg-brand-teal/15"
-            >
-              Explore {active.title}
-              <ArrowUpRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </motion.div>
-      </AnimatePresence>
-
-      {/* Progress dots */}
-      <div className="flex justify-center gap-2 mt-10">
-        {features.map((f, i) => (
-          <button
-            key={f.id}
-            onClick={() => setActiveTab(i)}
-            className={cn(
-              "transition-all duration-300 rounded-full h-1.5",
-              activeTab === i ? "w-6 bg-brand-teal" : "w-1.5 bg-border-default"
-            )}
-          />
-        ))}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );
