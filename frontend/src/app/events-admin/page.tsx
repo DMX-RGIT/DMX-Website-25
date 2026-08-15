@@ -318,7 +318,7 @@ export default function EventsAdminPage() {
                       type={field.type === "datetime" ? "datetime-local" : field.type}
                       value={formData[field.name] ?? ""}
                       onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
-                      required={field.required}
+                      required={"required" in field ? field.required : undefined}
                       placeholder={"placeholder" in field ? field.placeholder : undefined}
                     />
                   )}
