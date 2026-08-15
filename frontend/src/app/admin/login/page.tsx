@@ -36,9 +36,10 @@ export default function AdminLoginPage() {
         throw new Error(data.detail || "Invalid credentials");
       }
 
-      const { access_token } = await res.json();
+      const { access_token, role } = await res.json();
       localStorage.setItem("dmx_admin_token", access_token);
-      router.push("/admin");
+      localStorage.setItem("dmx_admin_role", role);
+      router.push(role === "events" ? "/admin/events" : "/admin");
     } catch (err: any) {
       setError(err.message || "Login failed");
     } finally {

@@ -2,8 +2,14 @@
 
 import { AdminCrudPage } from "@/components/admin/AdminCrudPage";
 import { Info } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function AdminEventsPage() {
+  const [isEventsAdmin, setIsEventsAdmin] = useState(false);
+
+  useEffect(() => {
+    setIsEventsAdmin(localStorage.getItem("dmx_admin_role") === "events");
+  }, []);
   const fields = [
     { name: "title", label: "Title", type: "text" as const, required: true },
     { name: "description", label: "Description (supports Markdown)", type: "textarea" as const, required: true },
@@ -67,6 +73,7 @@ export default function AdminEventsPage() {
         endpoint="/events"
         fields={fields}
         columns={columns}
+        disableDelete={isEventsAdmin}
       />
     </div>
   );

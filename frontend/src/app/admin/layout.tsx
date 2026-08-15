@@ -14,34 +14,33 @@ import {
   Handshake,
   LogOut,
   LayoutDashboard,
+  Lock,
 } from "lucide-react";
 
-const sidebarLinks = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/join", label: "Applications", icon: Users },
-  { href: "/admin/events", label: "Events", icon: CalendarDays },
-  { href: "/admin/projects", label: "Projects", icon: FolderKanban },
-  { href: "/admin/team", label: "Team", icon: Users },
-  { href: "/admin/gallery", label: "Gallery", icon: Image },
-  { href: "/admin/sponsors", label: "Sponsors", icon: Handshake },
-  { href: "/admin/content", label: "Site Content", icon: LayoutDashboard },
+const ALL_LINKS = [
+  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, roles: ["superadmin"] },
+  { href: "/admin/join", label: "Applications", icon: Users, roles: ["superadmin"] },
+  { href: "/admin/events", label: "Events", icon: CalendarDays, roles: ["superadmin", "events"] },
+  { href: "/admin/projects", label: "Projects", icon: FolderKanban, roles: ["superadmin"] },
+  { href: "/admin/team", label: "Team", icon: Users, roles: ["superadmin"] },
+  { href: "/admin/gallery", label: "Gallery", icon: Image, roles: ["superadmin"] },
+  { href: "/admin/sponsors", label: "Sponsors", icon: Handshake, roles: ["superadmin"] },
+  { href: "/admin/content", label: "Site Content", icon: LayoutDashboard, roles: ["superadmin"] },
 ];
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const [authed, setAuthed] = useState(false);
   const [checking, setChecking] = useState(true);
+  const [role, setRole] = useState<string>("superadmin");
 
   useEffect(() => {
-    // Don't check auth on the login page itself
     if (pathname === "/admin/login") {
       setChecking(false);
-      setAuthed(true); // Let the login page render
+      setAuthed(true);
       return;
     }
 
@@ -51,18 +50,31 @@ export default function AdminLayout({
       return;
     }
 
-    // Verify token
-    const API_BASE =
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
     fetch(`${API_BASE}/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
         if (!res.ok) throw new Error("Unauthorized");
+        return res.json();
+      })
+      .then((data) => {
+        const userRole: string = data.role || "superadmin";
+        setRole(userRole);
+        localStorage.setItem("dmx_admin_role", userRole);
+
+        // Enforce route access — events admins can only visit /admin/events
+        const allowedLinks = ALL_LINKS.filter((l) => l.roles.includes(userRole));
+        const allowedHrefs = allowedLinks.map((l) => l.href);
+        if (!allowedHrefs.some((href) => pathname === href || pathname.startsWith(href + "/"))) {
+          router.replace("/admin/events");
+          return;
+        }
+
         setAuthed(true);
       })
       .catch(() => {
         localStorage.removeItem("dmx_admin_token");
+        localStorage.removeItem("dmx_admin_role");
         router.replace("/admin/login");
       })
       .finally(() => setChecking(false));
@@ -70,13 +82,11 @@ export default function AdminLayout({
 
   const handleLogout = () => {
     localStorage.removeItem("dmx_admin_token");
+    localStorage.removeItem("dmx_admin_role");
     router.replace("/admin/login");
   };
 
-  // Login page — render without sidebar
-  if (pathname === "/admin/login") {
-    return <>{children}</>;
-  }
+  if (pathname === "/admin/login") return <>{children}</>;
 
   if (checking) {
     return (
@@ -88,6 +98,9 @@ export default function AdminLayout({
 
   if (!authed) return null;
 
+  const sidebarLinks = ALL_LINKS.filter((l) => l.roles.includes(role));
+  const lockedLinks = ALL_LINKS.filter((l) => !l.roles.includes(role));
+
   return (
     <div className="h-screen flex bg-bg-primary overflow-hidden -mt-16">
       {/* Sidebar */}
@@ -97,11 +110,12 @@ export default function AdminLayout({
             <DMXLogo className="h-7 w-auto" />
           </Link>
           <p className="text-xs text-text-secondary mt-2 font-mono">
-            Admin Panel
+            {role === "events" ? "Events Admin" : "Admin Panel"}
           </p>
         </div>
 
-        <nav className="flex-1 p-4 space-y-1">
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+          {/* Accessible links */}
           {sidebarLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -120,6 +134,26 @@ export default function AdminLayout({
               </Link>
             );
           })}
+
+          {/* Locked links — shown but non-clickable for events role */}
+          {lockedLinks.length > 0 && role === "events" && (
+            <>
+              <div className="pt-3 pb-1 px-4">
+                <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">Restricted</p>
+              </div>
+              {lockedLinks.map((link) => (
+                <div
+                  key={link.href}
+                  className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-text-muted opacity-40 cursor-not-allowed select-none"
+                  title="Super admin access required"
+                >
+                  <link.icon className="w-4 h-4" />
+                  {link.label}
+                  <Lock className="w-3 h-3 ml-auto" />
+                </div>
+              ))}
+            </>
+          )}
         </nav>
 
         <div className="p-4 border-t border-border-default space-y-2">
