@@ -30,7 +30,7 @@ const features = [
     description: "DMX members collaborate on real software projects — web apps, tools, dashboards, and more. Projects are open source, team-driven, and documented so anyone can contribute or learn from them.",
     icon: Layers,
     href: "/projects",
-    accent: "#818CF8",
+    accent: "var(--brand-teal)",
     stats: [
       { value: "Open", label: "Source" },
       { value: "Team", label: "Driven" },
@@ -46,7 +46,7 @@ const features = [
     description: "Hands-on technical sessions where you build something by the end. Topics span web development, data science, cloud, DevOps, and more — run by seniors, alumni, and invited experts.",
     icon: BookOpen,
     href: "/events?category=workshop",
-    accent: "#F59E0B",
+    accent: "var(--brand-teal)",
     stats: [
       { value: "Hands-on", label: "Format" },
       { value: "Free", label: "For Members" },
@@ -62,7 +62,7 @@ const features = [
     description: "Guest speakers — working professionals, alumni, and researchers — share their journeys, insights, and the things no textbook covers. Followed by open Q&A so you can ask what actually matters.",
     icon: Mic,
     href: "/events?category=seminar",
-    accent: "#EC4899",
+    accent: "var(--brand-teal)",
     stats: [
       { value: "Guest", label: "Speakers" },
       { value: "Live Q&A", label: "Every Session" },
