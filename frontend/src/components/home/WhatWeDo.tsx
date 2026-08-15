@@ -35,44 +35,63 @@ function AbstractGraphic({ id }: { id: string }) {
     );
   }
   if (id === "projects") {
-    // Abstract typing/compiling code blocks representing repos
+    // Data Matrix / Neural Network Node Animation
     return (
-      <div className="absolute inset-0 flex flex-col justify-center gap-4 opacity-[0.12] p-8 pointer-events-none overflow-hidden">
-        {[...Array(6)].map((_, i) => {
-          const w1 = 20 + (i * 17) % 40;
-          const w2 = 10 + (i * 23) % 30;
-          const hasW3 = i % 2 === 0;
-          const w3 = 15;
-          return (
-            <div key={i} className="flex gap-3 items-center">
-              {/* Line number dot */}
-              <div className="w-1.5 h-1.5 rounded-full opacity-40 shrink-0" style={{ backgroundColor: ACCENT }} />
-              <motion.div
-                className="h-3 rounded-full"
-                style={{ backgroundColor: ACCENT }}
-                initial={{ width: 0 }}
-                animate={{ width: `${w1}%` }}
-                transition={{ duration: 2, repeat: Infinity, repeatType: "reverse", ease: "easeInOut", delay: i * 0.2 }}
+      <div className="absolute inset-0 flex items-center justify-center opacity-[0.35] pointer-events-none">
+        <svg className="w-full h-full" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor={ACCENT} stopOpacity="0.6" />
+              <stop offset="100%" stopColor={ACCENT} stopOpacity="0" />
+            </radialGradient>
+          </defs>
+
+          {/* Network Connections */}
+          <g stroke={ACCENT} strokeWidth="1" opacity="0.2">
+            <line x1="200" y1="100" x2="100" y2="50" />
+            <line x1="200" y1="100" x2="90" y2="150" />
+            <line x1="200" y1="100" x2="300" y2="40" />
+            <line x1="200" y1="100" x2="310" y2="160" />
+            <line x1="100" y1="50" x2="90" y2="150" />
+            <line x1="300" y1="40" x2="310" y2="160" />
+            {/* Outer nodes */}
+            <line x1="100" y1="50" x2="20" y2="90" />
+            <line x1="90" y1="150" x2="30" y2="180" />
+            <line x1="300" y1="40" x2="370" y2="80" />
+            <line x1="310" y1="160" x2="380" y2="130" />
+          </g>
+
+          {/* Animated Data Packets (flowing along lines) */}
+          <motion.g stroke={ACCENT} strokeWidth="2" strokeDasharray="6 40" fill="none">
+            <motion.line x1="200" y1="100" x2="100" y2="50" animate={{ strokeDashoffset: [0, -111] }} transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }} />
+            <motion.line x1="200" y1="100" x2="300" y2="40" animate={{ strokeDashoffset: [0, -116] }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }} />
+            <motion.line x1="90" y1="150" x2="200" y2="100" animate={{ strokeDashoffset: [0, -120] }} transition={{ duration: 1.8, repeat: Infinity, ease: "linear" }} />
+            <motion.line x1="310" y1="160" x2="200" y2="100" animate={{ strokeDashoffset: [0, -125] }} transition={{ duration: 2.2, repeat: Infinity, ease: "linear" }} />
+          </motion.g>
+
+          {/* Nodes */}
+          {[
+            { x: 200, y: 100, r: 5 }, // Center
+            { x: 100, y: 50, r: 4 },   
+            { x: 90, y: 150, r: 4 },  
+            { x: 300, y: 40, r: 4 },  
+            { x: 310, y: 160, r: 4 }, 
+            { x: 20, y: 90, r: 3 }, 
+            { x: 30, y: 180, r: 3 }, 
+            { x: 370, y: 80, r: 3 }, 
+            { x: 380, y: 130, r: 3 }, 
+          ].map((node, i) => (
+            <g key={i}>
+              <motion.circle 
+                cx={node.x} cy={node.y} r={node.r * 3.5} 
+                fill="url(#nodeGlow)"
+                animate={{ scale: [1, 1.8, 1], opacity: [0.3, 0.8, 0.3] }}
+                transition={{ duration: 2 + i * 0.2, repeat: Infinity, ease: "easeInOut", delay: i * 0.1 }}
               />
-              <motion.div
-                className="h-3 rounded-full"
-                style={{ backgroundColor: ACCENT }}
-                initial={{ width: 0 }}
-                animate={{ width: `${w2}%` }}
-                transition={{ duration: 2.5, repeat: Infinity, repeatType: "reverse", ease: "easeInOut", delay: i * 0.2 + 0.5 }}
-              />
-              {hasW3 && (
-                <motion.div
-                  className="h-3 rounded-full"
-                  style={{ backgroundColor: ACCENT }}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${w3}%` }}
-                  transition={{ duration: 1.8, repeat: Infinity, repeatType: "reverse", ease: "easeInOut", delay: i * 0.2 + 1 }}
-                />
-              )}
-            </div>
-          );
-        })}
+              <circle cx={node.x} cy={node.y} r={node.r} fill={ACCENT} />
+            </g>
+          ))}
+        </svg>
       </div>
     );
   }
