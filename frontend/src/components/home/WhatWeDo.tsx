@@ -270,19 +270,7 @@ function HackathonsBento() {
           href="/events?category=hackathon"
         />
       </BentoCell>
-      <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-5">
-        {[
-          { icon: Timer, value: "48h", label: "Non-stop" },
-          { icon: Users, value: "200+", label: "Hackers" },
-          { icon: Trophy, value: "₹50K", label: "Prizes" },
-        ].map((s) => (
-          <BentoCell key={s.label} className="!p-5 justify-center items-center text-center">
-            <s.icon className="w-6 h-6 mb-3" style={{ color: ACCENT }} />
-            <p className="text-2xl font-bold font-display text-text-primary leading-none mb-1.5">{s.value}</p>
-            <p className="text-xs text-text-muted uppercase tracking-wider font-semibold">{s.label}</p>
-          </BentoCell>
-        ))}
-      </div>
+
     </div>
   );
 }
