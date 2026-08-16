@@ -143,54 +143,59 @@ function CodeRenderer({ id, data }: { id: string; data: { tagline: string; desc:
     comment: "text-[#8b949e]",    // gray
   };
 
-  return (
-    <div className="flex font-mono text-sm leading-[1.6]">
-      {/* Line Numbers */}
-      <div className="text-[#8b949e]/50 select-none pr-4 sm:pr-6 text-right flex flex-col shrink-0">
-        {Array.from({length: 12}).map((_, i) => <span key={i}>{i + 1}</span>)}
+  const CodeLine = ({ num, children, className }: { num: number | string, children: React.ReactNode, className?: string }) => (
+    <div className="flex w-full">
+      <div className="w-8 sm:w-10 shrink-0 text-right pr-3 sm:pr-4 text-[#8b949e]/50 select-none">
+        {num}
       </div>
-      
-      {/* Code */}
-      <div className="flex-1 overflow-x-auto pb-4 hide-scrollbar">
-        <div className="min-w-max">
-          <span className={syntax.comment}>{`//`} dmx.config.{id === 'hackathons' ? 'ts' : id === 'projects' ? 'py' : id === 'workshops' ? 'yml' : 'md'}</span>
-          <br /><br />
-          <span className={syntax.keyword}>export const </span>
-          <span className={syntax.variable}>{id}</span>
-          <span className={syntax.keyword}> = </span>
-          <span className={syntax.punctuation}>&#123;</span>
-          <br />
-          
-          &nbsp;&nbsp;<span className={syntax.property}>tagline</span>
-          <span className={syntax.keyword}>: </span>
-          <span className={syntax.string}>&quot;{data.tagline}&quot;</span>,
-          <br />
-          
-          &nbsp;&nbsp;<span className={syntax.property}>description</span>
-          <span className={syntax.keyword}>: </span>
-          <span className={syntax.string}>&quot;{data.desc}&quot;</span>,
-          <br />
-          
-          &nbsp;&nbsp;<span className={syntax.property}>action</span>
-          <span className={syntax.keyword}>: </span>
-          <span className={syntax.variable}>() </span>
-          <span className={syntax.keyword}>=&gt; </span>
-          <span className="text-[#d2a8ff]">execute</span>
-          <span className={syntax.punctuation}>(</span>
-          <span className={syntax.string}>&quot;{data.href}&quot;</span>
-          <span className={syntax.punctuation}>)</span>
-          <br />
-          <span className={syntax.punctuation}>&#125;;</span>
-        </div>
+      <div className={cn("flex-1 break-words", className)}>
+        {children}
+      </div>
+    </div>
+  );
 
-        {/* Action Button */}
-        <div className="mt-8">
-          <Link href={data.href} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all hover:-translate-y-0.5 group"
-            style={{ background: `color-mix(in srgb, ${ACCENT} 12%, transparent)`, color: ACCENT, border: `1px solid color-mix(in srgb, ${ACCENT} 25%, transparent)` }}>
-            <Play className="w-4 h-4 fill-current group-hover:scale-110 transition-transform" />
-            <span>Run script</span>
-          </Link>
-        </div>
+  return (
+    <div className="flex flex-col font-mono text-[13px] sm:text-sm leading-[1.7] pb-4">
+      <CodeLine num={1}><span className={syntax.comment}>{`//`} dmx.config.{id === 'hackathons' ? 'ts' : id === 'projects' ? 'py' : id === 'workshops' ? 'yml' : 'md'}</span></CodeLine>
+      <CodeLine num={2}><span>&nbsp;</span></CodeLine>
+      <CodeLine num={3}>
+        <span className={syntax.keyword}>export const </span>
+        <span className={syntax.variable}>{id}</span>
+        <span className={syntax.keyword}> = </span>
+        <span className={syntax.punctuation}>&#123;</span>
+      </CodeLine>
+      <CodeLine num={4} className="pl-4 sm:pl-6">
+        <span className={syntax.property}>tagline</span>
+        <span className={syntax.keyword}>: </span>
+        <span className={syntax.string}>&quot;{data.tagline}&quot;</span>,
+      </CodeLine>
+      <CodeLine num={5} className="pl-4 sm:pl-6">
+        <span className={syntax.property}>description</span>
+        <span className={syntax.keyword}>: </span>
+        <span className={syntax.string}>&quot;{data.desc}&quot;</span>,
+      </CodeLine>
+      <CodeLine num={6} className="pl-4 sm:pl-6">
+        <span className={syntax.property}>action</span>
+        <span className={syntax.keyword}>: </span>
+        <span className={syntax.variable}>() </span>
+        <span className={syntax.keyword}>=&gt; </span>
+        <span className="text-[#d2a8ff]">execute</span>
+        <span className={syntax.punctuation}>(</span>
+        <span className={syntax.string}>&quot;{data.href}&quot;</span>
+        <span className={syntax.punctuation}>)</span>
+      </CodeLine>
+      <CodeLine num={7}>
+        <span className={syntax.punctuation}>&#125;;</span>
+      </CodeLine>
+      <CodeLine num={8}><span>&nbsp;</span></CodeLine>
+
+      {/* Action Button */}
+      <div className="mt-6 ml-8 sm:ml-10">
+        <Link href={data.href} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all hover:-translate-y-0.5 group"
+          style={{ background: `color-mix(in srgb, ${ACCENT} 12%, transparent)`, color: ACCENT, border: `1px solid color-mix(in srgb, ${ACCENT} 25%, transparent)` }}>
+          <Play className="w-4 h-4 fill-current group-hover:scale-110 transition-transform" />
+          <span>Run script</span>
+        </Link>
       </div>
     </div>
   );
