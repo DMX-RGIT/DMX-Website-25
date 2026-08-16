@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Code2, Layers, BookOpen, Mic, Play, Terminal, FileCode2, FileJson, FileText, LayoutTemplate } from "lucide-react";
