@@ -278,7 +278,6 @@ function HackathonsBento() {
 function ProjectsBento() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-      <VisualPanel id="projects" icon={Layers} className="lg:col-span-5 min-h-[250px] lg:min-h-[400px]" />
       <BentoCell className="lg:col-span-7">
         <TitleBlock
           icon={Layers}
@@ -288,6 +287,7 @@ function ProjectsBento() {
           href="/projects"
         />
       </BentoCell>
+      <VisualPanel id="projects" icon={Layers} className="lg:col-span-5 order-first lg:order-none min-h-[250px] lg:min-h-[400px]" />
     </div>
   );
 }
@@ -314,7 +314,6 @@ function WorkshopsBento() {
 function SeminarsBento() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-      <VisualPanel id="seminars" icon={Mic} className="lg:col-span-5 min-h-[250px] lg:min-h-[400px]" />
       <BentoCell className="lg:col-span-7">
         <TitleBlock
           icon={Mic}
@@ -324,6 +323,7 @@ function SeminarsBento() {
           href="/events?category=seminar"
         />
       </BentoCell>
+      <VisualPanel id="seminars" icon={Mic} className="lg:col-span-5 order-first lg:order-none min-h-[250px] lg:min-h-[400px]" />
     </div>
   );
 }
