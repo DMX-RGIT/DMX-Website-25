@@ -277,10 +277,6 @@ function HackathonsBento() {
 
 /* ─── Tab 2: Projects ─── */
 function ProjectsBento() {
-  const repos = [
-    { name: "dmx-website", desc: "Club website & admin dashboard", lang: "TypeScript", stars: 12 },
-    { name: "ai-workshop-kit", desc: "Starter templates for ML", lang: "Python", stars: 8 },
-  ];
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
       <BentoCell className="lg:col-span-6">
@@ -293,44 +289,12 @@ function ProjectsBento() {
         />
       </BentoCell>
       <VisualPanel id="projects" icon={Layers} className="lg:col-span-6 min-h-[220px] order-first lg:order-none" />
-      {repos.map((repo, i) => (
-        <motion.div
-          key={repo.name}
-          className="lg:col-span-6 h-full"
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: i * 0.15 }}
-        >
-          <BentoCell className="!p-6 justify-center group h-full cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl" glow={true}>
-            <div className="flex items-center gap-2.5 mb-2.5">
-              <GitBranch className="w-4 h-4 opacity-70 group-hover:scale-110 group-hover:rotate-3 transition-transform" style={{ color: ACCENT }} />
-              <p className="text-sm font-bold text-text-primary font-mono group-hover:text-brand-teal transition-colors">{repo.name}</p>
-            </div>
-            <p className="text-sm text-text-secondary mb-4 leading-relaxed">{repo.desc}</p>
-            <div className="flex items-center justify-between mt-auto">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: ACCENT, color: ACCENT }} />
-                <span className="text-xs font-medium text-text-muted">{repo.lang}</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-text-muted bg-white/5 px-2 py-1 rounded-md transition-colors group-hover:bg-white/10 group-hover:text-text-primary">
-                <Star className="w-3.5 h-3.5" />
-                <span className="text-xs font-semibold">{repo.stars}</span>
-              </div>
-            </div>
-          </BentoCell>
-        </motion.div>
-      ))}
     </div>
   );
 }
 
 /* ─── Tab 3: Workshops ─── */
 function WorkshopsBento() {
-  const topics = [
-    { title: "Web Development", level: "Beginner → Advanced" },
-    { title: "Data Science & ML", level: "Intermediate" },
-    { title: "Cloud & DevOps", level: "Beginner" },
-  ];
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
       <BentoCell className="lg:col-span-8">
@@ -343,16 +307,6 @@ function WorkshopsBento() {
         />
       </BentoCell>
       <VisualPanel id="workshops" icon={BookOpen} className="lg:col-span-4 min-h-[220px] order-first lg:order-none" />
-      
-      {topics.map((topic) => (
-        <BentoCell key={topic.title} className="lg:col-span-4 !p-5 justify-center text-center">
-          <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 mb-4 mx-auto" style={{ background: `color-mix(in srgb, ${ACCENT} 10%, transparent)` }}>
-            <CheckCircle2 className="w-6 h-6" style={{ color: ACCENT }} />
-          </div>
-          <p className="text-sm font-bold text-text-primary mb-1">{topic.title}</p>
-          <p className="text-xs font-medium text-text-muted">{topic.level}</p>
-        </BentoCell>
-      ))}
     </div>
   );
 }
@@ -361,7 +315,7 @@ function WorkshopsBento() {
 function SeminarsBento() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-      <BentoCell className="lg:col-span-6 lg:row-span-2">
+      <BentoCell className="lg:col-span-7">
         <TitleBlock
           icon={Mic}
           title="Seminars"
@@ -370,25 +324,7 @@ function SeminarsBento() {
           href="/events?category=seminar"
         />
       </BentoCell>
-      <BentoCell className="lg:col-span-6 flex flex-col justify-center relative !bg-transparent border border-brand-teal/20" glow={false}>
-        <div className="absolute inset-0 bg-brand-teal/5 rounded-3xl" />
-        <Quote className="w-12 h-12 absolute top-6 left-6 opacity-10" style={{ color: ACCENT }} />
-        <div className="relative z-10 p-2 sm:p-4">
-          <p className="text-xl text-text-primary font-display italic leading-relaxed mb-8">
-            &ldquo;The things no textbook covers — career pivots, failed startups, the reality of tech interviews.&rdquo;
-          </p>
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full flex items-center justify-center border shadow-lg" style={{ backgroundColor: `color-mix(in srgb, ${ACCENT} 15%, transparent)`, borderColor: `color-mix(in srgb, ${ACCENT} 30%, transparent)` }}>
-              <Mic className="w-5 h-5" style={{ color: ACCENT }} />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-text-primary mb-0.5">Guest Speakers</p>
-              <p className="text-xs font-medium text-text-muted">Alumni & Industry Pros</p>
-            </div>
-          </div>
-        </div>
-      </BentoCell>
-      <VisualPanel id="seminars" icon={Mic} className="lg:col-span-6 lg:h-56 min-h-[160px] order-first lg:order-none" />
+      <VisualPanel id="seminars" icon={Mic} className="lg:col-span-5 min-h-[220px] order-first lg:order-none" />
     </div>
   );
 }
