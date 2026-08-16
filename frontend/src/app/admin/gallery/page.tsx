@@ -287,6 +287,8 @@ export default function AdminGalleryPage() {
                   <SelectContent>
                     <SelectItem value="hackathon">Hackathon</SelectItem>
                     <SelectItem value="workshop">Workshop</SelectItem>
+                    <SelectItem value="seminar">Seminar</SelectItem>
+                    <SelectItem value="webinar">Webinar</SelectItem>
                     <SelectItem value="social">Social</SelectItem>
                   </SelectContent>
                 </Select>

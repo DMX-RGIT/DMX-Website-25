@@ -16,9 +16,14 @@ export default function AdminEventsPage() {
     {
       name: "category",
       label: "Category",
-      type: "text" as const,
+      type: "select" as const,
       required: true,
-      placeholder: "e.g., Hackathon, Workshop, etc."
+      options: [
+        { label: "Hackathon", value: "Hackathon" },
+        { label: "Workshop", value: "Workshop" },
+        { label: "Seminar", value: "Seminar" },
+        { label: "Webinar", value: "Webinar" },
+      ],
     },
     { name: "date", label: "Date", type: "datetime" as const, required: true },
     { name: "end_date", label: "End Date", type: "datetime" as const },

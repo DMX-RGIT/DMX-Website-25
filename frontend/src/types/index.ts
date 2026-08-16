@@ -62,7 +62,7 @@ export interface GalleryImage {
   id: string;
   image_url: string;
   caption: string | null;
-  category: "hackathon" | "workshop" | "social";
+  category: string;
   event_id: string | null;
   created_at: string;
 }

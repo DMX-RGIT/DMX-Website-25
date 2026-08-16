@@ -27,12 +27,6 @@ class TeamTier(str, PyEnum):
     member = "member"
 
 
-class GalleryCategory(str, PyEnum):
-    hackathon = "hackathon"
-    workshop = "workshop"
-    social = "social"
-
-
 class SponsorTier(str, PyEnum):
     title = "title"
     gold = "gold"
@@ -110,7 +104,7 @@ class GalleryImage(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     image_url = Column(String(500), nullable=False)
     caption = Column(String(500), nullable=True)
-    category = Column(Enum(GalleryCategory), nullable=False)
+    category = Column(String(255), nullable=False)
     event_id = Column(UUID(as_uuid=True), ForeignKey("events.id"), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
