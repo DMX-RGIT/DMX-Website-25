@@ -1,18 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Code2, Layers, BookOpen, Mic, Play, Terminal, FileCode2, FileJson, FileText, LayoutTemplate } from "lucide-react";
+import { motion } from "framer-motion";
+import { Code2, Layers, BookOpen, Mic, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 const ACCENT = "var(--brand-teal)";
 
 const featuresMeta = [
-  { id: "hackathons", title: "hackathons.tsx", icon: FileCode2, color: "#3178C6", realTitle: "Hackathons", mainIcon: Code2 },
-  { id: "projects", title: "projects.py", icon: FileCode2, color: "#3776AB", realTitle: "Projects", mainIcon: Layers },
-  { id: "workshops", title: "workshops.yml", icon: FileJson, color: "#CB171E", realTitle: "Workshops", mainIcon: BookOpen },
-  { id: "seminars", title: "seminars.md", icon: FileText, color: "#94a3b8", realTitle: "Seminars", mainIcon: Mic },
+  { id: "hackathons", realTitle: "Hackathons", icon: Code2 },
+  { id: "projects", realTitle: "Projects", icon: Layers },
+  { id: "workshops", realTitle: "Workshops", icon: BookOpen },
+  { id: "seminars", realTitle: "Seminars", icon: Mic },
 ];
 
 const contentData: Record<string, { tagline: string, desc: string, href: string }> = {
@@ -115,7 +114,7 @@ function AbstractGraphic({ id }: { id: string }) {
 
 function VisualPanel({ icon: Icon, id }: { icon: React.ElementType; id: string }) {
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-[#0d1117] overflow-hidden">
+    <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
       <AbstractGraphic id={id} />
       <div className="absolute inset-0 opacity-[0.06]" style={{ background: `radial-gradient(circle at center, ${ACCENT}, transparent)` }} />
       <div className="absolute inset-0 opacity-[0.015]" style={{ backgroundImage: `linear-gradient(${ACCENT} 1px, transparent 1px), linear-gradient(90deg, ${ACCENT} 1px, transparent 1px)`, backgroundSize: "32px 32px" }} />
@@ -132,85 +131,86 @@ function VisualPanel({ icon: Icon, id }: { icon: React.ElementType; id: string }
   );
 }
 
-function CodeRenderer({ id, data }: { id: string; data: { tagline: string; desc: string; href: string } }) {
-  // VS Code GitHub Dark Theme Colors
-  const syntax = {
-    keyword: "text-[#ff7b72]",    // red
-    variable: "text-[#79c0ff]",   // light blue
-    property: "text-[#79c0ff]",   // light blue
-    string: "text-[#a5d6ff]",     // lighter blue
-    punctuation: "text-white",
-    comment: "text-[#8b949e]",    // gray
-  };
-
-  const CodeLine = ({ num, children, className }: { num: number | string, children: React.ReactNode, className?: string }) => (
-    <div className="flex w-full">
-      <div className="w-8 sm:w-10 shrink-0 text-right pr-3 sm:pr-4 text-[#8b949e]/50 select-none">
-        {num}
-      </div>
-      <div className={cn("flex-1 break-words", className)}>
-        {children}
-      </div>
-    </div>
-  );
+function NotebookCell({ item, index }: { item: typeof featuresMeta[0], index: number }) {
+  const data = contentData[item.id];
+  const Icon = item.icon;
 
   return (
-    <div className="flex flex-col font-mono text-[13px] sm:text-sm leading-[1.7] pb-4">
-      <CodeLine num={1}><span className={syntax.comment}>{`//`} dmx.config.{id === 'hackathons' ? 'ts' : id === 'projects' ? 'py' : id === 'workshops' ? 'yml' : 'md'}</span></CodeLine>
-      <CodeLine num={2}><span>&nbsp;</span></CodeLine>
-      <CodeLine num={3}>
-        <span className={syntax.keyword}>export const </span>
-        <span className={syntax.variable}>{id}</span>
-        <span className={syntax.keyword}> = </span>
-        <span className={syntax.punctuation}>&#123;</span>
-      </CodeLine>
-      <CodeLine num={4} className="pl-4 sm:pl-6">
-        <span className={syntax.property}>tagline</span>
-        <span className={syntax.keyword}>: </span>
-        <span className={syntax.string}>&quot;{data.tagline}&quot;</span>,
-      </CodeLine>
-      <CodeLine num={5} className="pl-4 sm:pl-6">
-        <span className={syntax.property}>description</span>
-        <span className={syntax.keyword}>: </span>
-        <span className={syntax.string}>&quot;{data.desc}&quot;</span>,
-      </CodeLine>
-      <CodeLine num={6} className="pl-4 sm:pl-6">
-        <span className={syntax.property}>action</span>
-        <span className={syntax.keyword}>: </span>
-        <span className={syntax.variable}>() </span>
-        <span className={syntax.keyword}>=&gt; </span>
-        <span className="text-[#d2a8ff]">execute</span>
-        <span className={syntax.punctuation}>(</span>
-        <span className={syntax.string}>&quot;{data.href}&quot;</span>
-        <span className={syntax.punctuation}>)</span>
-      </CodeLine>
-      <CodeLine num={7}>
-        <span className={syntax.punctuation}>&#125;;</span>
-      </CodeLine>
-      <CodeLine num={8}><span>&nbsp;</span></CodeLine>
-
-      {/* Action Button */}
-      <div className="mt-6 ml-8 sm:ml-10">
-        <Link href={data.href} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all hover:-translate-y-0.5 group"
-          style={{ background: `color-mix(in srgb, ${ACCENT} 12%, transparent)`, color: ACCENT, border: `1px solid color-mix(in srgb, ${ACCENT} 25%, transparent)` }}>
-          <Play className="w-4 h-4 fill-current group-hover:scale-110 transition-transform" />
-          <span>Run script</span>
-        </Link>
+    <motion.div 
+      className="flex flex-col mb-12 sm:mb-20 last:mb-0 max-w-5xl mx-auto w-full"
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6 }}
+    >
+      {/* Input Cell */}
+      <div className="flex gap-2 sm:gap-4 mb-3 sm:mb-4">
+        <div className="text-[var(--brand-teal)] font-mono text-[10px] sm:text-xs font-bold pt-2 sm:pt-2.5 shrink-0 select-none w-10 sm:w-16 text-right">
+          In [{index}]:
+        </div>
+        <div className="flex-1 bg-[#0d1117]/80 backdrop-blur-sm border border-white/5 rounded-lg p-3 sm:p-4 font-mono text-[11px] sm:text-[13px] overflow-x-auto hide-scrollbar">
+          <div className="min-w-max text-[#d4d4d4]">
+            <span className="text-[#ff7b72]">import</span> dmx<br />
+            <span className="text-[#79c0ff]">dmx</span>.<span className="text-[#d2a8ff]">execute</span>(<span className="text-[#a5d6ff]">&apos;{item.id}&apos;</span>)
+          </div>
+        </div>
       </div>
-    </div>
+
+      {/* Output Cell */}
+      <div className="flex gap-2 sm:gap-4">
+        <div className="text-[#ff7b72] font-mono text-[10px] sm:text-xs font-bold pt-2 shrink-0 select-none w-10 sm:w-16 text-right">
+          Out[{index}]:
+        </div>
+        
+        {/* Output Content Wrapper */}
+        <div className="flex-1 bg-[#161b22]/40 backdrop-blur-sm border border-white/5 rounded-2xl overflow-hidden flex flex-col lg:flex-row shadow-2xl relative">
+          
+          {/* Subtle Grid Background for Output Cell */}
+          <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: `linear-gradient(${ACCENT} 1px, transparent 1px), linear-gradient(90deg, ${ACCENT} 1px, transparent 1px)`, backgroundSize: "24px 24px" }} />
+
+          {/* Text Details (Left on Desktop, Top on Mobile) */}
+          <div className="flex-1 p-6 sm:p-8 lg:p-10 flex flex-col justify-between relative z-10">
+            <div>
+              <div className="inline-flex items-center gap-2 w-fit px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border mb-6 backdrop-blur-sm"
+                style={{ color: ACCENT, borderColor: `color-mix(in srgb, ${ACCENT} 30%, transparent)`, background: `color-mix(in srgb, ${ACCENT} 8%, transparent)` }}>
+                <Icon className="w-3.5 h-3.5" />
+                {item.realTitle}
+              </div>
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-text-primary leading-[1.2] mb-4">
+                {data.tagline}
+              </h3>
+              <p className="text-sm sm:text-base text-text-secondary leading-relaxed mb-8">
+                {data.desc}
+              </p>
+            </div>
+            
+            <Link
+              href={data.href}
+              className="group inline-flex items-center gap-2 w-fit px-6 py-3 rounded-xl text-sm font-bold transition-all hover:-translate-y-0.5"
+              style={{ background: `color-mix(in srgb, ${ACCENT} 12%, transparent)`, color: ACCENT, border: `1px solid color-mix(in srgb, ${ACCENT} 25%, transparent)` }}
+            >
+              Explore {item.realTitle}
+              <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </Link>
+          </div>
+          
+          {/* Visual Panel (Right on Desktop, Bottom on Mobile) */}
+          <div className="lg:w-[350px] xl:w-[450px] h-[250px] lg:h-auto border-t lg:border-t-0 lg:border-l border-white/5 relative shrink-0 bg-[#0d1117]/50">
+             <VisualPanel id={item.id} icon={Icon} />
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
 /* ─── Main Component ─── */
 export function WhatWeDo() {
-  const [activeTab, setActiveTab] = useState(0);
-  const active = featuresMeta[activeTab];
-
   return (
     <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
       {/* Header */}
       <motion.div
-        className="mb-16 text-center"
+        className="mb-16 sm:mb-24 text-center"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -227,123 +227,12 @@ export function WhatWeDo() {
         </p>
       </motion.div>
 
-      {/* IDE Container */}
-      <motion.div 
-        className="rounded-xl overflow-hidden shadow-2xl flex flex-col max-w-5xl mx-auto border border-white/10"
-        style={{ backgroundColor: "#0d1117" }}
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-      >
-        {/* Title Bar */}
-        <div className="h-12 bg-[#161b22] border-b border-white/5 flex items-center px-4 shrink-0 justify-between select-none">
-          <div className="flex gap-2 w-20">
-            <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
-            <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
-            <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
-          </div>
-          <div className="flex items-center gap-2 text-xs font-mono text-[#8b949e]">
-            <LayoutTemplate className="w-3.5 h-3.5" />
-            dmx-workspace — WhatWeDo
-          </div>
-          <div className="w-20" /> {/* Spacer for centering */}
-        </div>
-        
-        <div className="flex flex-col lg:flex-row h-[700px] lg:h-[500px]">
-          {/* Sidebar (Desktop) */}
-          <div className="hidden lg:flex flex-col w-56 bg-[#161b22] border-r border-white/5 shrink-0 select-none">
-            <div className="px-4 py-3 text-[10px] font-bold text-[#8b949e] tracking-widest mt-2">EXPLORER</div>
-            <div className="flex flex-col">
-              {featuresMeta.map((f, i) => (
-                <button
-                  key={f.id}
-                  onClick={() => setActiveTab(i)}
-                  className={cn(
-                    "flex items-center gap-2.5 px-4 py-2 text-sm font-mono text-left transition-colors border-l-2",
-                    activeTab === i ? "bg-white/5 text-white border-[var(--brand-teal)]" : "text-[#8b949e] hover:text-white hover:bg-white/5 border-transparent"
-                  )}
-                >
-                  <f.icon className="w-4 h-4 shrink-0" style={{ color: f.color }} />
-                  <span className="truncate">{f.title}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Top Tabs (Mobile) */}
-          <div className="flex lg:hidden overflow-x-auto bg-[#161b22] border-b border-white/5 shrink-0 hide-scrollbar select-none">
-            {featuresMeta.map((f, i) => (
-              <button
-                key={f.id}
-                onClick={() => setActiveTab(i)}
-                className={cn(
-                  "flex items-center gap-2 px-4 py-3.5 text-xs font-mono whitespace-nowrap border-b-2 transition-colors",
-                  activeTab === i ? "border-[var(--brand-teal)] text-white bg-white/5" : "border-transparent text-[#8b949e] hover:text-white hover:bg-white/5"
-                )}
-              >
-                <f.icon className="w-3.5 h-3.5" style={{ color: f.color }} />
-                {f.title}
-              </button>
-            ))}
-          </div>
-
-          {/* Editor Area */}
-          <div className="flex-1 flex flex-col overflow-hidden relative">
-            
-            {/* Editor Top Bar (Breadcrumb) */}
-            <div className="h-10 bg-[#0d1117] border-b border-white/5 flex items-center px-4 shrink-0 text-xs font-mono text-[#8b949e] select-none gap-2">
-              <span>dmx-web</span>
-              <span className="opacity-50">&gt;</span>
-              <span>src</span>
-              <span className="opacity-50">&gt;</span>
-              <span className="text-white flex items-center gap-1.5">
-                <active.icon className="w-3.5 h-3.5" style={{ color: active.color }} />
-                {active.title}
-              </span>
-            </div>
-
-            {/* Split Content Area */}
-            <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-              
-              {/* Code Block */}
-              <div className="flex-1 p-4 sm:p-6 overflow-y-auto">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={active.id}
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -5 }}
-                    transition={{ duration: 0.15 }}
-                  >
-                    <CodeRenderer id={active.id} data={contentData[active.id]} />
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-
-              {/* Preview Window (Right on Desktop, Bottom on Mobile) */}
-              <div className="h-64 lg:h-auto lg:w-[400px] xl:w-[450px] border-t lg:border-t-0 lg:border-l border-white/5 relative shrink-0">
-                <div className="absolute top-0 left-0 right-0 h-8 bg-[#161b22]/80 backdrop-blur-md border-b border-white/5 flex items-center px-3 z-20 text-[10px] font-mono text-[#8b949e] uppercase tracking-wider select-none gap-2">
-                  <Terminal className="w-3 h-3" />
-                  Live Output
-                </div>
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={active.id + '-visual'}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute inset-0 top-8"
-                  >
-                    <VisualPanel icon={active.mainIcon} id={active.id} />
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            </div>
-          </div>
-        </div>
-      </motion.div>
+      {/* Notebook Cells */}
+      <div className="flex flex-col">
+        {featuresMeta.map((item, i) => (
+          <NotebookCell key={item.id} item={item} index={i + 1} />
+        ))}
+      </div>
     </section>
   );
 }
