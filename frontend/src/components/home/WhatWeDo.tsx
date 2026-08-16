@@ -111,7 +111,7 @@ function AbstractGraphic({ id }: { id: string }) {
   return null;
 }
 
-function VisualPanel({ icon: Icon, id }: { icon: any; id: string }) {
+function VisualPanel({ icon: Icon, id }: { icon: React.ElementType; id: string }) {
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-[#0d1117] overflow-hidden">
       <AbstractGraphic id={id} />
@@ -130,7 +130,7 @@ function VisualPanel({ icon: Icon, id }: { icon: any; id: string }) {
   );
 }
 
-function CodeRenderer({ id, data }: { id: string, data: any }) {
+function CodeRenderer({ id, data }: { id: string; data: { tagline: string; desc: string; href: string } }) {
   // VS Code GitHub Dark Theme Colors
   const syntax = {
     keyword: "text-[#ff7b72]",    // red
@@ -151,7 +151,7 @@ function CodeRenderer({ id, data }: { id: string, data: any }) {
       {/* Code */}
       <div className="flex-1 overflow-x-auto pb-4 hide-scrollbar">
         <div className="min-w-max">
-          <span className={syntax.comment}>// dmx.config.{id === 'hackathons' ? 'ts' : id === 'projects' ? 'py' : id === 'workshops' ? 'yml' : 'md'}</span>
+          <span className={syntax.comment}>{`//`} dmx.config.{id === 'hackathons' ? 'ts' : id === 'projects' ? 'py' : id === 'workshops' ? 'yml' : 'md'}</span>
           <br /><br />
           <span className={syntax.keyword}>export const </span>
           <span className={syntax.variable}>{id}</span>
@@ -161,12 +161,12 @@ function CodeRenderer({ id, data }: { id: string, data: any }) {
           
           &nbsp;&nbsp;<span className={syntax.property}>tagline</span>
           <span className={syntax.keyword}>: </span>
-          <span className={syntax.string}>"{data.tagline}"</span>,
+          <span className={syntax.string}>&quot;{data.tagline}&quot;</span>,
           <br />
           
           &nbsp;&nbsp;<span className={syntax.property}>description</span>
           <span className={syntax.keyword}>: </span>
-          <span className={syntax.string}>"{data.desc}"</span>,
+          <span className={syntax.string}>&quot;{data.desc}&quot;</span>,
           <br />
           
           &nbsp;&nbsp;<span className={syntax.property}>action</span>
@@ -175,7 +175,7 @@ function CodeRenderer({ id, data }: { id: string, data: any }) {
           <span className={syntax.keyword}>=&gt; </span>
           <span className="text-[#d2a8ff]">execute</span>
           <span className={syntax.punctuation}>(</span>
-          <span className={syntax.string}>"{data.href}"</span>
+          <span className={syntax.string}>&quot;{data.href}&quot;</span>
           <span className={syntax.punctuation}>)</span>
           <br />
           <span className={syntax.punctuation}>&#125;;</span>
