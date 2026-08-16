@@ -260,7 +260,7 @@ function TitleBlock({ icon: Icon, title, tagline, desc, href }: { icon: any; tit
 function HackathonsBento() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-      <VisualPanel id="hackathons" icon={Code2} className="lg:col-span-5 lg:row-span-2 min-h-[250px] lg:min-h-full" />
+      <VisualPanel id="hackathons" icon={Code2} className="lg:col-span-5 min-h-[250px] lg:min-h-[400px]" />
       <BentoCell className="lg:col-span-7">
         <TitleBlock
           icon={Code2}
@@ -270,7 +270,6 @@ function HackathonsBento() {
           href="/events?category=hackathon"
         />
       </BentoCell>
-
     </div>
   );
 }
@@ -279,7 +278,8 @@ function HackathonsBento() {
 function ProjectsBento() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-      <BentoCell className="lg:col-span-6">
+      <VisualPanel id="projects" icon={Layers} className="lg:col-span-5 min-h-[250px] lg:min-h-[400px]" />
+      <BentoCell className="lg:col-span-7">
         <TitleBlock
           icon={Layers}
           title="Projects"
@@ -288,7 +288,6 @@ function ProjectsBento() {
           href="/projects"
         />
       </BentoCell>
-      <VisualPanel id="projects" icon={Layers} className="lg:col-span-6 min-h-[220px] order-first lg:order-none" />
     </div>
   );
 }
@@ -297,7 +296,8 @@ function ProjectsBento() {
 function WorkshopsBento() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-      <BentoCell className="lg:col-span-8">
+      <VisualPanel id="workshops" icon={BookOpen} className="lg:col-span-5 min-h-[250px] lg:min-h-[400px]" />
+      <BentoCell className="lg:col-span-7">
         <TitleBlock
           icon={BookOpen}
           title="Workshops"
@@ -306,7 +306,6 @@ function WorkshopsBento() {
           href="/events?category=workshop"
         />
       </BentoCell>
-      <VisualPanel id="workshops" icon={BookOpen} className="lg:col-span-4 min-h-[220px] order-first lg:order-none" />
     </div>
   );
 }
@@ -315,6 +314,7 @@ function WorkshopsBento() {
 function SeminarsBento() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <VisualPanel id="seminars" icon={Mic} className="lg:col-span-5 min-h-[250px] lg:min-h-[400px]" />
       <BentoCell className="lg:col-span-7">
         <TitleBlock
           icon={Mic}
@@ -324,7 +324,6 @@ function SeminarsBento() {
           href="/events?category=seminar"
         />
       </BentoCell>
-      <VisualPanel id="seminars" icon={Mic} className="lg:col-span-5 min-h-[220px] order-first lg:order-none" />
     </div>
   );
 }
