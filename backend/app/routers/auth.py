@@ -119,8 +119,14 @@ async def upload_file(
     _: str = Depends(require_events_or_super_admin),
 ):
     """Upload an image to Cloudinary (requires admin or events-admin auth)."""
-    if not file.content_type or not file.content_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail="Only image files are allowed")
+    content_type = file.content_type or ""
+    filename = file.filename.lower() if file.filename else ""
+    is_image = content_type.startswith("image/") or filename.endswith(
+        (".heic", ".heif", ".png", ".jpg", ".jpeg", ".webp", ".gif")
+    )
+
+    if not is_image:
+        raise HTTPException(status_code=400, detail="Only image files are allowed. Please ensure the file is a valid image (e.g., .jpg, .png, .heic).")
 
     url = await upload_image(file, folder=folder)
     return {"url": url}
