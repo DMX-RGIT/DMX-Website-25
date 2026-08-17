@@ -11,9 +11,13 @@ class Settings(BaseSettings):
     # JWT
     access_token_expire_minutes: int = 60 * 24  # 24 hours
 
-    # Admin
+    # Super Admin
     admin_username: str = "admin"
     admin_password: str  # Required — must be set in .env
+
+    # Events Admin (limited role — create + edit events only)
+    events_admin_username: str = "events"
+    events_admin_password: str = ""  # Set in .env to enable the events-admin role
 
     # Cloudinary
     cloudinary_cloud_name: str = ""

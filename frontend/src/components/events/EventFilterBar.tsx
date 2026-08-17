@@ -21,7 +21,8 @@ export function EventFilterBar({
     { label: "All Events", value: "all" as EventCategory },
     { label: "Hackathons", value: "hackathon" as EventCategory },
     { label: "Workshops", value: "workshop" as EventCategory },
-    { label: "Speaker Sessions", value: "speaker_session" as EventCategory },
+    { label: "Seminars", value: "seminar" as EventCategory },
+    { label: "Webinars", value: "webinar" as EventCategory },
   ];
 
   return (

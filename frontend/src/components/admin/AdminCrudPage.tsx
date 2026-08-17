@@ -1,12 +1,19 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Pencil, Trash2, X, Upload } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Upload, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CustomSelect } from "@/components/shared/CustomSelect";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+
+/** Format a date string to local YYYY-MM-DDTHH:mm for datetime-local inputs */
+function formatToLocalDatetime(dateStr: string): string {
+  const d = new Date(dateStr);
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
@@ -49,9 +56,10 @@ interface AdminCrudPageProps {
   listEndpoint?: string; // e.g., "/admin/join" if different from endpoint
   fields: Field[];
   columns: { key: string; label: string; render?: (item: any) => React.ReactNode }[];
+  disableDelete?: boolean; // When true, shows a "contact super admin" mail button instead of delete
 }
 
-export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns }: AdminCrudPageProps) {
+export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns, disableDelete }: AdminCrudPageProps) {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -106,7 +114,7 @@ export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns }
       } else if (f.type === "tags" || f.type === "json") {
         data[f.name] = item[f.name] || [];
       } else if (f.type === "datetime") {
-        data[f.name] = item[f.name] ? new Date(item[f.name]).toISOString().slice(0, 16) : "";
+        data[f.name] = item[f.name] ? formatToLocalDatetime(item[f.name]) : "";
       } else {
         data[f.name] = item[f.name] ?? "";
       }
@@ -237,12 +245,27 @@ export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns }
                   ))}
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <button onClick={() => openEdit(item)} className="p-1.5 rounded-md text-text-secondary hover:text-brand-teal hover:bg-brand-teal/10 transition-colors">
+                      <button onClick={() => openEdit(item)} className="p-1.5 rounded-md text-text-secondary hover:text-brand-teal hover:bg-brand-teal/10 transition-colors" title="Edit">
                         <Pencil className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleDelete(item.id)} className="p-1.5 rounded-md text-text-secondary hover:text-red-400 hover:bg-red-500/10 transition-colors">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      {disableDelete ? (
+                        <button
+                          onClick={() => {
+                            window.location.href = `mailto:?subject=Please delete event: ${encodeURIComponent(item.title || item.name || "")}&body=Hi, please delete the following item from the DMX website:%0A%0ATitle: ${encodeURIComponent(item.title || item.name || "")}%0AID: ${item.id}%0A%0AThanks!`;
+                          }}
+                          className="p-1.5 rounded-md text-text-muted hover:text-brand-teal hover:bg-brand-teal/10 transition-colors group relative"
+                          title="Contact super admin to delete"
+                        >
+                          <Mail className="w-4 h-4" />
+                          <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-bg-secondary border border-border-default text-xs text-text-secondary rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            Contact super admin to delete
+                          </span>
+                        </button>
+                      ) : (
+                        <button onClick={() => handleDelete(item.id)} className="p-1.5 rounded-md text-text-secondary hover:text-red-400 hover:bg-red-500/10 transition-colors" title="Delete">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -306,7 +329,7 @@ export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns }
                         onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
                         placeholder={field.placeholder || "https://..."}
                       />
-                      { (field.name.includes("image") || field.name.includes("photo") || field.name.includes("poster") || field.name.includes("banner") || field.name.includes("url")) && (
+                      { (field.name.includes("image") || field.name.includes("photo") || field.name.includes("poster") || field.name.includes("banner")) && (
                         <div className="flex flex-col gap-2">
                           <label className="flex items-center gap-2 px-3 py-2 border border-dashed border-border-default rounded-lg cursor-pointer hover:border-brand-teal transition-colors text-text-secondary text-xs">
                             <Upload className="w-4 h-4" />

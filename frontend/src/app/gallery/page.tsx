@@ -54,6 +54,8 @@ function GalleryContent() {
     { label: "All Photos", value: "all" as GalleryFilter },
     { label: "Hackathons", value: "hackathon" as GalleryFilter },
     { label: "Workshops", value: "workshop" as GalleryFilter },
+    { label: "Seminars", value: "seminar" as GalleryFilter },
+    { label: "Webinars", value: "webinar" as GalleryFilter },
     { label: "Socials", value: "social" as GalleryFilter },
   ];
 

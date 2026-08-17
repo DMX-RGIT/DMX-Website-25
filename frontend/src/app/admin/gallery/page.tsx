@@ -122,7 +122,10 @@ export default function AdminGalleryPage() {
           body: form,
         });
         
-        if (!uploadRes.ok) throw new Error("Upload failed");
+        if (!uploadRes.ok) {
+          const errData = await uploadRes.json().catch(() => ({}));
+          throw new Error(errData.detail || "Upload failed");
+        }
         const { url } = await uploadRes.json();
 
         // Create gallery entry
@@ -146,9 +149,9 @@ export default function AdminGalleryPage() {
       setCaption("");
       setEventId("");
       fetchData();
-    } catch (err) {
+    } catch (err: any) {
       console.error("Bulk upload error", err);
-      alert("An error occurred during upload.");
+      alert(`An error occurred during upload: ${err.message}`);
     } finally {
       setUploading(false);
     }
@@ -258,7 +261,7 @@ export default function AdminGalleryPage() {
                 <input
                   type="file"
                   multiple
-                  accept="image/*"
+                  accept="image/*,.heic,.heif"
                   onChange={(e) => setSelectedFiles(Array.from(e.target.files || []))}
                   className="w-full text-sm text-text-primary"
                 />
@@ -284,6 +287,8 @@ export default function AdminGalleryPage() {
                   <SelectContent>
                     <SelectItem value="hackathon">Hackathon</SelectItem>
                     <SelectItem value="workshop">Workshop</SelectItem>
+                    <SelectItem value="seminar">Seminar</SelectItem>
+                    <SelectItem value="webinar">Webinar</SelectItem>
                     <SelectItem value="social">Social</SelectItem>
                   </SelectContent>
                 </Select>

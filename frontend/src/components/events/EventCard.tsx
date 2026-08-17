@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowUpRight, Calendar, MapPin, Heart } from "lucide-react";
 import { Event } from "@/types";
 import { api } from "@/lib/api";
-import { cn } from "@/lib/utils";
+import { cn, stripMarkdown } from "@/lib/utils";
 import { TiltCard } from "@/components/shared/TiltCard";
 
 interface EventCardProps {
@@ -96,7 +96,7 @@ export function EventCard({ event, index, onClick }: EventCardProps) {
           </h3>
           
           <p className="text-sm text-text-secondary mb-6 line-clamp-3 flex-1">
-            {event.description}
+            {stripMarkdown(event.description)}
           </p>
 
           <div className="space-y-2 mb-6">

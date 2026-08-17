@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Code2, ExternalLink, Users } from "lucide-react";
 import { Project } from "@/types";
-import { cn } from "@/lib/utils";
+import { cn, stripMarkdown } from "@/lib/utils";
 import { TiltCard } from "@/components/shared/TiltCard";
 
 interface ProjectCardProps {
@@ -61,7 +61,7 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
         </div>
 
         <p className="text-sm text-text-secondary mb-6 flex-1 line-clamp-3" style={{ transform: "translateZ(30px)" }}>
-          {project.description}
+          {stripMarkdown(project.description)}
         </p>
 
         <div className="flex flex-wrap gap-2 mb-4" style={{ transform: "translateZ(20px)" }}>

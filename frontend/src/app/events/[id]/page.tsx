@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -234,7 +234,7 @@ export default function EventDetailPage() {
               <div className={`mb-6 ${hasBothImages ? "grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4 items-stretch" : ""}`}>
                 {hasBanner && (
                   <div
-                    className={`relative bg-bg-surface border border-border-default rounded-xl overflow-hidden cursor-pointer group ${hasBothImages ? "h-64 md:h-80 lg:h-[440px]" : "h-64 md:h-80 lg:h-[500px] w-full"}`}
+                    className={`relative bg-bg-surface border border-border-default rounded-xl overflow-hidden cursor-pointer group ${hasBothImages ? "aspect-video md:aspect-auto md:h-80 lg:h-[440px]" : "w-full aspect-video"}`}
                     onClick={() => setMediaModal(event.image_url!)}>
                     {renderMedia(event.image_url!, `${event.title} banner`, "w-full h-full object-cover transition-transform duration-700 group-hover:scale-105")}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
@@ -244,7 +244,7 @@ export default function EventDetailPage() {
                 )}
                 {hasBothImages && hasPoster && (
                   <div
-                    className="relative bg-bg-surface border border-border-default rounded-xl overflow-hidden cursor-pointer group h-64 md:h-80 lg:h-[440px]"
+                    className="relative bg-bg-surface border border-border-default rounded-xl overflow-hidden cursor-pointer group aspect-[3/4] md:aspect-auto md:h-80 lg:h-[440px]"
                     onClick={() => setMediaModal(event.poster_url!)}>
                     {renderMedia(event.poster_url!, `${event.title} poster`, "w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105")}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
