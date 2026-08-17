@@ -1,0 +1,156 @@
+{
+  "title": "SIH 2026 Internal Round Problem Statements",
+  "total_problem_statements": 25,
+  "problem_statements": [
+    {
+      "sr_no": 1,
+      "problem_statement": "Centralised Digital Platform for Comprehensive student activity record in HEIs",
+      "description": "Develop a centralized digital platform for maintaining comprehensive academic and non-academic student activity records, including achievements, certifications, workshops, volunteering, leadership and other activities, with verification and institutional reporting support.",
+      "domain": "Smart Education / Software"
+    },
+    {
+      "sr_no": 2,
+      "problem_statement": "One-Stop Personalized Career & Education Advisor",
+      "description": "Develop a personalized career and education guidance platform that helps learners identify suitable career paths, courses, colleges, examinations and learning resources based on their interests, skills and goals.",
+      "domain": "Smart Education / Software"
+    },
+    {
+      "sr_no": 3,
+      "problem_statement": "Smart Traffic Management System for Urban Congestion",
+      "description": "Develop an AI-enabled traffic management solution that uses real-time traffic information and predictive analytics to monitor congestion, optimize traffic-signal operations and improve traffic flow across busy urban routes.",
+      "domain": "Transportation & Logistics / Software"
+    },
+    {
+      "sr_no": 4,
+      "problem_statement": "AI-Driven Public Health Chatbot for Disease Awareness",
+      "description": "Develop an AI-driven chatbot that provides accessible and reliable information about diseases, prevention, symptoms and health awareness, helping users obtain timely guidance while promoting responsible healthcare practices.",
+      "domain": "MedTech, BioTech, HealthTech / Software"
+    },
+    {
+      "sr_no": 5,
+      "problem_statement": "Secure Data Wiping for Trustworthy IT Asset Recycling",
+      "description": "Design a secure cross-platform data-wiping solution that permanently erases user data and provides verifiable, tamper-resistant proof of erasure, supporting trustworthy reuse and recycling of IT assets.",
+      "domain": "Miscellaneous, Cybersecurity / Software"
+    },
+    {
+      "sr_no": 6,
+      "problem_statement": "Blockchain-Based Supply Chain Transparency for Agricultural Produce",
+      "description": "Develop a blockchain-based solution to improve traceability and transparency in the agricultural supply chain by recording produce movement and transactions across stakeholders, helping build trust and reduce information gaps.",
+      "domain": "Agriculture, FoodTech & Rural Development / Software"
+    },
+    {
+      "sr_no": 7,
+      "problem_statement": "Gamified Platform to Promote Sustainable Farming Practices",
+      "description": "Develop a gamified digital platform that motivates farmers to adopt sustainable agricultural practices through missions, points, rewards, personalized challenges and community participation.",
+      "domain": "Agriculture, FoodTech & Rural Development / Software"
+    },
+    {
+      "sr_no": 8,
+      "problem_statement": "Development of a travel related software app that can be installed on mobile phones that could capture trip related information",
+      "description": "Develop a mobile application that automatically captures trip-related information such as travel routes, locations and journey details, reducing manual data collection and supporting better transportation and travel analysis.",
+      "domain": "Travel & Tourism / Software"
+    },
+    {
+      "sr_no": 9,
+      "problem_statement": "ERP-based Integrated Student Management system",
+      "description": "Develop a cost-effective integrated student-management ERP that brings admissions, fees, hostel, examinations and institutional reporting into a single source of truth with automation, dashboards, role-based access and backups.",
+      "domain": "Smart Automation / Software"
+    },
+    {
+      "sr_no": 10,
+      "problem_statement": "AI-Based Rockfall Prediction and Alert System for Open-Pit Mines",
+      "description": "Develop an AI/ML-based system to assess rockfall risk in open-pit mines using relevant environmental and geological information, provide risk predictions and issue timely alerts to improve worker safety and operational decisions.",
+      "domain": "Disaster Management / Software"
+    },
+    {
+      "sr_no": 11,
+      "problem_statement": "Student Innovation: Technology ideas in tertiary sectors like Hospitality, Financial Services, Entertainment and Retail.",
+      "description": "Propose an innovative technology solution addressing a real-world challenge in tertiary sectors such as hospitality, financial services, entertainment or retail, with emphasis on feasibility, scalability and measurable impact.",
+      "domain": "Student Innovation / Software"
+    },
+    {
+      "sr_no": 12,
+      "problem_statement": "Student Innovation: Smart Education, a Concept that Describes learning in digital age.it enables learner to learn more effectively,efficently,flexibly and comfortably.",
+      "description": "Propose an innovative smart-education solution that uses digital technology to make learning more effective, efficient, flexible and accessible for learners in the digital age.",
+      "domain": "Smart Education / Software"
+    },
+    {
+      "sr_no": 13,
+      "problem_statement": "Student Innovation: Challenges your creative minds to conceptualize and develop unique toys & games.",
+      "description": "Develop an innovative toy or game concept that demonstrates creativity, technological innovation and practical usability while creating an engaging experience for its intended users.",
+      "domain": "Student Innovation / Software"
+    },
+    {
+      "sr_no": 14,
+      "problem_statement": "Women Safety Analytics – Protecting Women from threats",
+      "description": "Develop a proactive women-safety analytics solution capable of detecting people and gender distribution, identifying potentially risky situations such as a lone woman at night or a woman surrounded by men, recognizing SOS gestures and identifying safety hotspots.",
+      "domain": "Miscellaneous, Public Safety / Software"
+    },
+    {
+      "sr_no": 15,
+      "problem_statement": "Development of a Geolocation-Based Attendance Tracking Mobile Application.",
+      "description": "Develop a mobile application that automates attendance tracking using geolocation, recording check-in/check-out events and location information within defined office or institutional boundaries while reducing manual errors.",
+      "domain": "Smart Automation / Software"
+    },
+    {
+      "sr_no": 16,
+      "problem_statement": "Solutions could be in the form of waste segregation, disposal, and improve sanitization system.",
+      "description": "Develop a hardware or integrated solution for effective waste segregation and disposal while improving sanitization, cleanliness and overall waste-management efficiency.",
+      "domain": "Clean & Green Technology / Waste Management / Hardware"
+    },
+    {
+      "sr_no": 17,
+      "problem_statement": "Smart irrigation system for precision farming",
+      "description": "Develop a smart irrigation system that uses sensors and automated control to deliver water according to crop and soil requirements, improving water efficiency and supporting precision farming.",
+      "domain": "Agriculture & Precision Farming / Hardware"
+    },
+    {
+      "sr_no": 18,
+      "problem_statement": "Development of an Affordable Wearable Assistive System for Real-Time Tremor Reduction in Parkinson’s Patients",
+      "description": "Develop an affordable wearable assistive device capable of detecting tremors in real time and providing an appropriate physical response to reduce tremor intensity and improve the user's ability to perform daily activities.",
+      "domain": "Healthcare, Assistive Technology / Hardware"
+    },
+    {
+      "sr_no": 19,
+      "problem_statement": "Innovating for Sustainability: Driving Smart Resource Conservation (Energy & Water) in Home Appliances (Refrigerators, Air Conditioners, Washing Machines and Desert Air Coolers)",
+      "description": "Develop smart hardware solutions for home appliances that monitor and optimize energy and water consumption, helping conserve resources without compromising appliance performance.",
+      "domain": "Clean & Green Technology / Resource Conservation / Hardware"
+    },
+    {
+      "sr_no": 20,
+      "problem_statement": "Detection and prevention of tampering in Weighing and Measuring Instruments",
+      "description": "Develop a hardware-based system to detect, prevent or record tampering attempts in weighing and measuring instruments, improving measurement integrity, reliability and accountability.",
+      "domain": "Instrumentation & Measurement / Hardware"
+    },
+    {
+      "sr_no": 21,
+      "problem_statement": "Disaster Response — Intelligent Floodwater Drainage Management",
+      "description": "Develop a smart floodwater management system using IoT sensors, GIS, weather data and AI/ML to monitor water levels, identify waterlogged areas and drainage blockages, predict flooding, and prioritize drainage and pumping operations in real time.",
+      "domain": "Disaster Response, Smart Infrastructure / Hardware"
+    },
+    {
+      "sr_no": 22,
+      "problem_statement": "MedTech — Smart Ambulance Patient Monitoring System",
+      "description": "Develop an IoT-enabled ambulance system that continuously monitors heart rate, SpO₂, ECG, temperature and respiratory rate while securely transmitting patient data and GPS location to the destination hospital for timely preparation and emergency response.",
+      "domain": "MedTech, Healthcare IoT / Hardware"
+    },
+    {
+      "sr_no": 23,
+      "problem_statement": "AgriTech — AI-Based Autonomous Weed Detection and Removal",
+      "description": "Develop an AI-enabled agricultural system using cameras and sensors to distinguish weeds from crops, locate them accurately and perform targeted weed removal or treatment, reducing manual labour, unnecessary herbicide use and crop losses.",
+      "domain": "AgriTech, Precision Agriculture / Hardware"
+    },
+    {
+      "sr_no": 24,
+      "problem_statement": "EdTech — AI-Based Examination Cheating Analyzer",
+      "description": "Develop an AI-powered examination monitoring system using cameras, microphones and optional IoT sensors to detect suspicious activities such as unauthorized device usage, communication, repeated head movements and abnormal behaviour, generating real-time alerts and reports for invigilators.",
+      "domain": "EdTech, AI & Computer Vision / Hardware"
+    },
+    {
+      "sr_no": 25,
+      "problem_statement": "Student Innovation — Open Innovation",
+      "description": "Propose an innovative hardware, software or integrated solution addressing a real-world problem in any domain, emphasizing technological innovation, practical feasibility, scalability and measurable social or economic impact.",
+      "domain": "Student Innovation, Open Innovation / Hardware"
+    }
+  ]
+}

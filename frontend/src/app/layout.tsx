@@ -33,26 +33,26 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "DMX — DataMatrix | RGIT Mumbai's AI & ML Community",
+    default: "DMX — DataMatrix | RGIT Mumbai's Tech & Engineering Community",
     template: "%s | DMX",
   },
   description:
-    "DMX (DataMatrix) is the official AI & Machine Learning student committee of MCT's Rajiv Gandhi Institute of Technology, Mumbai. We run hackathons, workshops, research projects, and speaker sessions.",
+    "DMX (DataMatrix) is the premier tech and computer engineering student committee of MCT's Rajiv Gandhi Institute of Technology, Mumbai. We run hackathons, workshops, and build real-world projects.",
   keywords: [
     "DMX",
     "DataMatrix",
     "RGIT",
-    "AI",
-    "Machine Learning",
+    "Computer Engineering",
+    "Tech Community",
     "Hack2Infinity",
     "Mumbai",
     "student committee",
   ],
   authors: [{ name: "DMX — DataMatrix, RGIT Mumbai" }],
   openGraph: {
-    title: "DMX — DataMatrix | RGIT Mumbai's AI & ML Community",
+    title: "DMX — DataMatrix | RGIT Mumbai's Tech & Engineering Community",
     description:
-      "Student-run AI & Machine Learning research community at RGIT Mumbai.",
+      "Student-run tech and computer engineering community at RGIT Mumbai.",
     type: "website",
     locale: "en_IN",
   },

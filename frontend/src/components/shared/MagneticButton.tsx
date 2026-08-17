@@ -26,7 +26,8 @@ export function MagneticButton({
 
   const variants = {
     primary: "text-bg-primary hover:text-white",
-    outline: "text-text-primary border border-border-default bg-transparent",
+    outline:
+      "text-text-primary border border-border-default bg-transparent ",
     ghost: "text-text-secondary hover:text-text-primary bg-transparent",
   };
 
@@ -36,7 +37,9 @@ export function MagneticButton({
         className={cn(baseStyles, variants[variant], className)}
         style={{
           ...style,
-          ...(variant === "primary" ? { background: "var(--gradient-teal)" } : {}),
+          ...(variant === "primary"
+            ? { background: "var(--gradient-teal)" }
+            : {}),
         }}
         {...props}
       >

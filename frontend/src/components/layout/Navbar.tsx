@@ -9,12 +9,13 @@ import { DMXLogo } from "./DMXLogo";
 import { ThemeToggle } from "./ThemeToggle";
 import { cn } from "@/lib/utils";
 
-const navLinks = [
+const navLinks: { href: string; label: string; badge?: boolean }[] = [
   { href: "/about", label: "About" },
   { href: "/events", label: "Events" },
   { href: "/projects", label: "Projects" },
   { href: "/team", label: "Team" },
   { href: "/gallery", label: "Gallery" },
+  { href: "/sih", label: "SIH 2026", badge: true },
 ];
 
 export function Navbar() {
@@ -56,13 +57,21 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "relative px-4 py-2 text-sm font-medium transition-colors rounded-lg",
+                  "relative px-4 py-2 text-sm font-medium transition-colors rounded-lg flex items-center gap-1.5",
                   isActive
                     ? "text-text-primary"
+                    : link.badge
+                    ? "text-brand-teal hover:text-brand-teal-light"
                     : "text-text-secondary hover:text-text-primary",
                 )}
               >
                 {link.label}
+                {link.badge && (
+                  <span
+                    className="inline-block w-1.5 h-1.5 rounded-full bg-brand-teal"
+                    style={{ boxShadow: "0 0 0 3px rgba(52,217,166,.2)", animation: "pulse 2s ease-in-out infinite" }}
+                  />
+                )}
                 {isActive && (
                   <motion.div
                     layoutId="nav-underline"
@@ -122,13 +131,21 @@ export function Navbar() {
                     key={link.href}
                     href={link.href}
                     className={cn(
-                      "px-4 py-3 text-sm font-medium rounded-lg transition-colors",
+                      "px-4 py-3 text-sm font-medium rounded-lg transition-colors flex items-center gap-2",
                       isActive
                         ? "text-text-primary bg-bg-surface"
+                        : link.badge
+                        ? "text-brand-teal hover:bg-bg-surface"
                         : "text-text-secondary hover:text-text-primary hover:bg-bg-surface",
                     )}
                   >
                     {link.label}
+                    {link.badge && (
+                      <span
+                        className="inline-block w-1.5 h-1.5 rounded-full bg-brand-teal"
+                        style={{ boxShadow: "0 0 0 3px rgba(52,217,166,.2)" }}
+                      />
+                    )}
                   </Link>
                 );
               })}
