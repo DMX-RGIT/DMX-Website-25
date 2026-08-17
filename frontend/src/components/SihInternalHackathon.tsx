@@ -798,7 +798,7 @@ const SIH_STYLES = `
     .sih-stage-copy p { font-size: 13px; }
     .sih-vault-workspace { min-height: 0; }
     .sih-card-deck { width: 100%; height: 460px; aspect-ratio: auto; }
-    .sih-card { padding: 24px; overflow-y: auto; }
+    .sih-card { padding: 24px; }
     .sih-card h3 { font-size: 20px; margin-bottom: 12px; }
     .sih-card p { font-size: 13px; line-height: 1.5; }
     .sih-card-domain { max-width: 43%; font-size: 8px; line-height: 1.5; }
