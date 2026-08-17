@@ -796,11 +796,13 @@ const SIH_STYLES = `
     .sih-motion-timeline-shell { padding: 16px 12px; }
     .sih-stage-copy h3 { font-size: 18px; }
     .sih-stage-copy p { font-size: 13px; }
-    .sih-vault-workspace { min-height: 500px; }
-    .sih-card-deck { width: 100%; aspect-ratio: .78; }
-    .sih-card h3 { font-size: 26px; }
+    .sih-vault-workspace { min-height: 0; }
+    .sih-card-deck { width: 100%; height: 460px; aspect-ratio: auto; }
+    .sih-card { padding: 24px; overflow-y: auto; }
+    .sih-card h3 { font-size: 20px; margin-bottom: 12px; }
+    .sih-card p { font-size: 13px; line-height: 1.5; }
     .sih-card-domain { max-width: 43%; font-size: 8px; line-height: 1.5; }
-    .sih-card-bottom { font-size: 8px; }
+    .sih-card-bottom { font-size: 8px; margin-top: 18px; }
     .sih-vault-tools select { width: 100%; }
 
     /* Elegant spiral scaling */
@@ -814,10 +816,19 @@ const SIH_STYLES = `
     }
   }
   @media (max-width: 400px) {
+    .sih-pad { padding-left: 16px; padding-right: 16px; }
+    .sih-hero { padding-left: 16px; padding-right: 16px; }
+    
     .sih-squad-system {
       transform: scale(0.65);
       margin-bottom: -110px;
     }
+    
+    .sih-card-deck { height: 500px; }
+    .sih-card { padding: 18px; }
+    .sih-card h3 { font-size: 16px; margin-bottom: 8px; }
+    .sih-card p { font-size: 12px; line-height: 1.5; }
+    .sih-card-bottom { margin-top: 14px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .sih-orb { animation: none; }
