@@ -252,8 +252,9 @@ const SIH_STYLES = `
   .sih-aurora { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; opacity: .55; }
   .sih-orb {
     position: absolute; display: block; border-radius: 50%;
-    mix-blend-mode: screen; opacity: .22; width: 46vw; height: 23vw;
+    opacity: .18; width: 46vw; height: 23vw;
     min-width: 320px; min-height: 160px;
+    will-change: transform;
   }
   .sih-orb-1 { top: 5%; left: -12%; background: radial-gradient(ellipse, rgba(52,217,166,.45), transparent 66%); transform: rotate(-16deg); }
   .sih-orb-2 { top: 23%; right: -17%; background: radial-gradient(ellipse, rgba(30,58,138,.55), transparent 68%); transform: rotate(18deg); }
@@ -262,7 +263,7 @@ const SIH_STYLES = `
   /* ── Signal glows ── */
   .sih-glow {
     position: fixed; z-index: 0; pointer-events: none; border-radius: 50%;
-    width: 180px; height: 180px;
+    width: 180px; height: 180px; will-change: transform, opacity;
   }
   .sih-glow-1 { top: 21%; left: 43%; background: radial-gradient(circle, rgba(52,217,166,.14), transparent 68%); }
   .sih-glow-2 { top: 69%; right: 13%; width: 220px; height: 220px; background: radial-gradient(circle, rgba(30,58,138,.12), transparent 68%); }
@@ -459,7 +460,11 @@ const SIH_STYLES = `
   .sih-squad-command h2 span { color: var(--sih-mint); }
 
   /* squad diagram */
-  .sih-squad-system { position: relative; width: 100%; max-width: 480px; aspect-ratio: 1.24; margin: 24px auto 10px; }
+  .sih-squad-system {
+    position: relative; width: 100%; max-width: 480px; aspect-ratio: 1.24;
+    margin: 24px auto 10px;
+    overflow: visible; isolation: isolate;
+  }
   .sih-squad-circuit { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
   .sih-squad-circuit path { fill: none; stroke: rgba(52,217,166,.3); stroke-width: 1.3; stroke-dasharray: 5 7; vector-effect: non-scaling-stroke; }
   .sih-squad-circuit .spine { stroke: rgba(30,58,138,.7); stroke-dasharray: none; }
@@ -480,12 +485,12 @@ const SIH_STYLES = `
   .sih-squad-node i { color: var(--sih-amber); font-style: normal; }
   .sih-squad-node.is-dimmed { opacity: .25; }
   .sih-squad-node.is-active { color: var(--sih-mint); border-color: var(--sih-mint); transform: translateY(-3px) scale(1.04); box-shadow: 0 0 18px rgba(52,217,166,.15); }
-  .sih-node-1 { top: 8%; left: 35%; }
-  .sih-node-2 { top: 27%; right: 0; }
-  .sih-node-3 { bottom: 19%; right: 3%; }
-  .sih-node-4 { bottom: 5%; left: 34%; }
-  .sih-node-5 { bottom: 20%; left: 0; }
-  .sih-node-6 { top: 27%; left: -1%; }
+  .sih-node-1 { top: 6%; left: 34%; transform: translateX(-50%); }
+  .sih-node-2 { top: 26%; right: 2%; }
+  .sih-node-3 { bottom: 18%; right: 2%; }
+  .sih-node-4 { bottom: 4%; left: 34%; transform: translateX(-50%); }
+  .sih-node-5 { bottom: 18%; left: 2%; }
+  .sih-node-6 { top: 26%; left: 2%; }
   .sih-role-tooltip {
     position: absolute; z-index: 5;
     left: 50%; bottom: calc(100% + 9px); width: 180px;
@@ -791,6 +796,26 @@ const SIH_STYLES = `
     .sih-squad-caption { display: block; line-height: 1.6; }
     .sih-vault-tools select { width: 100%; }
   }
+  @media (max-width: 768px) {
+    /* Kill expensive animations on mobile */
+    .sih-orb { animation: none !important; transform: none !important; }
+    .sih-glow { animation: none !important; opacity: 0 !important; }
+    .sih-ambient-grid { transform: none !important; }
+    /* Squad nodes — prevent overflow on medium mobile */
+    .sih-squad-node { font-size: 8px; padding: 5px 7px; }
+    .sih-node-2, .sih-node-3 { right: 1%; }
+    .sih-node-5, .sih-node-6 { left: 1%; }
+  }
+  @media (max-width: 400px) {
+    /* Compact spiral for very small screens */
+    .sih-squad-system { max-width: 320px; }
+    .sih-squad-core strong { font-size: 46px; }
+    .sih-squad-node { font-size: 7px; padding: 4px 6px; gap: 4px; }
+    .sih-node-1, .sih-node-4 { left: 50%; transform: translateX(-50%); }
+    .sih-node-2, .sih-node-3 { right: 0%; }
+    .sih-node-5, .sih-node-6 { left: 0%; }
+    .sih-role-tooltip { width: 140px; font-size: 9px; }
+  }
   @media (prefers-reduced-motion: reduce) {
     .sih-orb { animation: none; }
     .sih-ambient-grid { transform: none !important; }
@@ -905,11 +930,20 @@ export default function SihInternalHackathon() {
       setCardIndex(statement - 1);
   }, []);
 
-  // Parallax scroll tracking
+  // Parallax scroll tracking — throttled with rAF, disabled on mobile
   useEffect(() => {
-    const onScroll = () => setScrollY(window.scrollY);
+    // Don't track scroll for parallax on mobile — saves re-renders
+    if (window.innerWidth <= 768) return;
+    let rafId = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => setScrollY(window.scrollY));
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(rafId);
+    };
   }, []);
 
   // Card navigation
@@ -1170,7 +1204,7 @@ export default function SihInternalHackathon() {
               transition={{ duration: 0.55, delay: 0.12 }}
             >
               <p>
-                CESS, CodeCell, and DMX come together to take the SIH mindset
+                DMX, CodeCell, and CESS  come together to take the SIH mindset
                 from a national stage into a campus-scale proving ground.
                 Students across disciplines are invited to form a team, choose a
                 direction, and make a sharp, testable first move.
