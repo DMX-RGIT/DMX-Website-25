@@ -1,0 +1,305 @@
+{
+  "declared": false,
+  "teams": [
+    {
+      "id": 1,
+      "name": "Team 01",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 2,
+      "name": "Team 02",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 3,
+      "name": "Team 03",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 4,
+      "name": "Team 04",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 5,
+      "name": "Team 05",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 6,
+      "name": "Team 06",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 7,
+      "name": "Team 07",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 8,
+      "name": "Team 08",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 9,
+      "name": "Team 09",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 10,
+      "name": "Team 10",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 11,
+      "name": "Team 11",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 12,
+      "name": "Team 12",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 13,
+      "name": "Team 13",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 14,
+      "name": "Team 14",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 15,
+      "name": "Team 15",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 16,
+      "name": "Team 16",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 17,
+      "name": "Team 17",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 18,
+      "name": "Team 18",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 19,
+      "name": "Team 19",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 20,
+      "name": "Team 20",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 21,
+      "name": "Team 21",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 22,
+      "name": "Team 22",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 23,
+      "name": "Team 23",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 24,
+      "name": "Team 24",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 25,
+      "name": "Team 25",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 26,
+      "name": "Team 26",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 27,
+      "name": "Team 27",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 28,
+      "name": "Team 28",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 29,
+      "name": "Team 29",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 30,
+      "name": "Team 30",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 31,
+      "name": "Team 31",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 32,
+      "name": "Team 32",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 33,
+      "name": "Team 33",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 34,
+      "name": "Team 34",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 35,
+      "name": "Team 35",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 36,
+      "name": "Team 36",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 37,
+      "name": "Team 37",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 38,
+      "name": "Team 38",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 39,
+      "name": "Team 39",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 40,
+      "name": "Team 40",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 41,
+      "name": "Team 41",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 42,
+      "name": "Team 42",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 43,
+      "name": "Team 43",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 44,
+      "name": "Team 44",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 45,
+      "name": "Team 45",
+      "status": "selected",
+      "message": "Congratulations on advancing to the next stage! Your journey continues."
+    },
+    {
+      "id": 46,
+      "name": "Team 46",
+      "status": "backup",
+      "message": "You are on the backup list. Stay prepared and keep building!"
+    },
+    {
+      "id": 47,
+      "name": "Team 47",
+      "status": "backup",
+      "message": "You are on the backup list. Stay prepared and keep building!"
+    },
+    {
+      "id": 48,
+      "name": "Team 48",
+      "status": "backup",
+      "message": "You are on the backup list. Stay prepared and keep building!"
+    },
+    {
+      "id": 49,
+      "name": "Team 49",
+      "status": "backup",
+      "message": "You are on the backup list. Stay prepared and keep building!"
+    },
+    {
+      "id": 50,
+      "name": "Team 50",
+      "status": "backup",
+      "message": "You are on the backup list. Stay prepared and keep building!"
+    }
+  ]
+}

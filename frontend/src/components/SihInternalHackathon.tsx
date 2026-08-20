@@ -7,7 +7,13 @@
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-import { motion, useAnimation, useScroll, useSpring, useTransform } from "framer-motion";
+import {
+  motion,
+  useAnimation,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "framer-motion";
 import {
   ArrowDown,
   ArrowLeft,
@@ -25,6 +31,8 @@ import {
   Sparkles,
   Users,
 } from "lucide-react";
+import confetti from "canvas-confetti";
+import teamData from "@/lib/selectedTeams.json";
 import problemData from "@/lib/problemStatements.json";
 import { MagneticButton } from "@/components/shared/MagneticButton";
 import Link from "next/link";
@@ -156,11 +164,29 @@ const protocolRules = [
   ],
 ] as const;
 
+// Whether the selected teams have been declared — flip this flag in selectedTeams.json
+const TEAMS_DECLARED = teamData.declared as boolean;
+
 const sections = [
   { id: "sih-brief", label: "Brief" },
   { id: "sih-rules", label: "Team protocol" },
   { id: "sih-timeline", label: "Timeline" },
-  { id: "sih-vault", label: "Problem vault" },
+  {
+    id: "sih-vault",
+    label: TEAMS_DECLARED ? "Selected Teams" : "Problem vault",
+  },
+];
+
+type Team = {
+  id: number;
+  name: string;
+  status: string;
+  message: string;
+};
+const teams = teamData.teams as Team[];
+const teamStatuses: string[] = [
+  "All teams",
+  ...Array.from(new Set(teams.map((t: Team) => t.status))),
 ];
 
 type ProblemStatement = {
@@ -851,6 +877,7 @@ export default function SihInternalHackathon() {
   const [activeRole, setActiveRole] = useState<string | null>(null);
   const [teamCount, setTeamCount] = useState(0);
   const [domainFilter, setDomainFilter] = useState("All domains");
+  const [statusFilter, setStatusFilter] = useState("All teams");
   const [reducedMotion, setReducedMotion] = useState(false);
 
   const heroStatRef = useRef<HTMLDivElement | null>(null);
@@ -868,6 +895,7 @@ export default function SihInternalHackathon() {
   });
   const timelineBeam = useTransform(timelineProgress, [0, 1], ["0%", "100%"]);
 
+  // Problem vault data (used when TEAMS_DECLARED === false)
   const filteredProblems = useMemo(
     () =>
       domainFilter === "All domains"
@@ -875,16 +903,27 @@ export default function SihInternalHackathon() {
         : problems.filter((p) => p.domain === domainFilter),
     [domainFilter],
   );
-  const card =
-    filteredProblems[cardIndex % filteredProblems.length] ?? problems[0];
+
+  // Teams data (used when TEAMS_DECLARED === true)
+  const filteredTeams = useMemo(
+    () =>
+      statusFilter === "All teams"
+        ? teams
+        : teams.filter((t) => t.status === statusFilter),
+    [statusFilter],
+  );
+
+  // Active card — switches source depending on declared flag
+  const activeList = TEAMS_DECLARED ? filteredTeams : filteredProblems;
+  const card = activeList[cardIndex % activeList.length] ?? activeList[0];
   const nextCards = useMemo(
     () =>
       [1, 2].map(
         (offset) =>
-          filteredProblems[(cardIndex + offset) % filteredProblems.length] ??
-          problems[offset],
+          activeList[(cardIndex + offset) % activeList.length] ??
+          activeList[offset],
       ),
-    [cardIndex, filteredProblems],
+    [cardIndex, activeList],
   );
 
   // Reduced motion
@@ -903,7 +942,12 @@ export default function SihInternalHackathon() {
       return;
     }
     consoleControls
-      .start({ opacity: 1, x: 0, rotate: 1.5, transition: { duration: 0.7, delay: 0.18, ease: [0.33, 1, 0.68, 1] } })
+      .start({
+        opacity: 1,
+        x: 0,
+        rotate: 1.5,
+        transition: { duration: 0.7, delay: 0.18, ease: [0.33, 1, 0.68, 1] },
+      })
       .then(() => {
         consoleControls.start({
           y: [0, -10, 0],
@@ -911,7 +955,7 @@ export default function SihInternalHackathon() {
           transition: { duration: 5, repeat: Infinity, ease: "easeInOut" },
         });
       });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reducedMotion]);
 
   // Count-up animation
@@ -937,12 +981,17 @@ export default function SihInternalHackathon() {
     return () => observer.disconnect();
   }, [reducedMotion]);
 
-  // URL param to jump to problem
+  // URL param to jump to card
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const statement = Number(params.get("statement"));
-    if (statement > 0 && statement <= problems.length)
-      setCardIndex(statement - 1);
+    if (TEAMS_DECLARED) {
+      const teamId = Number(params.get("team"));
+      if (teamId > 0 && teamId <= teams.length) setCardIndex(teamId - 1);
+    } else {
+      const statement = Number(params.get("statement"));
+      if (statement > 0 && statement <= problems.length)
+        setCardIndex(statement - 1);
+    }
   }, []);
 
   // Parallax scroll tracking — throttled with rAF, disabled on mobile
@@ -964,26 +1013,74 @@ export default function SihInternalHackathon() {
   // Card navigation
   const moveCard = (direction: number) => {
     setCardIndex((cur) => {
-      return (
-        (cur + direction + filteredProblems.length) % filteredProblems.length
-      );
+      return (cur + direction + activeList.length) % activeList.length;
     });
+
+    // Fire small confetti burst on card change
+    if (TEAMS_DECLARED) {
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { y: 0.7 },
+        colors: ["#34D9A6", "#1E3A8A", "#ffffff"],
+        zIndex: 100,
+      });
+    }
   };
 
+  // Initial page load big confetti
   useEffect(() => {
-    const statement =
-      filteredProblems[cardIndex % filteredProblems.length]?.sr_no;
-    if (statement) {
-      window.history.replaceState(
-        {},
-        "",
-        `${window.location.pathname}?statement=${statement}`,
-      );
+    if (TEAMS_DECLARED) {
+      const fireCannon = () => {
+        confetti({
+          particleCount: 100,
+          angle: 60,
+          spread: 70,
+          origin: { x: 0 },
+          colors: ["#34D9A6", "#1E3A8A", "#ffffff"],
+          zIndex: 100,
+        });
+        confetti({
+          particleCount: 100,
+          angle: 120,
+          spread: 70,
+          origin: { x: 1 },
+          colors: ["#34D9A6", "#1E3A8A", "#ffffff"],
+          zIndex: 100,
+        });
+      };
+      
+      // Fire once immediately, and again slightly later for a layered effect
+      fireCannon();
+      setTimeout(fireCannon, 400);
     }
-  }, [cardIndex, filteredProblems]);
+  }, []);
 
-  const handlePointerDown = (e: ReactPointerEvent<HTMLDivElement>) =>
+  useEffect(() => {
+    if (TEAMS_DECLARED) {
+      const teamId = (activeList[cardIndex % activeList.length] as Team)?.id;
+      if (teamId)
+        window.history.replaceState(
+          {},
+          "",
+          `${window.location.pathname}?team=${teamId}`,
+        );
+    } else {
+      const sr = (activeList[cardIndex % activeList.length] as ProblemStatement)
+        ?.sr_no;
+      if (sr)
+        window.history.replaceState(
+          {},
+          "",
+          `${window.location.pathname}?statement=${sr}`,
+        );
+    }
+  }, [cardIndex, activeList]);
+
+  const handlePointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    e.currentTarget.setPointerCapture(e.pointerId);
     setDragStart(e.clientX);
+  };
   const handlePointerUp = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (dragStart === null) return;
     const dist = e.clientX - dragStart;
@@ -1139,7 +1236,8 @@ export default function SihInternalHackathon() {
                 onClick={() => scrollToId("sih-vault")}
               >
                 <span className="flex items-center gap-2">
-                  Explore problem vault <ArrowDown size={16} />
+                  {TEAMS_DECLARED ? "Check standings" : "Explore problem vault"}{" "}
+                  <ArrowDown size={16} />
                 </span>
               </MagneticButton>
             </div>
@@ -1150,7 +1248,13 @@ export default function SihInternalHackathon() {
             className="sih-console"
             initial={{ opacity: 0, x: 50, rotate: 0 }}
             animate={consoleControls}
-            whileHover={{ y: -14, rotate: 0, boxShadow: "24px 24px 0 rgba(30,58,138,.22), 0 0 40px rgba(52,217,166,.18)", transition: { duration: 0.3, ease: [0.33, 1, 0.68, 1] } }}
+            whileHover={{
+              y: -14,
+              rotate: 0,
+              boxShadow:
+                "24px 24px 0 rgba(30,58,138,.22), 0 0 40px rgba(52,217,166,.18)",
+              transition: { duration: 0.3, ease: [0.33, 1, 0.68, 1] },
+            }}
             style={{ cursor: "default" }}
           >
             <div className="sih-console-top">
@@ -1219,7 +1323,7 @@ export default function SihInternalHackathon() {
               transition={{ duration: 0.55, delay: 0.12 }}
             >
               <p>
-                DMX, CodeCell, and CESS  come together to take the SIH mindset
+                DMX, CodeCell, and CESS come together to take the SIH mindset
                 from a national stage into a campus-scale proving ground.
                 Students across disciplines are invited to form a team, choose a
                 direction, and make a sharp, testable first move.
@@ -1455,48 +1559,84 @@ export default function SihInternalHackathon() {
           </div>
         </section>
 
-        {/* ══ PROBLEM VAULT ═════════════════════════════════════════════════════ */}
+        {/* ══ PROBLEM VAULT / SELECTED TEAMS ══════════════════════════════════ */}
+        {/* Toggle: set "declared": true in selectedTeams.json to switch to teams view */}
         <section className="sih-vault sih-pad" id="sih-vault">
           <div className="sih-vault-backdrop" aria-hidden="true" />
           <div className="sih-kicker">
             <span>03</span>
-            <span>THE PROBLEM VAULT</span>
+            <span>
+              {TEAMS_DECLARED ? "SELECTED TEAMS" : "THE PROBLEM VAULT"}
+            </span>
           </div>
 
           <div className="sih-vault-header">
             <div>
-              <p className="sih-terminal">$dmx open --mock-statements</p>
+              <p className="sih-terminal">
+                {TEAMS_DECLARED
+                  ? "$dmx list --selected-teams"
+                  : "$dmx open --mock-statements"}
+              </p>
               <h2>
-                Pick a problem.
-                <br />
-                <span>Build the proof.</span>
+                {TEAMS_DECLARED ? (
+                  <>
+                    Meet the teams.
+                    <br />
+                    <span>The journey continues.</span>
+                  </>
+                ) : (
+                  <>
+                    Pick a problem.
+                    <br />
+                    <span>Build the proof.</span>
+                  </>
+                )}
               </h2>
             </div>
             <div className="sih-vault-tools">
-              <label htmlFor="sih-domain-filter">FILTER / DOMAIN</label>
-              <select
-                id="sih-domain-filter"
-                value={domainFilter}
-                onChange={(e) => {
-                  setDomainFilter(e.target.value);
-                  setCardIndex(0);
-                }}
-              >
-                <option>All domains</option>
-                {problemDomains.slice(1).map((d) => (
-                  <option key={d}>{d}</option>
-                ))}
-              </select>
+              <label htmlFor="sih-domain-filter">
+                {TEAMS_DECLARED ? "FILTER / STATUS" : "FILTER / DOMAIN"}
+              </label>
+              {TEAMS_DECLARED ? (
+                <select
+                  id="sih-domain-filter"
+                  value={statusFilter}
+                  onChange={(e) => {
+                    setStatusFilter(e.target.value);
+                    setCardIndex(0);
+                  }}
+                >
+                  <option value="All teams">All teams</option>
+                  {teamStatuses.slice(1).map((s) => (
+                    <option key={s} value={s}>
+                      {s.toUpperCase()}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <select
+                  id="sih-domain-filter"
+                  value={domainFilter}
+                  onChange={(e) => {
+                    setDomainFilter(e.target.value);
+                    setCardIndex(0);
+                  }}
+                >
+                  <option>All domains</option>
+                  {problemDomains.slice(1).map((d) => (
+                    <option key={d}>{d}</option>
+                  ))}
+                </select>
+              )}
               <div className="sih-vault-count">
-                <span>INTERNAL / MOCK ONLY</span>
+                <span>
+                  {TEAMS_DECLARED
+                    ? "INTERNAL / SHORTLIST"
+                    : "INTERNAL / MOCK ONLY"}
+                </span>
                 <strong>
-                  {String((cardIndex % filteredProblems.length) + 1).padStart(
-                    2,
-                    "0",
-                  )}{" "}
-                  <small>
-                    / {String(filteredProblems.length).padStart(2, "0")}
-                  </small>
+                  {String((cardIndex % activeList.length) + 1).padStart(2, "0")}{" "}
+                  <small>/ {String(activeList.length).padStart(2, "0")}</small>
                 </strong>
               </div>
             </div>
@@ -1519,78 +1659,170 @@ export default function SihInternalHackathon() {
               onPointerCancel={() => setDragStart(null)}
             >
               {/* Behind cards (depth effect) */}
-              {nextCards.map((next, idx) => (
-                <div
-                  key={`${next.sr_no}-${idx}`}
-                  className={`sih-card sih-card-behind-${idx + 1}`}
-                  aria-hidden="true"
-                >
-                  <span className="sih-card-index">
-                    {String(next.sr_no).padStart(2, "0")}
-                  </span>
-                  <span className="sih-card-domain">{next.domain}</span>
-                  <h3>{next.problem_statement}</h3>
-                </div>
-              ))}
+              {nextCards.map((next, idx) => {
+                const t = next as Team;
+                const p = next as ProblemStatement;
+                return (
+                  <div
+                    key={
+                      TEAMS_DECLARED
+                        ? `t-${t.id}-${idx}`
+                        : `p-${p.sr_no}-${idx}`
+                    }
+                    className={`sih-card sih-card-behind-${idx + 1}`}
+                    aria-hidden="true"
+                  >
+                    <span className="sih-card-index">
+                      {String(TEAMS_DECLARED ? t.id : p.sr_no).padStart(2, "0")}
+                    </span>
+                    <span className="sih-card-domain">
+                      {TEAMS_DECLARED ? t.status.toUpperCase() : p.domain}
+                    </span>
+                    <h3>{TEAMS_DECLARED ? t.name : p.problem_statement}</h3>
+                  </div>
+                );
+              })}
 
-              {/* Front card */}
-              <article className="sih-card sih-card-front" key={card.sr_no}>
-                <div className="sih-card-topline">
-                  <span className="sih-card-index">
-                    {String(card.sr_no).padStart(2, "0")}
-                  </span>
-                  <span className="sih-card-domain">{card.domain}</span>
-                  <span className="sih-card-flag">
-                    <Flag size={14} /> MOCK
-                  </span>
-                </div>
-                <h3>{card.problem_statement}</h3>
-                <p>{card.description}</p>
-                <div className="sih-card-bottom">
-                  <span>INTERNAL ROUND / PROBLEM STATEMENT</span>
-                  <span>DRAG TO MOVE</span>
-                </div>
-              </article>
+              {/* Front card — problem vault mode */}
+              {!TEAMS_DECLARED &&
+                (() => {
+                  const p = card as ProblemStatement;
+                  return (
+                    <article className="sih-card sih-card-front" key={p.sr_no}>
+                      <div className="sih-card-topline">
+                        <span className="sih-card-index">
+                          {String(p.sr_no).padStart(2, "0")}
+                        </span>
+                        <span className="sih-card-domain">{p.domain}</span>
+                        <span className="sih-card-flag">
+                          <Flag size={14} /> MOCK
+                        </span>
+                      </div>
+                      <h3>{p.problem_statement}</h3>
+                      <p>{p.description}</p>
+                      <div className="sih-card-bottom">
+                        <span>INTERNAL ROUND / PROBLEM STATEMENT</span>
+                        <span>DRAG TO MOVE</span>
+                      </div>
+                    </article>
+                  );
+                })()}
+
+              {/* Front card — selected teams mode */}
+              {TEAMS_DECLARED &&
+                (() => {
+                  const t = card as Team;
+                  return (
+                    <article className="sih-card sih-card-front" key={t.id}>
+                      <div className="sih-card-topline">
+                        <span className="sih-card-index">
+                          {String(t.id).padStart(2, "0")}
+                        </span>
+                        <span
+                          className="sih-card-domain"
+                          style={{
+                            color:
+                              t.status === "backup"
+                                ? "var(--sih-amber)"
+                                : "var(--sih-mint)",
+                          }}
+                        >
+                          {t.status.toUpperCase()}
+                        </span>
+                        <span className="sih-card-flag">
+                          {t.status === "backup" ? (
+                            <ShieldAlert size={14} />
+                          ) : (
+                            <Flag size={14} />
+                          )}{" "}
+                          {t.status === "backup" ? "BACKUP" : "SELECTED"}
+                        </span>
+                      </div>
+                      <h3>{t.name}</h3>
+                      <p>{t.message}</p>
+                      <div className="sih-card-bottom">
+                        <span>INTERNAL ROUND / SELECTED TEAMS</span>
+                        <span>DRAG TO MOVE</span>
+                      </div>
+                    </article>
+                  );
+                })()}
             </div>
           </div>
 
           {/* Controls */}
           <div className="sih-vault-controls">
-            <button onClick={() => moveCard(-1)} aria-label="Previous problem">
+            <button
+              onClick={() => moveCard(-1)}
+              aria-label={TEAMS_DECLARED ? "Previous team" : "Previous problem"}
+            >
               <ArrowLeft size={18} />
             </button>
             <div className="sih-pips">
-              {problems
-                .slice(0, Math.min(problems.length, 10))
-                .map((p, idx) => (
-                  <button
-                    key={p.sr_no}
-                    className={idx === cardIndex % 10 ? "active" : ""}
-                    onClick={() => setCardIndex(idx)}
-                    aria-label={`Open problem ${p.sr_no}`}
-                  />
-                ))}
+              {activeList
+                .slice(0, Math.min(activeList.length, 10))
+                .map((item, idx) => {
+                  const key = TEAMS_DECLARED
+                    ? (item as Team).id
+                    : (item as ProblemStatement).sr_no;
+                  return (
+                    <button
+                      key={key}
+                      className={idx === cardIndex % 10 ? "active" : ""}
+                      onClick={() => {
+                        setCardIndex(idx);
+                        if (TEAMS_DECLARED) {
+                          confetti({
+                            particleCount: 30,
+                            spread: 40,
+                            origin: { y: 0.7 },
+                            colors: ["#34D9A6", "#1E3A8A", "#ffffff"],
+                            zIndex: 100,
+                          });
+                        }
+                      }}
+                      aria-label={
+                        TEAMS_DECLARED
+                          ? `Open team ${key}`
+                          : `Open problem ${key}`
+                      }
+                    />
+                  );
+                })}
             </div>
-            <button onClick={() => moveCard(1)} aria-label="Next problem">
+            <button
+              onClick={() => moveCard(1)}
+              aria-label={TEAMS_DECLARED ? "Next team" : "Next problem"}
+            >
               <ArrowRight size={18} />
             </button>
           </div>
 
           <div className="sih-vault-footnote">
-            <span className="sih-vault-led">
-              <span className="sih-status-dot" /> 25 PROMPTS INDEXED
-            </span>
-            <Link2 size={16} />
-            <span>
-              Need the full set?{" "}
-              <a
-                href="https://drive.google.com/drive/folders/1KFoSoMhActRnlmjN-dxeUTiZs4ThaCKV?usp=drive_link"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Open all 25 mock statements <ExternalLink size={13} />
-              </a>
-            </span>
+            {TEAMS_DECLARED ? (
+              <span className="sih-vault-led">
+                <span className="sih-status-dot" /> {teams.length} TEAMS INDEXED
+              </span>
+            ) : (
+              <>
+                <span className="sih-vault-led">
+                  <span className="sih-status-dot" /> {problems.length} PROMPTS
+                  INDEXED
+                </span>
+                <Link2 size={16} />
+                <span>
+                  Need the full set?{" "}
+                  <a
+                    href="https://drive.google.com/drive/folders/1KFoSoMhActRnlmjN-dxeUTiZs4ThaCKV?usp=drive_link"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Open all {problems.length} mock statements{" "}
+                    <ExternalLink size={13} />
+                  </a>
+                </span>
+              </>
+            )}
           </div>
         </section>
 
