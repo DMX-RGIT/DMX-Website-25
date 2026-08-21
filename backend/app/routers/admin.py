@@ -219,7 +219,7 @@ async def delete_join_request(request_id: UUID, db: AsyncSession = Depends(get_d
 # ─── Site Content CRUD ───
 
 @router.put("/content", response_model=SiteContentResponse)
-async def update_site_content(content: SiteContentBase, db: AsyncSession = Depends(get_db), _: str = Depends(get_current_admin)):
+async def update_site_content(content: SiteContentBase, db: AsyncSession = Depends(get_db), _: str = Depends(require_events_or_super_admin)):
     result = await db.execute(select(SiteContent).where(SiteContent.id == 1))
     db_content = result.scalar_one_or_none()
     if not db_content:

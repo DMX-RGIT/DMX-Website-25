@@ -25,7 +25,7 @@ const ALL_LINKS = [
   { href: "/admin/team", label: "Team", icon: Users, roles: ["superadmin"] },
   { href: "/admin/gallery", label: "Gallery", icon: Image, roles: ["superadmin", "events"] },
   { href: "/admin/sponsors", label: "Sponsors", icon: Handshake, roles: ["superadmin"] },
-  { href: "/admin/content", label: "Site Content", icon: LayoutDashboard, roles: ["superadmin"] },
+  { href: "/admin/content", label: "Site Content", icon: LayoutDashboard, roles: ["superadmin", "events"] },
 ];
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
