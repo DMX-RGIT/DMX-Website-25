@@ -54,19 +54,19 @@ export function SihJudgeCard({ judge, index, isActive }: SihJudgeCardProps) {
 
       {/* Content Section */}
       <div className="flex-1 flex flex-col justify-center min-w-0 text-center md:text-left w-full relative z-10">
-        <div className="text-[10px] md:text-[11px] font-mono tracking-widest text-[var(--sih-mint)] uppercase mb-2 truncate">
+        <div className="text-[10px] md:text-[11px] font-mono tracking-widest text-[var(--sih-mint)] uppercase mb-2 line-clamp-2">
           {judge.department}
         </div>
         
-        <h3 className="text-xl md:text-2xl font-bold text-white mb-1 leading-tight line-clamp-2 md:truncate">
+        <h3 className="text-xl md:text-2xl font-bold text-white mb-1 leading-tight line-clamp-2">
           {judge.name}
         </h3>
         
-        <p className="text-[13px] md:text-sm text-gray-400 mb-4 md:mb-5 truncate">
+        <p className="text-[13px] md:text-sm text-gray-400 mb-4 md:mb-5 line-clamp-1">
           {judge.designation}
         </p>
         
-        <div className="text-[12px] md:text-sm text-gray-300 leading-snug md:leading-relaxed line-clamp-4 text-left md:text-left">
+        <div className="text-[12px] md:text-sm text-gray-300 leading-snug md:leading-relaxed line-clamp-4 text-left">
           {judge.description}
         </div>
       </div>
