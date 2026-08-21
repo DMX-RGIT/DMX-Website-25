@@ -34,7 +34,9 @@ import {
 import confetti from "canvas-confetti";
 import teamData from "@/lib/selectedTeams.json";
 import problemData from "@/lib/problemStatements.json";
+import judgeData from "@/lib/judges.json";
 import { MagneticButton } from "@/components/shared/MagneticButton";
+import { SihJudgeCard, type Judge } from "@/components/team/SihJudgeCard";
 import Link from "next/link";
 
 // ─── Data ──────────────────────────────────────────────────────────────────────
@@ -175,7 +177,10 @@ const sections = [
     id: "sih-vault",
     label: TEAMS_DECLARED ? "Selected Teams" : "Problem vault",
   },
+  { id: "sih-judges", label: "Judging Panel" },
 ];
+
+const judges = judgeData.judges as Judge[];
 
 type Team = {
   id: number;
@@ -757,25 +762,72 @@ const SIH_STYLES = `
   .sih-vault-footnote a:hover { color: #3FE0B0; }
 
   /* ══════════════════════════════════════
-     ACTION / CTA
+     JUDGES PANEL
   ══════════════════════════════════════ */
-  .sih-action { background: transparent; }
-  .sih-action-panel {
-    display: grid; grid-template-columns: 1fr .8fr; gap: 8vw;
-    padding: clamp(26px, 5vw, 68px);
-    border: 1px solid rgba(52,217,166,.22);
-    background: rgba(16,20,28,.75);
-    border-radius: 12px;
+  .sih-judges { background: transparent; }
+  
+  @keyframes sih-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
   }
-  .sih-action-panel > div:first-child > p:last-child { max-width: 475px; color: #9da8b3; line-height: 1.65; margin: 28px 0 0; }
-  .sih-action-panel h2 {
-    margin: 0; font-weight: 650;
-    font-size: clamp(36px, 5vw, 72px);
-    letter-spacing: -.065em; line-height: .93;
-    font-family: "Space Grotesk", sans-serif;
+
+  .sih-judge-carousel-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    /* Negative margin to allow full-bleed scroll while keeping container alignment */
+    margin-left: max(-1rem, calc((100vw - 100%) / -2));
+    margin-right: max(-1rem, calc((100vw - 100%) / -2));
+    padding-left: max(1rem, calc((100vw - 100%) / 2));
+    padding-right: max(1rem, calc((100vw - 100%) / 2));
   }
-  .sih-action-panel h2 span { color: var(--sih-mint); }
-  .sih-action-links { display: grid; align-content: center; justify-items: start; gap: 13px; }
+  .sih-judge-track {
+    scroll-behavior: smooth;
+    -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: none; /* Firefox */
+    --card-width: 80vw;
+    padding-left: calc(50% - var(--card-width) / 2);
+    padding-right: calc(50% - var(--card-width) / 2);
+  }
+  @media (min-width: 768px) {
+    .sih-judge-track {
+      --card-width: 500px;
+    }
+  }
+  .sih-judge-track::-webkit-scrollbar {
+    display: none; /* Safari/Chrome */
+  }
+
+  .sih-judge-card {
+    animation: sih-float 6s ease-in-out infinite;
+  }
+
+  .sih-judge-nav {
+    position: absolute;
+    z-index: 10;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    background: rgba(8,10,15,0.85);
+    border: 1px solid rgba(52,217,166,0.3);
+    border-radius: 50%;
+    color: var(--sih-mint);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+    animation: sih-float 4s ease-in-out infinite;
+  }
+  .sih-judge-nav:hover {
+    background: rgba(52,217,166,0.15);
+    border-color: var(--sih-mint);
+    scale: 1.1;
+  }
+  .sih-judge-prev { left: 24px; animation-delay: 0.5s; }
+  .sih-judge-next { right: 24px; animation-delay: 1.5s; }
 
   /* ══════════════════════════════════════
      RESPONSIVE
@@ -800,7 +852,6 @@ const SIH_STYLES = `
     .sih-vault-workspace { grid-template-columns: 1fr; margin-top: 28px; }
     .sih-vault-side { flex-direction: row; justify-content: center; display: flex; }
     .sih-vault-footnote { margin-left: 0; }
-    .sih-action-panel { grid-template-columns: 1fr; gap: 40px; }
     .sih-timeline-intro { align-items: flex-start; flex-direction: column; gap: 10px; }
   }
   @media (max-width: 768px) {
@@ -872,6 +923,12 @@ const SIH_STYLES = `
 export default function SihInternalHackathon() {
   const active = useActiveSection();
   const [cardIndex, setCardIndex] = useState(0);
+  
+  // 15 copies for infinite scroll loop (15 * 18 = 270 items). 
+  // Middle block starts at index 7 * 18 = 126
+  const infiniteJudges = useMemo(() => Array(15).fill(judges).flat(), []);
+  const [activeJudgeIndex, setActiveJudgeIndex] = useState(126);
+  
   const [dragStart, setDragStart] = useState<number | null>(null);
   const [scrollY, setScrollY] = useState(0);
   const [activeRole, setActiveRole] = useState<string | null>(null);
@@ -882,7 +939,141 @@ export default function SihInternalHackathon() {
 
   const heroStatRef = useRef<HTMLDivElement | null>(null);
   const timelineRef = useRef<HTMLElement | null>(null);
+  const judgeCarouselRef = useRef<HTMLDivElement | null>(null);
   const consoleControls = useAnimation();
+
+  useEffect(() => {
+    if (judgeCarouselRef.current) {
+      // Small timeout ensures the DOM has painted and offsetWidth is accurate
+      setTimeout(() => {
+        const container = judgeCarouselRef.current;
+        if (!container) return;
+        const firstChild = container.firstElementChild as HTMLElement;
+        if (firstChild) {
+          const itemWidth = firstChild.offsetWidth + 24;
+          // Jump instantly to the middle block (index 126)
+          container.scrollLeft = itemWidth * 126;
+        }
+      }, 50);
+    }
+  }, []);
+
+  // Carousel Drag-to-Scroll Logic
+  const isDraggingCarousel = useRef(false);
+  const carouselStartX = useRef(0);
+  const carouselScrollLeft = useRef(0);
+  const carouselHasDragged = useRef(false);
+
+  const scrollJudgeCarousel = (direction: 'left' | 'right') => {
+    if (judgeCarouselRef.current) {
+      const container = judgeCarouselRef.current;
+      const firstChild = container.firstElementChild as HTMLElement;
+      if (!firstChild) return;
+      const scrollAmount = direction === 'left' ? -(firstChild.offsetWidth + 24) : (firstChild.offsetWidth + 24);
+      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  const dragStartJudgeIndex = useRef(0);
+
+  const handleCarouselMouseDown = (e: React.MouseEvent) => {
+    if (!judgeCarouselRef.current) return;
+    isDraggingCarousel.current = true;
+    carouselHasDragged.current = false;
+    carouselStartX.current = e.pageX - judgeCarouselRef.current.offsetLeft;
+    carouselScrollLeft.current = judgeCarouselRef.current.scrollLeft;
+    dragStartJudgeIndex.current = activeJudgeIndex;
+    judgeCarouselRef.current.style.cursor = 'grabbing';
+    // Remove scroll snapping while dragging for smoothness
+    judgeCarouselRef.current.classList.remove('snap-x', 'snap-mandatory');
+  };
+
+  const snapToNearestCard = (container: HTMLDivElement) => {
+    const firstChild = container.firstElementChild as HTMLElement;
+    if (!firstChild) return;
+    
+    const itemWidth = firstChild.offsetWidth + 24;
+    const scrollDiff = container.scrollLeft - carouselScrollLeft.current;
+    
+    let targetIndex = dragStartJudgeIndex.current;
+    
+    // If they dragged more than 50px, force at least 1 card change in that direction
+    if (Math.abs(scrollDiff) > 50) {
+      const direction = scrollDiff > 0 ? 1 : -1;
+      const crossed = Math.max(1, Math.round(Math.abs(scrollDiff) / itemWidth));
+      targetIndex += direction * crossed;
+    } else {
+      targetIndex = Math.round(container.scrollLeft / itemWidth);
+    }
+    
+    // Safety bounds
+    targetIndex = Math.max(0, Math.min(targetIndex, infiniteJudges.length - 1));
+    
+    container.scrollTo({
+      left: targetIndex * itemWidth,
+      behavior: 'smooth'
+    });
+  };
+
+  const handleCarouselMouseLeave = () => {
+    if (!isDraggingCarousel.current) return;
+    isDraggingCarousel.current = false;
+    if (judgeCarouselRef.current) {
+      judgeCarouselRef.current.style.cursor = 'auto';
+      snapToNearestCard(judgeCarouselRef.current);
+      setTimeout(() => {
+        if (judgeCarouselRef.current) judgeCarouselRef.current.classList.add('snap-x', 'snap-mandatory');
+      }, 300);
+    }
+  };
+
+  const handleCarouselMouseUp = () => {
+    if (!isDraggingCarousel.current) return;
+    isDraggingCarousel.current = false;
+    if (judgeCarouselRef.current) {
+      judgeCarouselRef.current.style.cursor = 'auto';
+      snapToNearestCard(judgeCarouselRef.current);
+      setTimeout(() => {
+        if (judgeCarouselRef.current) judgeCarouselRef.current.classList.add('snap-x', 'snap-mandatory');
+      }, 300);
+    }
+  };
+
+  const handleCarouselMouseMove = (e: React.MouseEvent) => {
+    if (!isDraggingCarousel.current || !judgeCarouselRef.current) return;
+    e.preventDefault(); // prevent text selection
+    const x = e.pageX - judgeCarouselRef.current.offsetLeft;
+    const walk = (x - carouselStartX.current) * 1.5; // Scroll multiplier
+    if (Math.abs(walk) > 10) {
+      carouselHasDragged.current = true;
+    }
+    judgeCarouselRef.current.scrollLeft = carouselScrollLeft.current - walk;
+  };
+
+  const handleCarouselClickCapture = (e: React.MouseEvent) => {
+    if (carouselHasDragged.current) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+  };
+
+  const handleCarouselScroll = () => {
+    if (!judgeCarouselRef.current) return;
+    const container = judgeCarouselRef.current;
+    const firstChild = container.firstElementChild as HTMLElement;
+    if (!firstChild) return;
+    
+    const itemWidth = firstChild.offsetWidth;
+    const gap = 24; // gap-6 is 24px
+    const itemTotalWidth = itemWidth + gap;
+    
+    // Add small offset to avoid flickering at exact boundaries
+    const newIndex = Math.round(container.scrollLeft / itemTotalWidth);
+    
+    if (newIndex !== activeJudgeIndex) {
+      setActiveJudgeIndex(newIndex);
+    }
+  };
 
   const { scrollYProgress } = useScroll({
     target: timelineRef,
@@ -1826,62 +2017,58 @@ export default function SihInternalHackathon() {
           </div>
         </section>
 
-        {/* ══ ACTION / CTA ══════════════════════════════════════════════════════ */}
-        <section className="sih-action sih-pad">
-          <div className="sih-action-panel">
+        {/* ══ JUDGING PANEL ════════════════════════════════════════════════════ */}
+        <section className="sih-judges sih-pad" id="sih-judges">
+          <div className="sih-kicker">
+            <span>04</span>
+            <span>JUDGING PANEL</span>
+          </div>
+          
+          <div className="sih-vault-header">
             <div>
-              <p className="sih-terminal">$dmx next --team-leader</p>
+              <p className="sih-terminal">$dmx list --judges</p>
               <h2>
-                Ready to make
+                Meet the
                 <br />
-                <span>your first commit?</span>
+                <span>judges.</span>
               </h2>
-              <p>
-                Only the Team Leader should register. Keep the WhatsApp group
-                limited to Team Leaders for important updates and announcements.
-              </p>
             </div>
-            <div className="sih-action-links flex flex-col items-start gap-4 mt-8">
-              <Link
-                href="https://forms.gle/r2jCQVqFx81KzKyc6"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <MagneticButton>
-                  <span className="flex items-center gap-2">
-                    Register now <ExternalLink size={16} className="ml-1" />
-                  </span>
-                </MagneticButton>
-              </Link>
-              <Link
-                href="https://chat.whatsapp.com/GNpIA2WC7V2IIeTsdzO0Ru"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <MagneticButton
-                  variant="outline"
-                  style={{ border: "1px solid rgba(255,255,255,0.25)" }}
-                >
-                  <span className="flex items-center gap-2">
-                    <MessageCircle size={16} /> Join the WhatsApp group
-                  </span>
-                </MagneticButton>
-              </Link>
-              <Link
-                href="https://www.sih.gov.in/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <MagneticButton
-                  variant="outline"
-                  style={{ border: "1px solid rgba(255,255,255,0.15)" }}
-                >
-                  <span className="flex items-center gap-2">
-                    <Layers3 size={16} /> Official SIH portal
-                  </span>
-                </MagneticButton>
-              </Link>
+          </div>
+
+          <div className="sih-judge-carousel-container relative mt-12 w-full max-w-[100vw]">
+            <button 
+              className="sih-judge-nav sih-judge-prev hidden md:flex" 
+              onClick={() => scrollJudgeCarousel('left')}
+              aria-label="Previous judges"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            
+            <div 
+              ref={judgeCarouselRef}
+              className="sih-judge-track flex items-center gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory py-12 md:py-16 w-full"
+              onScroll={handleCarouselScroll}
+              onMouseDown={handleCarouselMouseDown}
+              onMouseLeave={handleCarouselMouseLeave}
+              onMouseUp={handleCarouselMouseUp}
+              onMouseMove={handleCarouselMouseMove}
+              onClickCapture={handleCarouselClickCapture}
+              onDragStart={(e) => e.preventDefault()}
+            >
+              {infiniteJudges.map((judge, i) => (
+                <div key={`${judge.id}-${i}`} className="snap-center shrink-0">
+                  <SihJudgeCard judge={judge} index={i} isActive={i === activeJudgeIndex} />
+                </div>
+              ))}
             </div>
+
+            <button 
+              className="sih-judge-nav sih-judge-next hidden md:flex" 
+              onClick={() => scrollJudgeCarousel('right')}
+              aria-label="Next judges"
+            >
+              <ArrowRight size={20} />
+            </button>
           </div>
         </section>
       </main>

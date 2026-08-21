@@ -1,0 +1,166 @@
+{
+  "judges": [
+    {
+      "id": 1,
+      "name": "Prof. Dnyaneshwar P. Kapse",
+      "designation": "Faculty",
+      "department": "Computer Engineering",
+      "description": "Faculty, Department of Computer Engineering, MCT's RGIT",
+      "photo_url": "/judges/judge-1.jpg",
+      "social_links": {}
+    },
+    {
+      "id": 2,
+      "name": "Prof. Dilip Kale",
+      "designation": "Faculty",
+      "department": "Computer Engineering",
+      "description": "Faculty, Department of Computer Engineering, MCT's RGIT",
+      "photo_url": "/judges/judge-2.jpg",
+      "social_links": {}
+    },
+    {
+      "id": 3,
+      "name": "Dr. Sharmila N. Rathod",
+      "designation": "Faculty",
+      "department": "Computer Engineering",
+      "description": "Faculty, Department of Computer Engineering, MCT's RGIT",
+      "photo_url": "/judges/judge-3.jpg",
+      "social_links": {}
+    },
+    {
+      "id": 4,
+      "name": "Prof. Sumitra Sadhukhan",
+      "designation": "Faculty",
+      "department": "Computer Engineering",
+      "description": "Faculty, Department of Computer Engineering, MCT's RGIT",
+      "photo_url": "/judges/judge-4.jpg",
+      "social_links": {}
+    },
+    {
+      "id": 5,
+      "name": "Dr. Shikha Gupta",
+      "designation": "Faculty",
+      "department": "Computer Engineering",
+      "description": "Faculty, Department of Computer Engineering, MCT's RGIT",
+      "photo_url": "/judges/judge-5.jpg",
+      "social_links": {}
+    },
+    {
+      "id": 6,
+      "name": "Dr. Manoj D. Patil",
+      "designation": "Faculty",
+      "department": "Computer Engineering",
+      "description": "Faculty, Department of Computer Engineering, MCT's RGIT",
+      "photo_url": "/judges/judge-6.jpg",
+      "social_links": {}
+    },
+    {
+      "id": 7,
+      "name": "Prof. Bhushan M. Patil",
+      "designation": "Faculty",
+      "department": "Computer Engineering",
+      "description": "Faculty, Department of Computer Engineering, MCT's RGIT",
+      "photo_url": "/judges/judge-7.jpg",
+      "social_links": {}
+    },
+    {
+      "id": 8,
+      "name": "Dr. Ankush G. Hutke",
+      "designation": "Faculty",
+      "department": "Information Technology",
+      "description": "Faculty, Department of Information Technology, MCT's RGIT",
+      "photo_url": "/judges/judge-8.jpg",
+      "social_links": {}
+    },
+    {
+      "id": 9,
+      "name": "Dr. Swati Narwane",
+      "designation": "Faculty",
+      "department": "Information Technology",
+      "description": "Faculty, Department of Information Technology, MCT's RGIT",
+      "photo_url": "/judges/judge-9.jpg",
+      "social_links": {}
+    },
+    {
+      "id": 10,
+      "name": "Prof. Abhay E. Patil",
+      "designation": "Faculty",
+      "department": "Information Technology",
+      "description": "Faculty, Department of Information Technology, MCT's RGIT",
+      "photo_url": "/judges/judge-10.jpg",
+      "social_links": {}
+    },
+    {
+      "id": 11,
+      "name": "Dr. Jyoti Deshmukh",
+      "designation": "HOD & Faculty",
+      "department": "AI & Data Science",
+      "description": "Head of Department and Faculty, Department of AI & Data Science, MCT's RGIT",
+      "photo_url": "/judges/judge-11.jpg",
+      "social_links": {}
+    },
+    {
+      "id": 12,
+      "name": "Dr. Nilesh Bhelkar",
+      "designation": "Faculty",
+      "department": "AI & Data Science",
+      "description": "Faculty, Department of AI & Data Science, MCT's RGIT",
+      "photo_url": "/judges/judge-12.jpg",
+      "social_links": {}
+    },
+    {
+      "id": 13,
+      "name": "Dr. Lakshmi Naga Divya Tamma",
+      "designation": "Faculty",
+      "department": "AI & Data Science",
+      "description": "Faculty, Department of AI & Data Science, MCT's RGIT",
+      "photo_url": "/judges/judge-13.jpg",
+      "social_links": {}
+    },
+    {
+      "id": 14,
+      "name": "Dr. K.G. Sawarkar",
+      "designation": "Faculty",
+      "department": "Electronics & Telecom",
+      "description": "Faculty, Department of Electronics & Telecommunication Engineering, MCT's RGIT",
+      "photo_url": "/judges/judge-14.jpg",
+      "social_links": {}
+    },
+    {
+      "id": 15,
+      "name": "Dr. Nilesh B. Shahapure",
+      "designation": "Faculty",
+      "department": "Mechanical Engineering",
+      "description": "Faculty, Department of Mechanical Engineering, MCT's RGIT",
+      "photo_url": "/judges/judge-15.jpg",
+      "social_links": {}
+    },
+    {
+      "id": 16,
+      "name": "Dr. Nitin Panaskar",
+      "designation": "Faculty",
+      "department": "Mechanical Engineering",
+      "description": "Faculty, Department of Mechanical Engineering, MCT's RGIT",
+      "photo_url": "/judges/judge-16.jpg",
+      "social_links": {}
+    },
+    {
+      "id": 17,
+      "name": "Dr. K.G. Chaudhari",
+      "designation": "HOD & Faculty",
+      "department": "Applied Sciences & Humanities",
+      "description": "Head of Department and Faculty, Department of Applied Sciences & Humanities, MCT's RGIT",
+      "photo_url": "/judges/judge-17.jpg",
+      "social_links": {}
+    },
+    {
+      "id": 18,
+      "name": "Dr. Pallavi Dikkar",
+      "designation": "Faculty",
+      "department": "Applied Sciences & Humanities",
+      "description": "Faculty, Department of Applied Sciences & Humanities, MCT's RGIT",
+      "photo_url": "/judges/judge-18.jpg",
+      "social_links": {}
+    }
+  ]
+}
