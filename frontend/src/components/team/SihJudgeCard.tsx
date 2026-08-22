@@ -8,6 +8,9 @@ export interface Judge {
   designation: string;
   department: string;
   description: string;
+  education?: string;
+  experience?: string;
+  interests?: string;
   photo_url: string;
   social_links: Record<string, string>;
 }
@@ -66,9 +69,32 @@ export function SihJudgeCard({ judge, index, isActive }: SihJudgeCardProps) {
           {judge.designation}
         </p>
         
-        <div className="text-[12px] md:text-sm text-gray-300 leading-snug md:leading-relaxed line-clamp-4 text-left">
-          {judge.description}
-        </div>
+        {judge.education || judge.experience || judge.interests ? (
+          <div className="flex flex-col gap-1.5 md:gap-2 text-[12px] md:text-[13px] text-left mt-2 border-t border-[rgba(255,255,255,0.05)] pt-3">
+            {judge.education && (
+              <div className="text-gray-300 leading-snug">
+                <span className="font-semibold text-[var(--sih-mint)] mr-1.5 text-[10px] uppercase tracking-wider">EDU</span>
+                {judge.education}
+              </div>
+            )}
+            {judge.experience && (
+              <div className="text-gray-300">
+                <span className="font-semibold text-[var(--sih-mint)] mr-1.5 text-[10px] uppercase tracking-wider">EXP</span>
+                {judge.experience}
+              </div>
+            )}
+            {judge.interests && (
+              <div className="text-gray-300 leading-snug">
+                <span className="font-semibold text-[var(--sih-mint)] mr-1.5 text-[10px] uppercase tracking-wider">INT</span>
+                {judge.interests}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="text-[12px] md:text-sm text-gray-300 leading-snug md:leading-relaxed text-left">
+            {judge.description}
+          </div>
+        )}
       </div>
     </div>
   );

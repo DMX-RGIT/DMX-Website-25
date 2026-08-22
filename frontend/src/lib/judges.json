@@ -7,7 +7,10 @@
       "department": "Computer Engineering",
       "description": "M.Tech (IT), B.E. (Computer Engg). 28 yrs exp. Interests: Computer Hardware, System Architecture & Security.",
       "photo_url": "/judges/judge-1.jpg",
-      "social_links": {}
+      "social_links": {},
+      "education": "M.Tech (IT), B.E. (Computer Engg)",
+      "experience": "28 yrs exp.",
+      "interests": "Computer Hardware, System Architecture & Security."
     },
     {
       "id": 2,
@@ -16,7 +19,10 @@
       "department": "Computer Engineering",
       "description": "M.E. (Computer). 28 yrs teaching + 2 yrs industry. Interests: Robotics, AI, DBMS, Computer Graphics, Machine Learning.",
       "photo_url": "/judges/judge-2.jpg",
-      "social_links": {}
+      "social_links": {},
+      "education": "M.E. (Computer)",
+      "experience": "28 yrs teaching + 2 yrs industry",
+      "interests": "Robotics, AI, DBMS, Computer Graphics, Machine Learning."
     },
     {
       "id": 3,
@@ -25,7 +31,10 @@
       "department": "Computer Engineering",
       "description": "PhD, M.E., B.E., Diploma (all Computer Engg). Associate Professor, 24 yrs exp. Interests: Software & Web Engineering, OO Software Engineering.",
       "photo_url": "/judges/judge-3.jpg",
-      "social_links": {}
+      "social_links": {},
+      "education": "PhD, M.E., B.E., Diploma (all Computer Engg)",
+      "experience": "Associate Professor, 24 yrs exp.",
+      "interests": "Software & Web Engineering, OO Software Engineering."
     },
     {
       "id": 4,
@@ -34,7 +43,10 @@
       "department": "Computer Engineering",
       "description": "PhD (pursuing), M.Tech (IT), B.E. (Computer Engg). 18 yrs exp. Interests: DSGT, Algorithms, Theory of Computation, Operating Systems.",
       "photo_url": "/judges/judge-4.jpg",
-      "social_links": {}
+      "social_links": {},
+      "education": "PhD (pursuing), M.Tech (IT), B.E. (Computer Engg)",
+      "experience": "18 yrs exp.",
+      "interests": "DSGT, Algorithms, Theory of Computation, Operating Systems."
     },
     {
       "id": 5,
@@ -43,7 +55,10 @@
       "department": "Computer Engineering",
       "description": "PhD (CSE), M.Tech (CSE), B.E. (IT). Associate Professor, 18 yrs exp. Interests: IoT, Big Data, Neural Networks, AI.",
       "photo_url": "/judges/judge-5.jpg",
-      "social_links": {}
+      "social_links": {},
+      "education": "PhD (CSE), M.Tech (CSE), B.E. (IT)",
+      "experience": "Associate Professor, 18 yrs exp.",
+      "interests": "IoT, Big Data, Neural Networks, AI."
     },
     {
       "id": 6,
@@ -52,7 +67,10 @@
       "department": "Computer Engineering",
       "description": "PhD (CSE), M.E. (Computer Engg), B.E. (EXTC). Associate Professor, 20 yrs exp. Interests: Neural Networks, Image Processing, Data Mining, ML.",
       "photo_url": "/judges/judge-6.jpg",
-      "social_links": {}
+      "social_links": {},
+      "education": "PhD (CSE), M.E. (Computer Engg), B.E. (EXTC)",
+      "experience": "Associate Professor, 20 yrs exp.",
+      "interests": "Neural Networks, Image Processing, Data Mining, ML."
     },
     {
       "id": 7,
@@ -61,7 +79,10 @@
       "department": "Computer Engineering",
       "description": "PhD (pursuing), M.E. & B.E. (Computer Engg). 26 yrs exp. Interests: Distributed Systems, Networking, Cloud Computing, Cybersecurity.",
       "photo_url": "/judges/judge-7.jpg",
-      "social_links": {}
+      "social_links": {},
+      "education": "PhD (pursuing), M.E. & B.E. (Computer Engg)",
+      "experience": "26 yrs exp.",
+      "interests": "Distributed Systems, Networking, Cloud Computing, Cybersecurity."
     },
     {
       "id": 8,
@@ -70,7 +91,10 @@
       "department": "Information Technology",
       "description": "PhD, M.E. (IT), B.E. (CS&E). 17 yrs exp. Interests: Data Structures & Algorithms, Networks & Security, DBMS, OOP, Cloud Computing.",
       "photo_url": "/judges/judge-8.jpg",
-      "social_links": {}
+      "social_links": {},
+      "education": "PhD, M.E. (IT), B.E. (CS&E)",
+      "experience": "17 yrs exp.",
+      "interests": "Data Structures & Algorithms, Networks & Security, DBMS, OOP, Cloud Computing."
     },
     {
       "id": 9,
@@ -79,7 +103,10 @@
       "department": "Information Technology",
       "description": "Ph.D., M.E., B.E. (Computer Engg). Associate Professor, 17 yrs exp. Interests: Machine Learning, Big Data Analytics, Healthcare Data Science, AI systems.",
       "photo_url": "/judges/judge-9.jpg",
-      "social_links": {}
+      "social_links": {},
+      "education": "Ph.D., M.E., B.E. (Computer Engg)",
+      "experience": "Associate Professor, 17 yrs exp.",
+      "interests": "Machine Learning, Big Data Analytics, Healthcare Data Science, AI systems."
     },
     {
       "id": 10,
@@ -88,7 +115,10 @@
       "department": "Information Technology",
       "description": "M.E. (Computer Engg), B.E. (CSE). 26 yrs exp. Interests: Project Management, MIS, Automata Theory.",
       "photo_url": "/judges/judge-10.jpg",
-      "social_links": {}
+      "social_links": {},
+      "education": "M.E. (Computer Engg), B.E. (CSE)",
+      "experience": "26 yrs exp.",
+      "interests": "Project Management, MIS, Automata Theory."
     },
     {
       "id": 11,
@@ -97,7 +127,10 @@
       "department": "AI & Data Science",
       "description": "PhD, M.E. (Computer Engg), B.Tech (CS&T). 20 yrs exp. Interests: Machine Learning, Image Processing, Data Mining & Warehousing.",
       "photo_url": "/judges/judge-11.jpg",
-      "social_links": {}
+      "social_links": {},
+      "education": "PhD, M.E. (Computer Engg), B.Tech (CS&T)",
+      "experience": "20 yrs exp.",
+      "interests": "Machine Learning, Image Processing, Data Mining & Warehousing."
     },
     {
       "id": 12,
@@ -106,7 +139,10 @@
       "department": "AI & Data Science",
       "description": "Ph.D., M.E. (Computer Engg), B.E. (EXTC). 23 yrs exp. Interests: Machine Learning, Embedded Systems, Computer Architecture.",
       "photo_url": "/judges/judge-12.jpg",
-      "social_links": {}
+      "social_links": {},
+      "education": "Ph.D., M.E. (Computer Engg), B.E. (EXTC)",
+      "experience": "23 yrs exp.",
+      "interests": "Machine Learning, Embedded Systems, Computer Architecture."
     },
     {
       "id": 13,
@@ -115,7 +151,10 @@
       "department": "AI & Data Science",
       "description": "Ph.D., M.Tech, B.Tech (all CSE). 7.4 yrs exp. Interests: Network Security, Big Data, Data Structures & Algorithms, Theory of Computation.",
       "photo_url": "/judges/judge-13.jpg",
-      "social_links": {}
+      "social_links": {},
+      "education": "Ph.D., M.Tech, B.Tech (all CSE)",
+      "experience": "7.4 yrs exp.",
+      "interests": "Network Security, Big Data, Data Structures & Algorithms, Theory of Computation."
     },
     {
       "id": 14,
@@ -124,7 +163,10 @@
       "department": "Electronics & Telecom",
       "description": "B.E., M.E., PhD. Associate Professor, 30 yrs exp. Interests: Analog Circuit Design, RF & Microwave Circuit Design.",
       "photo_url": "/judges/judge-14.jpg",
-      "social_links": {}
+      "social_links": {},
+      "education": "B.E., M.E., PhD",
+      "experience": "Associate Professor, 30 yrs exp.",
+      "interests": "Analog Circuit Design, RF & Microwave Circuit Design."
     },
     {
       "id": 15,
@@ -133,7 +175,10 @@
       "department": "Mechanical Engineering",
       "description": "Ph.D. (Production Engg), M.Tech (Manufacturing), B.E. (Mech). 18 yrs exp. Interests: Nanomaterials, Nanocomposites, 3D Printing.",
       "photo_url": "/judges/judge-15.jpg",
-      "social_links": {}
+      "social_links": {},
+      "education": "Ph.D. (Production Engg), M.Tech (Manufacturing), B.E. (Mech)",
+      "experience": "18 yrs exp.",
+      "interests": "Nanomaterials, Nanocomposites, 3D Printing."
     },
     {
       "id": 16,
@@ -142,7 +187,10 @@
       "department": "Mechanical Engineering",
       "description": "PhD (Technology), M.Tech (Mfg), B.E. (Mech), PGDM. 18 yrs teaching + 1.5 yrs industry. Interests: Production Management, Industrial Engineering.",
       "photo_url": "/judges/judge-16.jpg",
-      "social_links": {}
+      "social_links": {},
+      "education": "PhD (Technology), M.Tech (Mfg), B.E. (Mech), PGDM",
+      "experience": "18 yrs teaching + 1.5 yrs industry.",
+      "interests": "Production Management, Industrial Engineering."
     },
     {
       "id": 17,
@@ -151,7 +199,10 @@
       "department": "Applied Sciences & Humanities",
       "description": "Ph.D. 29 yrs exp. Specialization: Physics.",
       "photo_url": "/judges/judge-17.jpg",
-      "social_links": {}
+      "social_links": {},
+      "education": "Ph.D",
+      "experience": "29 yrs exp.",
+      "interests": "Physics."
     },
     {
       "id": 18,
@@ -160,7 +211,10 @@
       "department": "Applied Sciences & Humanities",
       "description": "PhD, M.Sc., B.Ed. 14 yrs exp. Specialization: Organic Chemistry.",
       "photo_url": "/judges/judge-18.jpg",
-      "social_links": {}
+      "social_links": {},
+      "education": "PhD, M.Sc., B.Ed",
+      "experience": "14 yrs exp.",
+      "interests": "Organic Chemistry."
     }
   ]
 }
