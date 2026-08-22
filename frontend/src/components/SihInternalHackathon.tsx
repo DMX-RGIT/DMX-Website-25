@@ -813,9 +813,6 @@ const SIH_STYLES = `
     border: 1px solid rgba(52,217,166,0.3);
     border-radius: 50%;
     color: var(--sih-mint);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
     backdrop-filter: blur(4px);
@@ -1951,7 +1948,7 @@ export default function SihInternalHackathon() {
 
           <div className="sih-judge-carousel-container relative mt-12 w-full max-w-[100vw]">
             <button 
-              className="sih-judge-nav sih-judge-prev hidden md:flex" 
+              className="sih-judge-nav sih-judge-prev hidden md:flex items-center justify-center" 
               onClick={() => scrollJudgeCarousel('left')}
               aria-label="Previous judges"
             >
@@ -1971,12 +1968,19 @@ export default function SihInternalHackathon() {
             </div>
 
             <button 
-              className="sih-judge-nav sih-judge-next hidden md:flex" 
+              className="sih-judge-nav sih-judge-next hidden md:flex items-center justify-center" 
               onClick={() => scrollJudgeCarousel('right')}
               aria-label="Next judges"
             >
               <ArrowRight size={20} />
             </button>
+          </div>
+
+          {/* Mobile Swipe Hint */}
+          <div className="md:hidden flex items-center justify-center gap-2 text-[var(--sih-mint)] opacity-70 text-[10px] uppercase tracking-widest mt-2 mb-4 w-full">
+            <ArrowLeft size={12} />
+            <span>Swipe to browse</span>
+            <ArrowRight size={12} />
           </div>
         </section>
       </main>
