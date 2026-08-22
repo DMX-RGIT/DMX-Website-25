@@ -775,19 +775,18 @@ const SIH_STYLES = `
     display: flex;
     align-items: center;
     position: relative;
-    /* Negative margin to allow full-bleed scroll while keeping container alignment */
-    margin-left: max(-1rem, calc((100vw - 100%) / -2));
-    margin-right: max(-1rem, calc((100vw - 100%) / -2));
-    padding-left: max(1rem, calc((100vw - 100%) / 2));
-    padding-right: max(1rem, calc((100vw - 100%) / 2));
+    /* Bulletproof full-bleed: always exactly 100vw wide, perfectly centered */
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
   }
   .sih-judge-track {
     scroll-behavior: smooth;
     -ms-overflow-style: none; /* IE/Edge */
     scrollbar-width: none; /* Firefox */
     --card-width: 80vw;
-    padding-left: calc(50% - var(--card-width) / 2);
-    padding-right: calc(50% - var(--card-width) / 2);
+    /* Use vw directly so parent container padding can't skew the centering */
+    padding-left: calc(50vw - var(--card-width) / 2);
+    padding-right: calc(50vw - var(--card-width) / 2);
   }
   @media (min-width: 768px) {
     .sih-judge-track {
@@ -807,8 +806,8 @@ const SIH_STYLES = `
     z-index: 10;
     top: 50%;
     transform: translateY(-50%);
-    width: 48px;
-    height: 48px;
+    width: 36px;
+    height: 36px;
     background: rgba(8,10,15,0.85);
     border: 1px solid rgba(52,217,166,0.3);
     border-radius: 50%;
@@ -818,13 +817,23 @@ const SIH_STYLES = `
     backdrop-filter: blur(4px);
     animation: sih-float 4s ease-in-out infinite;
   }
+  @media (min-width: 768px) {
+    .sih-judge-nav {
+      width: 48px;
+      height: 48px;
+    }
+  }
   .sih-judge-nav:hover {
     background: rgba(52,217,166,0.15);
     border-color: var(--sih-mint);
     scale: 1.1;
   }
-  .sih-judge-prev { left: 24px; animation-delay: 0.5s; }
-  .sih-judge-next { right: 24px; animation-delay: 1.5s; }
+  .sih-judge-prev { left: 8px; animation-delay: 0.5s; }
+  .sih-judge-next { right: 8px; animation-delay: 1.5s; }
+  @media (min-width: 768px) {
+    .sih-judge-prev { left: 24px; }
+    .sih-judge-next { right: 24px; }
+  }
 
   /* ══════════════════════════════════════
      RESPONSIVE
@@ -1947,8 +1956,9 @@ export default function SihInternalHackathon() {
           </div>
 
           <div className="sih-judge-carousel-container relative mt-12 w-full max-w-[100vw]">
+            {/* Desktop + Mobile prev arrow */}
             <button 
-              className="sih-judge-nav sih-judge-prev hidden md:flex items-center justify-center" 
+              className="sih-judge-nav sih-judge-prev flex items-center justify-center md:flex" 
               onClick={() => scrollJudgeCarousel('left')}
               aria-label="Previous judges"
             >
@@ -1967,20 +1977,14 @@ export default function SihInternalHackathon() {
               ))}
             </div>
 
+            {/* Desktop + Mobile next arrow */}
             <button 
-              className="sih-judge-nav sih-judge-next hidden md:flex items-center justify-center" 
+              className="sih-judge-nav sih-judge-next flex items-center justify-center md:flex" 
               onClick={() => scrollJudgeCarousel('right')}
               aria-label="Next judges"
             >
               <ArrowRight size={20} />
             </button>
-          </div>
-
-          {/* Mobile Swipe Hint */}
-          <div className="md:hidden flex items-center justify-center gap-2 text-[var(--sih-mint)] opacity-70 text-[10px] uppercase tracking-widest mt-2 mb-4 w-full">
-            <ArrowLeft size={12} />
-            <span>Swipe to browse</span>
-            <ArrowRight size={12} />
           </div>
         </section>
       </main>
