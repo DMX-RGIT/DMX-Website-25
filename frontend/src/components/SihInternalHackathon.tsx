@@ -958,11 +958,7 @@ export default function SihInternalHackathon() {
     }
   }, []);
 
-  // Carousel Drag-to-Scroll Logic
-  const isDraggingCarousel = useRef(false);
-  const carouselStartX = useRef(0);
-  const carouselScrollLeft = useRef(0);
-  const carouselHasDragged = useRef(false);
+
 
   const scrollJudgeCarousel = (direction: 'left' | 'right') => {
     if (judgeCarouselRef.current) {
@@ -974,88 +970,6 @@ export default function SihInternalHackathon() {
     }
   };
 
-  const dragStartJudgeIndex = useRef(0);
-
-  const handleCarouselMouseDown = (e: React.MouseEvent) => {
-    if (!judgeCarouselRef.current) return;
-    isDraggingCarousel.current = true;
-    carouselHasDragged.current = false;
-    carouselStartX.current = e.pageX - judgeCarouselRef.current.offsetLeft;
-    carouselScrollLeft.current = judgeCarouselRef.current.scrollLeft;
-    dragStartJudgeIndex.current = activeJudgeIndex;
-    judgeCarouselRef.current.style.cursor = 'grabbing';
-    // Remove scroll snapping while dragging for smoothness
-    judgeCarouselRef.current.classList.remove('snap-x', 'snap-mandatory');
-  };
-
-  const snapToNearestCard = (container: HTMLDivElement) => {
-    const firstChild = container.firstElementChild as HTMLElement;
-    if (!firstChild) return;
-    
-    const itemWidth = firstChild.offsetWidth + 24;
-    const scrollDiff = container.scrollLeft - carouselScrollLeft.current;
-    
-    let targetIndex = dragStartJudgeIndex.current;
-    
-    // If they dragged more than 50px, force at least 1 card change in that direction
-    if (Math.abs(scrollDiff) > 50) {
-      const direction = scrollDiff > 0 ? 1 : -1;
-      const crossed = Math.max(1, Math.round(Math.abs(scrollDiff) / itemWidth));
-      targetIndex += direction * crossed;
-    } else {
-      targetIndex = Math.round(container.scrollLeft / itemWidth);
-    }
-    
-    // Safety bounds
-    targetIndex = Math.max(0, Math.min(targetIndex, infiniteJudges.length - 1));
-    
-    container.scrollTo({
-      left: targetIndex * itemWidth,
-      behavior: 'smooth'
-    });
-  };
-
-  const handleCarouselMouseLeave = () => {
-    if (!isDraggingCarousel.current) return;
-    isDraggingCarousel.current = false;
-    if (judgeCarouselRef.current) {
-      judgeCarouselRef.current.style.cursor = 'auto';
-      snapToNearestCard(judgeCarouselRef.current);
-      setTimeout(() => {
-        if (judgeCarouselRef.current) judgeCarouselRef.current.classList.add('snap-x', 'snap-mandatory');
-      }, 300);
-    }
-  };
-
-  const handleCarouselMouseUp = () => {
-    if (!isDraggingCarousel.current) return;
-    isDraggingCarousel.current = false;
-    if (judgeCarouselRef.current) {
-      judgeCarouselRef.current.style.cursor = 'auto';
-      snapToNearestCard(judgeCarouselRef.current);
-      setTimeout(() => {
-        if (judgeCarouselRef.current) judgeCarouselRef.current.classList.add('snap-x', 'snap-mandatory');
-      }, 300);
-    }
-  };
-
-  const handleCarouselMouseMove = (e: React.MouseEvent) => {
-    if (!isDraggingCarousel.current || !judgeCarouselRef.current) return;
-    e.preventDefault(); // prevent text selection
-    const x = e.pageX - judgeCarouselRef.current.offsetLeft;
-    const walk = (x - carouselStartX.current) * 1.5; // Scroll multiplier
-    if (Math.abs(walk) > 10) {
-      carouselHasDragged.current = true;
-    }
-    judgeCarouselRef.current.scrollLeft = carouselScrollLeft.current - walk;
-  };
-
-  const handleCarouselClickCapture = (e: React.MouseEvent) => {
-    if (carouselHasDragged.current) {
-      e.stopPropagation();
-      e.preventDefault();
-    }
-  };
 
   const handleCarouselScroll = () => {
     if (!judgeCarouselRef.current) return;
@@ -2048,12 +1962,6 @@ export default function SihInternalHackathon() {
               ref={judgeCarouselRef}
               className="sih-judge-track flex items-center gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory py-12 md:py-16 w-full"
               onScroll={handleCarouselScroll}
-              onMouseDown={handleCarouselMouseDown}
-              onMouseLeave={handleCarouselMouseLeave}
-              onMouseUp={handleCarouselMouseUp}
-              onMouseMove={handleCarouselMouseMove}
-              onClickCapture={handleCarouselClickCapture}
-              onDragStart={(e) => e.preventDefault()}
             >
               {infiniteJudges.map((judge, i) => (
                 <div key={`${judge.id}-${i}`} className="snap-center shrink-0">
