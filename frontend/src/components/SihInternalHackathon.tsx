@@ -780,7 +780,6 @@ const SIH_STYLES = `
     margin-left: calc(-50vw + 50%);
   }
   .sih-judge-track {
-    scroll-behavior: smooth;
     -ms-overflow-style: none; /* IE/Edge */
     scrollbar-width: none; /* Firefox */
     --card-width: 80vw;
@@ -976,6 +975,57 @@ export default function SihInternalHackathon() {
     }
   };
 
+  // Desktop mouse drag-to-scroll
+  const isDragging = useRef(false);
+  const dragStartX = useRef(0);
+  const dragScrollLeft = useRef(0);
+  const hasDragged = useRef(false);
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    // Only left click
+    if (e.button !== 0) return;
+    const el = judgeCarouselRef.current;
+    if (!el) return;
+    isDragging.current = true;
+    hasDragged.current = false;
+    dragStartX.current = e.pageX;
+    dragScrollLeft.current = el.scrollLeft;
+    el.style.cursor = 'grabbing';
+    // Use inline style so React doesn't overwrite it on scroll re-renders
+    el.style.scrollSnapType = 'none';
+  };
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging.current || !judgeCarouselRef.current) return;
+    e.preventDefault(); // prevent text selection
+    const dx = e.pageX - dragStartX.current;
+    if (Math.abs(dx) > 5) hasDragged.current = true;
+    judgeCarouselRef.current.scrollLeft = dragScrollLeft.current - dx;
+  };
+
+  const onMouseUp = () => {
+    if (!isDragging.current) return;
+    isDragging.current = false;
+    const el = judgeCarouselRef.current;
+    if (!el) return;
+    el.style.cursor = '';
+    const firstChild = el.firstElementChild as HTMLElement;
+    if (firstChild) {
+      const itemWidth = firstChild.offsetWidth + 24;
+      const nearestIndex = Math.round(el.scrollLeft / itemWidth);
+      el.scrollTo({ left: nearestIndex * itemWidth, behavior: 'smooth' });
+    }
+    // Re-enable snap after smooth scroll finishes
+    setTimeout(() => {
+      if (!isDragging.current && el) {
+        el.style.scrollSnapType = 'x mandatory';
+      }
+    }, 400);
+  };
+
+  const onClickCapture = (e: React.MouseEvent) => {
+    if (hasDragged.current) { e.stopPropagation(); e.preventDefault(); }
+  };
 
   const handleCarouselScroll = () => {
     if (!judgeCarouselRef.current) return;
@@ -1967,8 +2017,14 @@ export default function SihInternalHackathon() {
             
             <div 
               ref={judgeCarouselRef}
-              className="sih-judge-track flex items-center gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory py-12 md:py-16 w-full"
+              className="sih-judge-track flex items-center gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory py-12 md:py-16 w-full cursor-grab"
               onScroll={handleCarouselScroll}
+              onMouseDown={onMouseDown}
+              onMouseMove={onMouseMove}
+              onMouseUp={onMouseUp}
+              onMouseLeave={onMouseUp}
+              onClickCapture={onClickCapture}
+              onDragStart={(e) => e.preventDefault()}
             >
               {infiniteJudges.map((judge, i) => (
                 <div key={`${judge.id}-${i}`} className="snap-center shrink-0">
