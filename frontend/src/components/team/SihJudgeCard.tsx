@@ -26,7 +26,7 @@ export function SihJudgeCard({ judge, index, isActive }: SihJudgeCardProps) {
     <div
       className={cn(
         "group relative flex flex-col md:flex-row items-center w-[80vw] max-w-[320px] md:max-w-none md:w-[500px] shrink-0 select-none outline-none cursor-grab active:cursor-grabbing",
-        "bg-[rgba(16,20,28,0.95)] border border-[rgba(52,217,166,0.15)] rounded-2xl overflow-hidden transition-all duration-500 ease-out p-6 md:p-7 gap-5 md:gap-6",
+        "bg-[rgba(16,20,28,0.95)] border border-[rgba(52,217,166,0.15)] rounded-2xl overflow-hidden transition-all duration-500 ease-out p-5 md:p-5 md:pr-6 gap-4 md:gap-5",
         isActive 
           ? "opacity-100 scale-100 shadow-[0_12px_40px_rgba(52,217,166,0.12)] z-10 hover:scale-[1.02] hover:-rotate-1 md:hover:-rotate-2" 
           : "opacity-40 scale-90 z-0"
@@ -65,12 +65,12 @@ export function SihJudgeCard({ judge, index, isActive }: SihJudgeCardProps) {
           {judge.name}
         </h3>
         
-        <p className="text-[13px] md:text-sm text-gray-400 mb-4 md:mb-5 line-clamp-1">
+        <p className="text-[13px] md:text-sm text-gray-400 mb-2 line-clamp-1">
           {judge.designation}
         </p>
         
         {judge.education || judge.experience || judge.interests ? (
-          <div className="flex flex-col gap-1.5 md:gap-2 text-[12px] md:text-[13px] text-left mt-2 border-t border-[rgba(255,255,255,0.05)] pt-3">
+          <div className="flex flex-col gap-1.5 md:gap-2 text-[12px] md:text-[13px] text-left mt-1 border-t border-[rgba(255,255,255,0.05)] pt-2.5">
             {judge.education && (
               <div className="text-gray-300 leading-snug">
                 <span className="font-semibold text-[var(--sih-mint)] mr-1.5 text-[10px] uppercase tracking-wider">EDU</span>
