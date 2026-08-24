@@ -3,303 +3,303 @@
   "teams": [
     {
       "id": 1,
-      "name": "Team 01",
+      "name": "MATRIX",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "You made it! Rank 1. Absolute dominance."
     },
     {
       "id": 2,
-      "name": "Team 02",
+      "name": "SYNTORY",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 2 secured. You guys cooked."
     },
     {
       "id": 3,
-      "name": "Team 03",
+      "name": "Team Zenith Core",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "DMX Core taking Rank 3. Built different."
     },
     {
       "id": 4,
-      "name": "Team 04",
+      "name": "We Tried",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 4 secured. You made the cut!"
     },
     {
       "id": 5,
-      "name": "Team 05",
+      "name": "Error 404",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 5 secured. Error not found, W found."
     },
     {
       "id": 6,
-      "name": "Team 06",
+      "name": "Team Apex",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 6 secured. Welcome to the top!"
     },
     {
       "id": 7,
-      "name": "Team 07",
+      "name": "Mind Nova",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 7 secured. Big brain energy."
     },
     {
       "id": 8,
-      "name": "Team 08",
+      "name": "Singularity",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 8 secured. You made it!"
     },
     {
       "id": 9,
-      "name": "Team 09",
+      "name": "GitItDone",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 9 secured. You really GitItDone."
     },
     {
       "id": 10,
-      "name": "Team 10",
+      "name": "POWERPUFF",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Top 10! POWERPUFF showed up."
     },
     {
       "id": 11,
-      "name": "Team 11",
+      "name": "RANSOM",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 11 secured. Nicely done!"
     },
     {
       "id": 12,
-      "name": "Team 12",
+      "name": "Unexpected Output",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 12 secured. Unexpectedly cracked."
     },
     {
       "id": 13,
-      "name": "Team 13",
+      "name": "NEXUS",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 13 secured. Welcome aboard!"
     },
     {
       "id": 14,
-      "name": "Team 14",
+      "name": "Code Climbers",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 14 secured. Keep climbing!"
     },
     {
       "id": 15,
-      "name": "Team 15",
+      "name": "Claude's Plan",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 15 secured. The plan worked."
     },
     {
       "id": 16,
-      "name": "Team 16",
+      "name": "Team Photonex",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 16 secured. You made the cut!"
     },
     {
       "id": 17,
-      "name": "Team 17",
+      "name": "Code Blooded",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 17 secured. Code well played."
     },
     {
       "id": 18,
-      "name": "Team 18",
+      "name": "IRIS- Dhiresh",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 18 secured. You're in!"
     },
     {
       "id": 19,
-      "name": "Team 19",
+      "name": "Rare Error",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 19 secured. Rare W."
     },
     {
       "id": 20,
-      "name": "Team 20",
+      "name": "MAXIMUS",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Top 20! MAXIMUS delivered."
     },
     {
       "id": 21,
-      "name": "Team 21",
+      "name": "Sixth Sense",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 21 secured. Sixth Sense was right."
     },
     {
       "id": 22,
-      "name": "Team 22",
+      "name": "Team Invicta",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 22 secured. Invicta made it!"
     },
     {
       "id": 23,
-      "name": "Team 23",
+      "name": "Coding Saints",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 23 secured. Blessed run!"
     },
     {
       "id": 24,
-      "name": "Team 24",
+      "name": "IRIS",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 24 secured. You're in!"
     },
     {
       "id": 25,
-      "name": "Team 25",
+      "name": "AlertX",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 25 secured. AlertX is locked in."
     },
     {
       "id": 26,
-      "name": "Team 26",
+      "name": "CYVORA",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 26 secured. Welcome to DMX!"
     },
     {
       "id": 27,
-      "name": "Team 27",
+      "name": "MedNexus",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 27 secured. You made it!"
     },
     {
       "id": 28,
-      "name": "Team 28",
+      "name": "ShaolinCoder",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 28 secured. Coding with style."
     },
     {
       "id": 29,
-      "name": "Team 29",
+      "name": "HexaMind",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 29 secured. Big brain moves."
     },
     {
       "id": 30,
-      "name": "Team 30",
+      "name": "Binary Brains",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Top 30! Binary Brains delivered."
     },
     {
       "id": 31,
-      "name": "Team 31",
+      "name": "Ember Sparks",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 31 secured. Keep the spark alive!"
     },
     {
       "id": 32,
-      "name": "Team 32",
+      "name": "ByteX",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 32 secured. ByteX is in!"
     },
     {
       "id": 33,
-      "name": "Team 33",
+      "name": "Recypher",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 33 secured. You cracked it."
     },
     {
       "id": 34,
-      "name": "Team 34",
+      "name": "HexaHack",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 34 secured. Hack well played."
     },
     {
       "id": 35,
-      "name": "Team 35",
+      "name": "Innoverse",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 35 secured. Welcome to the arena!"
     },
     {
       "id": 36,
-      "name": "Team 36",
+      "name": "PDBVAL",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 36 secured. You're in!"
     },
     {
       "id": 37,
-      "name": "Team 37",
+      "name": "CyberSparks",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 37 secured. Sparks are flying."
     },
     {
       "id": 38,
-      "name": "Team 38",
+      "name": "The Insiders",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 38 secured. You're officially in."
     },
     {
       "id": 39,
-      "name": "Team 39",
+      "name": "Kernel",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 39 secured. Kernel loaded."
     },
     {
       "id": 40,
-      "name": "Team 40",
+      "name": "Code Sentinal",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Top 40! You made the cut."
     },
     {
       "id": 41,
-      "name": "Team 41",
+      "name": "Parallel Minds",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 41 secured. Minds aligned."
     },
     {
       "id": 42,
-      "name": "Team 42",
+      "name": "Increvia",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 42 secured. You're in!"
     },
     {
       "id": 43,
-      "name": "Team 43",
+      "name": "Vasukee",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 43 secured. Welcome aboard!"
     },
     {
       "id": 44,
-      "name": "Team 44",
+      "name": "CortexCrew",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 44 secured. CortexCrew is in!"
     },
     {
       "id": 45,
-      "name": "Team 45",
+      "name": "Electrocraft",
       "status": "selected",
-      "message": "Congratulations on advancing to the next stage! Your journey continues."
+      "message": "Rank 45 secured. Last spot, but you're in!"
     },
     {
       "id": 46,
-      "name": "Team 46",
+      "name": "Edumarg",
       "status": "backup",
-      "message": "You are on the backup list. Stay prepared and keep building!"
+      "message": "You're on the backup list. Stay ready!"
     },
     {
       "id": 47,
-      "name": "Team 47",
+      "name": "Big Potato Stuff",
       "status": "backup",
-      "message": "You are on the backup list. Stay prepared and keep building!"
+      "message": "You're on the backup list. Stay ready!"
     },
     {
       "id": 48,
-      "name": "Team 48",
+      "name": "Krushivikas",
       "status": "backup",
-      "message": "You are on the backup list. Stay prepared and keep building!"
+      "message": "You're on the backup list. Stay ready!"
     },
     {
       "id": 49,
-      "name": "Team 49",
+      "name": "Ascending Heavens",
       "status": "backup",
-      "message": "You are on the backup list. Stay prepared and keep building!"
+      "message": "You're on the backup list. Stay ready!"
     },
     {
       "id": 50,
-      "name": "Team 50",
+      "name": "Off by one",
       "status": "backup",
-      "message": "You are on the backup list. Stay prepared and keep building!"
+      "message": "You're on the backup list. Stay ready!"
     }
   ]
 }
