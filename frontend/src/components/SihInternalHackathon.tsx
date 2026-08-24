@@ -977,10 +977,9 @@ const SIH_STYLES = `
   .sih-list-status.backup { color: var(--sih-amber); background: rgba(245,162,58,.08); border: 1px solid rgba(245,162,58,.3); }
 
   @media (max-width: 560px) {
-    .sih-list-row { grid-template-columns: 48px 1fr; gap: 12px; padding: 13px 16px; }
-    .sih-list-name { font-size: 13px; }
-    .sih-list-status { display: none; }
-    .sih-list-rank { font-size: 11px; }
+.sih-list-row { grid-template-columns: 48px 1fr auto; gap: 12px; padding: 13px 16px; }
+.sih-list-name { font-size: 13px; }
+.sih-list-status { display: inline-flex; }
   }
 
   /* animations */
@@ -994,12 +993,12 @@ const SIH_STYLES = `
 export default function SihInternalHackathon() {
   const active = useActiveSection();
   const [cardIndex, setCardIndex] = useState(0);
-  
-  // 15 copies for infinite scroll loop (15 * 18 = 270 items). 
+
+  // 15 copies for infinite scroll loop (15 * 18 = 270 items).
   // Middle block starts at index 7 * 18 = 126
   const infiniteJudges = useMemo(() => Array(15).fill(judges).flat(), []);
   const [activeJudgeIndex, setActiveJudgeIndex] = useState(126);
-  
+
   const [dragStart, setDragStart] = useState<number | null>(null);
   const [scrollY, setScrollY] = useState(0);
   const [activeRole, setActiveRole] = useState<string | null>(null);
@@ -1031,15 +1030,16 @@ export default function SihInternalHackathon() {
     }
   }, []);
 
-
-
-  const scrollJudgeCarousel = (direction: 'left' | 'right') => {
+  const scrollJudgeCarousel = (direction: "left" | "right") => {
     if (judgeCarouselRef.current) {
       const container = judgeCarouselRef.current;
       const firstChild = container.firstElementChild as HTMLElement;
       if (!firstChild) return;
-      const scrollAmount = direction === 'left' ? -(firstChild.offsetWidth + 24) : (firstChild.offsetWidth + 24);
-      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      const scrollAmount =
+        direction === "left"
+          ? -(firstChild.offsetWidth + 24)
+          : firstChild.offsetWidth + 24;
+      container.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
   };
 
@@ -1058,9 +1058,9 @@ export default function SihInternalHackathon() {
     hasDragged.current = false;
     dragStartX.current = e.pageX;
     dragScrollLeft.current = el.scrollLeft;
-    el.style.cursor = 'grabbing';
+    el.style.cursor = "grabbing";
     // Use inline style so React doesn't overwrite it on scroll re-renders
-    el.style.scrollSnapType = 'none';
+    el.style.scrollSnapType = "none";
   };
 
   const onMouseMove = (e: React.MouseEvent) => {
@@ -1076,23 +1076,26 @@ export default function SihInternalHackathon() {
     isDragging.current = false;
     const el = judgeCarouselRef.current;
     if (!el) return;
-    el.style.cursor = '';
+    el.style.cursor = "";
     const firstChild = el.firstElementChild as HTMLElement;
     if (firstChild) {
       const itemWidth = firstChild.offsetWidth + 24;
       const nearestIndex = Math.round(el.scrollLeft / itemWidth);
-      el.scrollTo({ left: nearestIndex * itemWidth, behavior: 'smooth' });
+      el.scrollTo({ left: nearestIndex * itemWidth, behavior: "smooth" });
     }
     // Re-enable snap after smooth scroll finishes
     setTimeout(() => {
       if (!isDragging.current && el) {
-        el.style.scrollSnapType = 'x mandatory';
+        el.style.scrollSnapType = "x mandatory";
       }
     }, 400);
   };
 
   const onClickCapture = (e: React.MouseEvent) => {
-    if (hasDragged.current) { e.stopPropagation(); e.preventDefault(); }
+    if (hasDragged.current) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
   };
 
   const handleCarouselScroll = () => {
@@ -1100,14 +1103,14 @@ export default function SihInternalHackathon() {
     const container = judgeCarouselRef.current;
     const firstChild = container.firstElementChild as HTMLElement;
     if (!firstChild) return;
-    
+
     const itemWidth = firstChild.offsetWidth;
     const gap = 24; // gap-6 is 24px
     const itemTotalWidth = itemWidth + gap;
-    
+
     // Add small offset to avoid flickering at exact boundaries
     const newIndex = Math.round(container.scrollLeft / itemTotalWidth);
-    
+
     if (newIndex !== activeJudgeIndex) {
       setActiveJudgeIndex(newIndex);
     }
@@ -1169,7 +1172,7 @@ export default function SihInternalHackathon() {
       });
     }, 600);
     return () => clearTimeout(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Reduced motion
@@ -1295,7 +1298,7 @@ export default function SihInternalHackathon() {
           zIndex: 100,
         });
       };
-      
+
       // Fire once immediately, and again slightly later for a layered effect
       fireCannon();
       setTimeout(fireCannon, 400);
@@ -1811,7 +1814,10 @@ export default function SihInternalHackathon() {
           <div className="sih-vault-backdrop" aria-hidden="true" />
           {TEAMS_DECLARED && (
             <div className="sih-results-badge">
-              <span className="sih-status-dot" style={{ display: "inline-block" }} />
+              <span
+                className="sih-status-dot"
+                style={{ display: "inline-block" }}
+              />
               RESULTS OUT — INTERNAL ROUND 2026
             </div>
           )}
@@ -1881,7 +1887,11 @@ export default function SihInternalHackathon() {
                 </select>
               )}
               {TEAMS_DECLARED && (
-                <div className="sih-view-toggle" role="group" aria-label="View mode">
+                <div
+                  className="sih-view-toggle"
+                  role="group"
+                  aria-label="View mode"
+                >
                   <button
                     className={`sih-view-btn${viewMode === "list" ? " active" : ""}`}
                     onClick={() => setViewMode("list")}
@@ -1903,7 +1913,13 @@ export default function SihInternalHackathon() {
                     : "INTERNAL / MOCK ONLY"}
                 </span>
                 <strong>
-                  {String(filteredTeams.length > 0 ? (TEAMS_DECLARED ? filteredTeams.length : (cardIndex % activeList.length) + 1) : 0).padStart(2, "0")}{" "}
+                  {String(
+                    filteredTeams.length > 0
+                      ? TEAMS_DECLARED
+                        ? filteredTeams.length
+                        : (cardIndex % activeList.length) + 1
+                      : 0,
+                  ).padStart(2, "0")}{" "}
                   <small>/ {String(activeList.length).padStart(2, "0")}</small>
                 </strong>
               </div>
@@ -1915,7 +1931,9 @@ export default function SihInternalHackathon() {
             <div className="sih-vault-list" role="list">
               {filteredTeams.map((t) => (
                 <div key={t.id} className="sih-list-row" role="listitem">
-                  <span className="sih-list-rank">#{String(t.id).padStart(2, "0")}</span>
+                  <span className="sih-list-rank">
+                    #{String(t.id).padStart(2, "0")}
+                  </span>
                   <span className="sih-list-name">{t.name}</span>
                   <span className={`sih-list-status ${t.status}`}>
                     {t.status === "backup" ? "Backup" : "Selected"}
@@ -1927,163 +1945,171 @@ export default function SihInternalHackathon() {
 
           {/* Deck workspace — shown when not TEAMS_DECLARED or viewMode=deck */}
           {(!TEAMS_DECLARED || viewMode === "deck") && (
-          <div className="sih-vault-workspace">
-            <div className="sih-vault-side">
-              <MousePointer2 size={16} />
-              <span>
-                Swipe
-                <br />
-                to browse
-              </span>
-            </div>
+            <div className="sih-vault-workspace">
+              <div className="sih-vault-side">
+                <MousePointer2 size={16} />
+                <span>
+                  Swipe
+                  <br />
+                  to browse
+                </span>
+              </div>
 
-            <div
-              className="sih-card-deck"
-              onPointerDown={handlePointerDown}
-              onPointerUp={handlePointerUp}
-              onPointerCancel={() => setDragStart(null)}
-            >
-              {/* Behind cards (depth effect) */}
-              {nextCards.map((next, idx) => {
-                const t = next as Team;
-                const p = next as ProblemStatement;
-                return (
-                  <div
-                    key={
-                      TEAMS_DECLARED
-                        ? `t-${t.id}-${idx}`
-                        : `p-${p.sr_no}-${idx}`
-                    }
-                    className={`sih-card sih-card-behind-${idx + 1}`}
-                    aria-hidden="true"
-                  >
-                    <span className="sih-card-index">
-                      {String(TEAMS_DECLARED ? t.id : p.sr_no).padStart(2, "0")}
-                    </span>
-                    <span className="sih-card-domain">
-                      {TEAMS_DECLARED ? t.status.toUpperCase() : p.domain}
-                    </span>
-                    <h3>{TEAMS_DECLARED ? t.name : p.problem_statement}</h3>
-                  </div>
-                );
-              })}
-
-              {/* Front card — problem vault mode */}
-              {!TEAMS_DECLARED &&
-                (() => {
-                  const p = card as ProblemStatement;
+              <div
+                className="sih-card-deck"
+                onPointerDown={handlePointerDown}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={() => setDragStart(null)}
+              >
+                {/* Behind cards (depth effect) */}
+                {nextCards.map((next, idx) => {
+                  const t = next as Team;
+                  const p = next as ProblemStatement;
                   return (
-                    <article className="sih-card sih-card-front" key={p.sr_no}>
-                      <div className="sih-card-topline">
-                        <span className="sih-card-index">
-                          {String(p.sr_no).padStart(2, "0")}
-                        </span>
-                        <span className="sih-card-domain">{p.domain}</span>
-                        <span className="sih-card-flag">
-                          <Flag size={14} /> MOCK
-                        </span>
-                      </div>
-                      <h3>{p.problem_statement}</h3>
-                      <p>{p.description}</p>
-                      <div className="sih-card-bottom">
-                        <span>INTERNAL ROUND / PROBLEM STATEMENT</span>
-                        <span>DRAG TO MOVE</span>
-                      </div>
-                    </article>
+                    <div
+                      key={
+                        TEAMS_DECLARED
+                          ? `t-${t.id}-${idx}`
+                          : `p-${p.sr_no}-${idx}`
+                      }
+                      className={`sih-card sih-card-behind-${idx + 1}`}
+                      aria-hidden="true"
+                    >
+                      <span className="sih-card-index">
+                        {String(TEAMS_DECLARED ? t.id : p.sr_no).padStart(
+                          2,
+                          "0",
+                        )}
+                      </span>
+                      <span className="sih-card-domain">
+                        {TEAMS_DECLARED ? t.status.toUpperCase() : p.domain}
+                      </span>
+                      <h3>{TEAMS_DECLARED ? t.name : p.problem_statement}</h3>
+                    </div>
                   );
-                })()}
+                })}
 
-              {/* Front card — selected teams mode */}
-              {TEAMS_DECLARED &&
-                (() => {
-                  const t = card as Team;
-                  return (
-                    <article className="sih-card sih-card-front" key={t.id}>
-                      <div className="sih-card-topline">
-                        <span className="sih-card-index">
-                          RANK {String(t.id).padStart(2, "0")}
-                        </span>
-                        <span
-                          className="sih-card-domain"
-                          style={{
-                            color:
-                              t.status === "backup"
-                                ? "var(--sih-amber)"
-                                : "var(--sih-mint)",
-                          }}
-                        >
-                          {t.status.toUpperCase()}
-                        </span>
-                        <span className="sih-card-flag">
-                          {t.status === "backup" ? (
-                            <ShieldAlert size={14} />
-                          ) : (
-                            <Flag size={14} />
-                          )}{" "}
-                          {t.status === "backup" ? "BACKUP" : "SELECTED"}
-                        </span>
-                      </div>
-                      <h3>{t.name}</h3>
-                      <p>{t.message}</p>
-                      <div className="sih-card-bottom">
-                        <span>INTERNAL ROUND / SELECTED TEAMS</span>
-                        <span>DRAG TO MOVE</span>
-                      </div>
-                    </article>
-                  );
-                })()}
+                {/* Front card — problem vault mode */}
+                {!TEAMS_DECLARED &&
+                  (() => {
+                    const p = card as ProblemStatement;
+                    return (
+                      <article
+                        className="sih-card sih-card-front"
+                        key={p.sr_no}
+                      >
+                        <div className="sih-card-topline">
+                          <span className="sih-card-index">
+                            {String(p.sr_no).padStart(2, "0")}
+                          </span>
+                          <span className="sih-card-domain">{p.domain}</span>
+                          <span className="sih-card-flag">
+                            <Flag size={14} /> MOCK
+                          </span>
+                        </div>
+                        <h3>{p.problem_statement}</h3>
+                        <p>{p.description}</p>
+                        <div className="sih-card-bottom">
+                          <span>INTERNAL ROUND / PROBLEM STATEMENT</span>
+                          <span>DRAG TO MOVE</span>
+                        </div>
+                      </article>
+                    );
+                  })()}
+
+                {/* Front card — selected teams mode */}
+                {TEAMS_DECLARED &&
+                  (() => {
+                    const t = card as Team;
+                    return (
+                      <article className="sih-card sih-card-front" key={t.id}>
+                        <div className="sih-card-topline">
+                          <span className="sih-card-index">
+                            RANK {String(t.id).padStart(2, "0")}
+                          </span>
+                          <span
+                            className="sih-card-domain"
+                            style={{
+                              color:
+                                t.status === "backup"
+                                  ? "var(--sih-amber)"
+                                  : "var(--sih-mint)",
+                            }}
+                          >
+                            {t.status.toUpperCase()}
+                          </span>
+                          <span className="sih-card-flag">
+                            {t.status === "backup" ? (
+                              <ShieldAlert size={14} />
+                            ) : (
+                              <Flag size={14} />
+                            )}{" "}
+                            {t.status === "backup" ? "BACKUP" : "SELECTED"}
+                          </span>
+                        </div>
+                        <h3>{t.name}</h3>
+                        <p>{t.message}</p>
+                        <div className="sih-card-bottom">
+                          <span>INTERNAL ROUND / SELECTED TEAMS</span>
+                          <span>DRAG TO MOVE</span>
+                        </div>
+                      </article>
+                    );
+                  })()}
+              </div>
             </div>
-          </div>
           )}
 
           {/* Controls — only show in deck mode */}
           {(!TEAMS_DECLARED || viewMode === "deck") && (
-          <div className="sih-vault-controls">
-            <button
-              onClick={() => moveCard(-1)}
-              aria-label={TEAMS_DECLARED ? "Previous team" : "Previous problem"}
-            >
-              <ArrowLeft size={18} />
-            </button>
-            <div className="sih-pips">
-              {activeList
-                .slice(0, Math.min(activeList.length, 10))
-                .map((item, idx) => {
-                  const key = TEAMS_DECLARED
-                    ? (item as Team).id
-                    : (item as ProblemStatement).sr_no;
-                  return (
-                    <button
-                      key={key}
-                      className={idx === cardIndex % 10 ? "active" : ""}
-                      onClick={() => {
-                        setCardIndex(idx);
-                        if (TEAMS_DECLARED) {
-                          confetti({
-                            particleCount: 30,
-                            spread: 40,
-                            origin: { y: 0.7 },
-                            colors: ["#34D9A6", "#1E3A8A", "#ffffff"],
-                            zIndex: 100,
-                          });
+            <div className="sih-vault-controls">
+              <button
+                onClick={() => moveCard(-1)}
+                aria-label={
+                  TEAMS_DECLARED ? "Previous team" : "Previous problem"
+                }
+              >
+                <ArrowLeft size={18} />
+              </button>
+              <div className="sih-pips">
+                {activeList
+                  .slice(0, Math.min(activeList.length, 10))
+                  .map((item, idx) => {
+                    const key = TEAMS_DECLARED
+                      ? (item as Team).id
+                      : (item as ProblemStatement).sr_no;
+                    return (
+                      <button
+                        key={key}
+                        className={idx === cardIndex % 10 ? "active" : ""}
+                        onClick={() => {
+                          setCardIndex(idx);
+                          if (TEAMS_DECLARED) {
+                            confetti({
+                              particleCount: 30,
+                              spread: 40,
+                              origin: { y: 0.7 },
+                              colors: ["#34D9A6", "#1E3A8A", "#ffffff"],
+                              zIndex: 100,
+                            });
+                          }
+                        }}
+                        aria-label={
+                          TEAMS_DECLARED
+                            ? `Open team ${key}`
+                            : `Open problem ${key}`
                         }
-                      }}
-                      aria-label={
-                        TEAMS_DECLARED
-                          ? `Open team ${key}`
-                          : `Open problem ${key}`
-                      }
-                    />
-                  );
-                })}
+                      />
+                    );
+                  })}
+              </div>
+              <button
+                onClick={() => moveCard(1)}
+                aria-label={TEAMS_DECLARED ? "Next team" : "Next problem"}
+              >
+                <ArrowRight size={18} />
+              </button>
             </div>
-            <button
-              onClick={() => moveCard(1)}
-              aria-label={TEAMS_DECLARED ? "Next team" : "Next problem"}
-            >
-              <ArrowRight size={18} />
-            </button>
-          </div>
           )}
 
           <div className="sih-vault-footnote">
@@ -2120,10 +2146,12 @@ export default function SihInternalHackathon() {
             <span>04</span>
             <span>JUDGING PANEL</span>
           </div>
-          
+
           <div className="sih-vault-header">
             <div>
-              <p className="sih-terminal">$dmx list --judges --round=internal</p>
+              <p className="sih-terminal">
+                $dmx list --judges --round=internal
+              </p>
               <h2>
                 Evaluated&nbsp;by
                 <br />
@@ -2131,21 +2159,23 @@ export default function SihInternalHackathon() {
               </h2>
             </div>
             <p>
-              Faculty evaluators with decades of combined experience across engineering, AI, and systems design. Your work goes in front of people who know the field.
+              Faculty evaluators with decades of combined experience across
+              engineering, AI, and systems design. Your work goes in front of
+              people who know the field.
             </p>
           </div>
 
           <div className="sih-judge-carousel-container relative mt-12 w-full max-w-[100vw]">
             {/* Desktop + Mobile prev arrow */}
-            <button 
-              className="sih-judge-nav sih-judge-prev flex items-center justify-center md:flex" 
-              onClick={() => scrollJudgeCarousel('left')}
+            <button
+              className="sih-judge-nav sih-judge-prev flex items-center justify-center md:flex"
+              onClick={() => scrollJudgeCarousel("left")}
               aria-label="Previous judges"
             >
               <ArrowLeft size={20} />
             </button>
-            
-            <div 
+
+            <div
               ref={judgeCarouselRef}
               className="sih-judge-track flex items-center gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory py-12 md:py-16 w-full cursor-grab"
               onScroll={handleCarouselScroll}
@@ -2158,15 +2188,19 @@ export default function SihInternalHackathon() {
             >
               {infiniteJudges.map((judge, i) => (
                 <div key={`${judge.id}-${i}`} className="snap-center shrink-0">
-                  <SihJudgeCard judge={judge} index={i} isActive={i === activeJudgeIndex} />
+                  <SihJudgeCard
+                    judge={judge}
+                    index={i}
+                    isActive={i === activeJudgeIndex}
+                  />
                 </div>
               ))}
             </div>
 
             {/* Desktop + Mobile next arrow */}
-            <button 
-              className="sih-judge-nav sih-judge-next flex items-center justify-center md:flex" 
-              onClick={() => scrollJudgeCarousel('right')}
+            <button
+              className="sih-judge-nav sih-judge-next flex items-center justify-center md:flex"
+              onClick={() => scrollJudgeCarousel("right")}
               aria-label="Next judges"
             >
               <ArrowRight size={20} />
