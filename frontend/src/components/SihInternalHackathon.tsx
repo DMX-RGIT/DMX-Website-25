@@ -780,16 +780,15 @@ const SIH_STYLES = `
     margin-left: calc(-50vw + 50%);
   }
   .sih-judge-track {
-    -ms-overflow-style: none; /* IE/Edge */
-    scrollbar-width: none; /* Firefox */
-    --card-width: 80vw;
-    /* Use vw directly so parent container padding can't skew the centering */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    --card-width: 85vw;
     padding-left: calc(50vw - var(--card-width) / 2);
     padding-right: calc(50vw - var(--card-width) / 2);
   }
   @media (min-width: 768px) {
     .sih-judge-track {
-      --card-width: 500px;
+      --card-width: 620px;
     }
   }
   .sih-judge-track::-webkit-scrollbar {
@@ -917,6 +916,73 @@ const SIH_STYLES = `
     .sih-ambient-grid { transform: none !important; }
   }
 
+  /* ── Team List View ── */
+  .sih-view-toggle { display: flex; gap: 2px; margin-top: 12px; }
+  .sih-view-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border: 1px solid rgba(255,255,255,.14);
+    background: transparent; color: #75818d;
+    font: 10px "JetBrains Mono", monospace; letter-spacing: .09em; text-transform: uppercase;
+    cursor: pointer; transition: color .18s ease, border-color .18s ease, background .18s ease;
+  }
+  .sih-view-btn:first-child { border-radius: 6px 0 0 6px; }
+  .sih-view-btn:last-child { border-radius: 0 6px 6px 0; }
+  .sih-view-btn.active { color: var(--sih-mint); border-color: rgba(52,217,166,.5); background: rgba(52,217,166,.06); }
+  .sih-view-btn:hover:not(.active) { color: #cbd5e1; border-color: rgba(255,255,255,.25); }
+
+  .sih-results-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 5px 12px; border: 1px solid rgba(52,217,166,.45);
+    background: rgba(52,217,166,.07); color: var(--sih-mint);
+    font: 10px "JetBrains Mono", monospace; letter-spacing: .12em; text-transform: uppercase;
+    border-radius: 4px; margin-bottom: 14px;
+  }
+
+  .sih-vault-list {
+    display: flex; flex-direction: column;
+    gap: 6px; margin-top: 32px;
+    max-width: 680px;
+    margin-left: auto; margin-right: auto;
+    max-height: 70vh;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .sih-vault-list::-webkit-scrollbar { display: none; }
+  .sih-list-row {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    align-items: center; gap: 20px;
+    padding: 16px 24px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(8,10,15,.4);
+    transition: background .15s ease, border-color .15s ease;
+    cursor: default;
+  }
+  .sih-list-row:hover { background: rgba(52,217,166,.04); border-color: rgba(52,217,166,.2); }
+  .sih-list-rank {
+    font: 600 13px "JetBrains Mono", monospace;
+    color: var(--sih-mint); letter-spacing: .08em;
+  }
+  .sih-list-name {
+    font: 500 15px "Space Grotesk", sans-serif;
+    color: #e2e8f0;
+  }
+  .sih-list-status {
+    font: 10px "JetBrains Mono", monospace;
+    letter-spacing: .1em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 3px;
+  }
+  .sih-list-status.selected { color: var(--sih-mint); background: rgba(52,217,166,.1); border: 1px solid rgba(52,217,166,.3); }
+  .sih-list-status.backup { color: var(--sih-amber); background: rgba(245,162,58,.08); border: 1px solid rgba(245,162,58,.3); }
+
+  @media (max-width: 560px) {
+    .sih-list-row { grid-template-columns: 48px 1fr; gap: 12px; padding: 13px 16px; }
+    .sih-list-name { font-size: 13px; }
+    .sih-list-status { display: none; }
+    .sih-list-rank { font-size: 11px; }
+  }
+
   /* animations */
   @keyframes sih-spin { to { transform: rotate(360deg); } }
   @keyframes sih-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
@@ -940,7 +1006,9 @@ export default function SihInternalHackathon() {
   const [teamCount, setTeamCount] = useState(0);
   const [domainFilter, setDomainFilter] = useState("All domains");
   const [statusFilter, setStatusFilter] = useState("All teams");
+  const [viewMode, setViewMode] = useState<"deck" | "list">("list");
   const [reducedMotion, setReducedMotion] = useState(false);
+  const confettiFired = useRef(false);
 
   const heroStatRef = useRef<HTMLDivElement | null>(null);
   const timelineRef = useRef<HTMLElement | null>(null);
@@ -1086,6 +1154,23 @@ export default function SihInternalHackathon() {
       ),
     [cardIndex, activeList],
   );
+
+  // Fire confetti once when results are declared
+  useEffect(() => {
+    if (!TEAMS_DECLARED || confettiFired.current) return;
+    confettiFired.current = true;
+    const timer = setTimeout(() => {
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        origin: { y: 0.55 },
+        colors: ["#34D9A6", "#1E3A8A", "#ffffff", "#F5A23A"],
+        zIndex: 100,
+      });
+    }, 600);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Reduced motion
   useEffect(() => {
@@ -1724,6 +1809,12 @@ export default function SihInternalHackathon() {
         {/* Toggle: set "declared": true in selectedTeams.json to switch to teams view */}
         <section className="sih-vault sih-pad" id="sih-vault">
           <div className="sih-vault-backdrop" aria-hidden="true" />
+          {TEAMS_DECLARED && (
+            <div className="sih-results-badge">
+              <span className="sih-status-dot" style={{ display: "inline-block" }} />
+              RESULTS OUT — INTERNAL ROUND 2026
+            </div>
+          )}
           <div className="sih-kicker">
             <span>03</span>
             <span>
@@ -1789,6 +1880,22 @@ export default function SihInternalHackathon() {
                   ))}
                 </select>
               )}
+              {TEAMS_DECLARED && (
+                <div className="sih-view-toggle" role="group" aria-label="View mode">
+                  <button
+                    className={`sih-view-btn${viewMode === "list" ? " active" : ""}`}
+                    onClick={() => setViewMode("list")}
+                  >
+                    LIST
+                  </button>
+                  <button
+                    className={`sih-view-btn${viewMode === "deck" ? " active" : ""}`}
+                    onClick={() => setViewMode("deck")}
+                  >
+                    DECK
+                  </button>
+                </div>
+              )}
               <div className="sih-vault-count">
                 <span>
                   {TEAMS_DECLARED
@@ -1796,13 +1903,30 @@ export default function SihInternalHackathon() {
                     : "INTERNAL / MOCK ONLY"}
                 </span>
                 <strong>
-                  {String((cardIndex % activeList.length) + 1).padStart(2, "0")}{" "}
+                  {String(filteredTeams.length > 0 ? (TEAMS_DECLARED ? filteredTeams.length : (cardIndex % activeList.length) + 1) : 0).padStart(2, "0")}{" "}
                   <small>/ {String(activeList.length).padStart(2, "0")}</small>
                 </strong>
               </div>
             </div>
           </div>
 
+          {/* List view — only shown when TEAMS_DECLARED and viewMode=list */}
+          {TEAMS_DECLARED && viewMode === "list" && (
+            <div className="sih-vault-list" role="list">
+              {filteredTeams.map((t) => (
+                <div key={t.id} className="sih-list-row" role="listitem">
+                  <span className="sih-list-rank">#{String(t.id).padStart(2, "0")}</span>
+                  <span className="sih-list-name">{t.name}</span>
+                  <span className={`sih-list-status ${t.status}`}>
+                    {t.status === "backup" ? "Backup" : "Selected"}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Deck workspace — shown when not TEAMS_DECLARED or viewMode=deck */}
+          {(!TEAMS_DECLARED || viewMode === "deck") && (
           <div className="sih-vault-workspace">
             <div className="sih-vault-side">
               <MousePointer2 size={16} />
@@ -1877,7 +2001,7 @@ export default function SihInternalHackathon() {
                     <article className="sih-card sih-card-front" key={t.id}>
                       <div className="sih-card-topline">
                         <span className="sih-card-index">
-                          {String(t.id).padStart(2, "0")}
+                          RANK {String(t.id).padStart(2, "0")}
                         </span>
                         <span
                           className="sih-card-domain"
@@ -1910,8 +2034,10 @@ export default function SihInternalHackathon() {
                 })()}
             </div>
           </div>
+          )}
 
-          {/* Controls */}
+          {/* Controls — only show in deck mode */}
+          {(!TEAMS_DECLARED || viewMode === "deck") && (
           <div className="sih-vault-controls">
             <button
               onClick={() => moveCard(-1)}
@@ -1958,6 +2084,7 @@ export default function SihInternalHackathon() {
               <ArrowRight size={18} />
             </button>
           </div>
+          )}
 
           <div className="sih-vault-footnote">
             {TEAMS_DECLARED ? (
@@ -1996,13 +2123,16 @@ export default function SihInternalHackathon() {
           
           <div className="sih-vault-header">
             <div>
-              <p className="sih-terminal">$dmx list --judges</p>
+              <p className="sih-terminal">$dmx list --judges --round=internal</p>
               <h2>
-                Meet the
+                Evaluated&nbsp;by
                 <br />
-                <span>judges.</span>
+                <span>the experts.</span>
               </h2>
             </div>
+            <p>
+              Faculty evaluators with decades of combined experience across engineering, AI, and systems design. Your work goes in front of people who know the field.
+            </p>
           </div>
 
           <div className="sih-judge-carousel-container relative mt-12 w-full max-w-[100vw]">
