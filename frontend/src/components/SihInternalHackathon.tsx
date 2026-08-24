@@ -687,8 +687,7 @@ const SIH_STYLES = `
       radial-gradient(circle at 76% 28%, rgba(30,58,138,.13), transparent 26%),
       radial-gradient(circle at 18% 76%, rgba(52,217,166,.08), transparent 24%);
   }
-  .sih-vault-header { display: flex; justify-content: space-between; align-items: end; gap: 30px; }
-  .sih-vault-header h2 {
+.sih-vault-header { display: flex; justify-content: space-between; align-items: start; gap: 30px; }  .sih-vault-header h2 {
     margin: 0; font-weight: 650;
     font-size: clamp(40px, 5.5vw, 78px);
     letter-spacing: -.065em; line-height: .93;
@@ -697,16 +696,25 @@ const SIH_STYLES = `
   .sih-vault-header h2 span { color: var(--sih-mint); }
 
   /* tools */
-  .sih-vault-tools { display: grid; justify-items: end; gap: 8px; }
+  .sih-vault-tools {
+    display: grid; justify-items: end; gap: 8px;
+    padding: 16px; border: 1px solid rgba(255,255,255,.08);
+    background: rgba(8,10,15,.35); border-radius: 10px;
+  }
   .sih-vault-tools > label { color: #75818d; font: 9px "JetBrains Mono", monospace; letter-spacing: .1em; text-transform: uppercase; }
-  .sih-vault-tools select {
+  .sih-vault-tools select, .sih-vault-search {
     width: min(100%, 260px); border: 1px solid rgba(52,217,166,.28);
     background: rgba(8,10,15,.75); color: #cbd5d1;
     padding: 9px 11px; font: 10px "JetBrains Mono", monospace; outline: none;
     cursor: pointer;
   }
-  .sih-vault-tools select:focus { border-color: var(--sih-mint); }
-  .sih-vault-count { text-align: right; font: 10px "JetBrains Mono", monospace; color: var(--sih-amber); letter-spacing: .12em; text-transform: uppercase; margin-top: 11px; }
+  .sih-vault-search { cursor: text; }
+  .sih-vault-search::placeholder { color: rgba(203,213,209,0.3); }
+  .sih-vault-tools select:focus, .sih-vault-search:focus { border-color: var(--sih-mint); }
+  .sih-vault-count {
+    text-align: right; font: 10px "JetBrains Mono", monospace; color: var(--sih-amber); letter-spacing: .12em; text-transform: uppercase;
+    border-top: 1px solid rgba(255,255,255,.08); padding-top: 12px; margin-top: 4px;
+  }
   .sih-vault-count strong { display: block; color: var(--sih-mint); font: 52px/.95 "Space Grotesk", sans-serif; font-weight: 600; letter-spacing: -.08em; margin-top: 8px; }
   .sih-vault-count small { color: #66727d; font-size: 18px; letter-spacing: -.04em; }
 
@@ -941,14 +949,36 @@ const SIH_STYLES = `
   .sih-vault-list {
     display: flex; flex-direction: column;
     gap: 6px; margin-top: 32px;
-    max-width: 680px;
-    margin-left: auto; margin-right: auto;
+    max-width: 100%;
+    margin-left: 0; margin-right: 0;
     max-height: 70vh;
     overflow-y: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
   .sih-vault-list::-webkit-scrollbar { display: none; }
+  .sih-list-empty {
+    padding: 48px 24px; text-align: center;
+    border: 1px dashed rgba(52,217,166,.25);
+    background: rgba(52,217,166,.03);
+    border-radius: 10px;
+  }
+  .sih-list-empty-title {
+    font: 600 15px "Space Grotesk", sans-serif;
+    color: #e2e8f0; letter-spacing: -.01em; margin-bottom: 8px;
+  }
+  .sih-list-empty-sub {
+    font: 11px "JetBrains Mono", monospace;
+    color: #75818d; letter-spacing: .06em; line-height: 1.6;
+  }
+  .sih-list-empty-reset {
+    margin-top: 16px; display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border: 1px solid rgba(52,217,166,.4);
+    color: var(--sih-mint); font: 10px "JetBrains Mono", monospace;
+    letter-spacing: .1em; text-transform: uppercase; cursor: pointer;
+    border-radius: 6px; background: transparent; transition: all .18s ease;
+  }
+  .sih-list-empty-reset:hover { background: rgba(52,217,166,.08); border-color: var(--sih-mint); }
   .sih-list-row {
     display: grid;
     grid-template-columns: 64px 1fr auto;
@@ -1005,6 +1035,7 @@ export default function SihInternalHackathon() {
   const [teamCount, setTeamCount] = useState(0);
   const [domainFilter, setDomainFilter] = useState("All domains");
   const [statusFilter, setStatusFilter] = useState("All teams");
+  const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"deck" | "list">("list");
   const [reducedMotion, setReducedMotion] = useState(false);
   const confettiFired = useRef(false);
@@ -1137,13 +1168,18 @@ export default function SihInternalHackathon() {
   );
 
   // Teams data (used when TEAMS_DECLARED === true)
-  const filteredTeams = useMemo(
-    () =>
+  const filteredTeams = useMemo(() => {
+    let filtered =
       statusFilter === "All teams"
         ? teams
-        : teams.filter((t) => t.status === statusFilter),
-    [statusFilter],
-  );
+        : teams.filter((t) => t.status === statusFilter);
+    if (searchQuery) {
+      filtered = filtered.filter((t) =>
+        t.name.toLowerCase().includes(searchQuery.toLowerCase()),
+      );
+    }
+    return filtered;
+  }, [statusFilter, searchQuery]);
 
   // Active card — switches source depending on declared flag
   const activeList = TEAMS_DECLARED ? filteredTeams : filteredProblems;
@@ -1853,24 +1889,38 @@ export default function SihInternalHackathon() {
             </div>
             <div className="sih-vault-tools">
               <label htmlFor="sih-domain-filter">
-                {TEAMS_DECLARED ? "FILTER / STATUS" : "FILTER / DOMAIN"}
+                {TEAMS_DECLARED
+                  ? "FILTER / STATUS / SEARCH"
+                  : "FILTER / DOMAIN"}
               </label>
               {TEAMS_DECLARED ? (
-                <select
-                  id="sih-domain-filter"
-                  value={statusFilter}
-                  onChange={(e) => {
-                    setStatusFilter(e.target.value);
-                    setCardIndex(0);
-                  }}
-                >
-                  <option value="All teams">All teams</option>
-                  {teamStatuses.slice(1).map((s) => (
-                    <option key={s} value={s}>
-                      {s.toUpperCase()}
-                    </option>
-                  ))}
-                </select>
+                <>
+                  <input
+                    type="text"
+                    className="sih-vault-search"
+                    placeholder="Search teams..."
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setCardIndex(0);
+                    }}
+                  />
+                  <select
+                    id="sih-domain-filter"
+                    value={statusFilter}
+                    onChange={(e) => {
+                      setStatusFilter(e.target.value);
+                      setCardIndex(0);
+                    }}
+                  >
+                    <option value="All teams">All teams</option>
+                    {teamStatuses.slice(1).map((s) => (
+                      <option key={s} value={s}>
+                        {s.toUpperCase()}
+                      </option>
+                    ))}
+                  </select>
+                </>
               ) : (
                 <select
                   id="sih-domain-filter"
@@ -1929,17 +1979,47 @@ export default function SihInternalHackathon() {
           {/* List view — only shown when TEAMS_DECLARED and viewMode=list */}
           {TEAMS_DECLARED && viewMode === "list" && (
             <div className="sih-vault-list" role="list">
-              {filteredTeams.map((t) => (
-                <div key={t.id} className="sih-list-row" role="listitem">
-                  <span className="sih-list-rank">
-                    #{String(t.id).padStart(2, "0")}
-                  </span>
-                  <span className="sih-list-name">{t.name}</span>
-                  <span className={`sih-list-status ${t.status}`}>
-                    {t.status === "backup" ? "Backup" : "Selected"}
-                  </span>
+              {filteredTeams.length > 0 ? (
+                filteredTeams.map((t) => (
+                  <div key={t.id} className="sih-list-row" role="listitem">
+                    <span className="sih-list-rank">
+                      #{String(t.id).padStart(2, "0")}
+                    </span>
+                    <span className="sih-list-name">{t.name}</span>
+                    <span className={`sih-list-status ${t.status}`}>
+                      {t.status === "backup" ? "Backup" : "Selected"}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="sih-list-empty">
+                  <span
+                    className="sih-status-dot"
+                    style={{ display: "inline-block", marginBottom: "10px" }}
+                  />
+                  <div className="sih-list-empty-title">
+                    No match for &quot;{searchQuery}&quot;
+                  </div>
+                  <div className="sih-list-empty-sub">
+                    Double-check the spelling, or try just the first word of
+                    your team name.
+                    <br />
+                    Didn&apos;t make this round? That&apos;s not the end of the
+                    story — there&apos;s always the next hackathon, and the next
+                    idea worth building.
+                  </div>
+                  <button
+                    type="button"
+                    className="sih-list-empty-reset"
+                    onClick={() => {
+                      setSearchQuery("");
+                      setStatusFilter("All teams");
+                    }}
+                  >
+                    Clear search
+                  </button>
                 </div>
-              ))}
+              )}
             </div>
           )}
 
