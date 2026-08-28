@@ -45,10 +45,16 @@ export function EventDetailClient({
   };
 
   const TIER_BADGE: Record<string, string> = {
-    title: "text-brand-teal border-brand-teal/40 bg-brand-teal/10",
-    gold: "text-yellow-400 border-yellow-400/40 bg-yellow-400/10",
-    silver: "text-slate-300 border-slate-300/40 bg-slate-300/10",
-    community: "text-text-secondary border-border-default bg-bg-surface",
+    title: "text-text-muted border-transparent bg-transparent",
+    gold: "text-text-muted border-transparent bg-transparent",
+    silver: "text-text-muted border-transparent bg-transparent",
+    community: "text-text-muted border-transparent bg-transparent",
+  };
+  const TIER_BORDER: Record<string, string> = {
+    title: "border-brand-teal/50 shadow-[0_0_12px_rgba(52,217,166,0.15)]",
+    gold: "border-border-default/80",
+    silver: "border-border-default/50",
+    community: "border-border-default/30",
   };
   const TIER_LABEL: Record<string, string> = {
     title: "Title Sponsor",
@@ -72,19 +78,22 @@ export function EventDetailClient({
           {sorted.map((s) => {
             const sizeClass = s.tier === "title"
               ? "h-10 px-3"
-              : s.tier === "gold"
+              : s.tier === "gold" || s.tier === "silver"
               ? "h-8 px-2.5"
-              : "h-7 px-2";
+              : "h-6 px-2";
+            const borderClass = TIER_BORDER[s.tier] || TIER_BORDER.community;
+            
             const card = (
               <div key={s.id} className="flex flex-col items-center gap-1 group">
-                <div className={`bg-white rounded-md border border-border-default/60 ${sizeClass} flex items-center grayscale group-hover:grayscale-0 transition-all duration-300`}>
+                <div className={`bg-white rounded-md border ${borderClass} ${sizeClass} flex items-center grayscale opacity-75 group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-300`}>
                   <Image src={s.logo_url} alt={s.name} width={90} height={40} className="h-full max-w-[90px] w-auto object-contain" unoptimized />
                 </div>
-                <span className={`text-[8px] font-bold uppercase tracking-widest px-1.5 py-px rounded-full border ${TIER_BADGE[s.tier] || TIER_BADGE.community} opacity-0 group-hover:opacity-100 transition-opacity`}>
+                <span className={`text-[8px] font-semibold uppercase tracking-widest px-1.5 py-px rounded-full border ${TIER_BADGE[s.tier] || TIER_BADGE.community} opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap`}>
                   {TIER_LABEL[s.tier] || s.tier}
                 </span>
               </div>
             );
+
             return s.website_url ? (
               <Link key={s.id} href={s.website_url} target="_blank" rel="noopener noreferrer sponsored">
                 {card}

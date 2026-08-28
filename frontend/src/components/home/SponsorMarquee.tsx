@@ -8,31 +8,41 @@ import { Sponsor } from "@/types";
 
 const TIER_CONFIG: Record<
   Sponsor["tier"],
-  { label: string; order: number; logoSize: string; badgeStyle: string }
+  {
+    label: string;
+    order: number;
+    logoSize: string;
+    cardBorder: string;
+    labelStyle: string;
+  }
 > = {
   title: {
     label: "Title Sponsor",
     order: 0,
     logoSize: "h-20 md:h-24 px-8",
-    badgeStyle: "text-brand-teal border-brand-teal/40 bg-brand-teal/10",
+    cardBorder: "border-brand-teal/50 shadow-[0_0_16px_rgba(52,217,166,0.15)]",
+    labelStyle: "text-text-muted border-transparent bg-transparent",
   },
   gold: {
     label: "Gold Sponsor",
     order: 1,
     logoSize: "h-14 md:h-16 px-5",
-    badgeStyle: "text-yellow-400 border-yellow-400/40 bg-yellow-400/10",
+    cardBorder: "border-border-default/80",
+    labelStyle: "text-text-muted border-transparent bg-transparent",
   },
   silver: {
     label: "Silver Sponsor",
     order: 2,
-    logoSize: "h-11 md:h-12 px-4",
-    badgeStyle: "text-slate-300 border-slate-300/40 bg-slate-300/10",
+    logoSize: "h-14 md:h-16 px-5",
+    cardBorder: "border-border-default/50",
+    labelStyle: "text-text-muted border-transparent bg-transparent",
   },
   community: {
     label: "Community Partner",
     order: 3,
     logoSize: "h-9 md:h-10 px-3",
-    badgeStyle: "text-text-secondary border-border-default bg-bg-surface",
+    cardBorder: "border-border-default/30",
+    labelStyle: "text-text-muted border-transparent bg-transparent",
   },
 };
 
@@ -49,9 +59,9 @@ function SponsorCard({ sponsor }: { sponsor: Sponsor }) {
   if (!sponsor.logo_url) return null;
 
   const card = (
-    <div className="flex flex-col items-center gap-2 group shrink-0">
+    <div className="flex flex-col items-center gap-1.5 group shrink-0">
       <div
-        className={`flex items-center justify-center bg-white rounded-xl border border-border-default/60 ${config.logoSize} grayscale group-hover:grayscale-0 opacity-75 group-hover:opacity-100 transition-all duration-300 shadow-sm`}
+        className={`flex items-center justify-center bg-white rounded-xl border ${config.cardBorder} ${config.logoSize} grayscale group-hover:grayscale-0 opacity-70 group-hover:opacity-100 transition-all duration-300`}
       >
         <Image
           src={sponsor.logo_url}
@@ -63,7 +73,7 @@ function SponsorCard({ sponsor }: { sponsor: Sponsor }) {
         />
       </div>
       <span
-        className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border ${config.badgeStyle} transition-opacity opacity-0 group-hover:opacity-100`}
+        className={`text-[9px] font-semibold uppercase tracking-widest px-2 py-px rounded-full border ${config.labelStyle} opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap`}
       >
         {config.label}
       </span>
@@ -97,18 +107,23 @@ export function SponsorMarquee() {
   if (sponsors.length === 0) return null;
 
   const titleSponsors = sponsors.filter((s) => s.tier === "title");
-  const goldSponsors = sponsors.filter((s) => s.tier === "gold");
-  const silverSponsors = sponsors.filter((s) => s.tier === "silver");
+  const goldSilverSponsors = sponsors.filter(
+    (s) => s.tier === "gold" || s.tier === "silver",
+  );
   const communitySponsors = sponsors.filter((s) => s.tier === "community");
 
-  const marqueeSponsors = [...goldSponsors, ...silverSponsors, ...communitySponsors];
-  const marqueeItems =
-    marqueeSponsors.length > 3
-      ? [...marqueeSponsors, ...marqueeSponsors, ...marqueeSponsors]
-      : marqueeSponsors;
+  const goldSilverItems =
+    goldSilverSponsors.length > 3
+      ? [...goldSilverSponsors, ...goldSilverSponsors, ...goldSilverSponsors]
+      : goldSilverSponsors;
+
+  const communityItems =
+    communitySponsors.length > 3
+      ? [...communitySponsors, ...communitySponsors, ...communitySponsors]
+      : communitySponsors;
 
   return (
-    <section className="py-16 border-t border-border-subtle overflow-hidden bg-bg-primary">
+    <section className="py-8 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 mb-10 text-center">
         <h3 className="text-xs font-bold uppercase tracking-widest text-text-secondary">
           Supported By
@@ -124,35 +139,83 @@ export function SponsorMarquee() {
         </div>
       )}
 
-      {/* Tier divider line if we have both title and others */}
-      {titleSponsors.length > 0 && marqueeSponsors.length > 0 && (
+      {/* Tier divider line for Gold & Silver */}
+      {titleSponsors.length > 0 && goldSilverSponsors.length > 0 && (
         <div className="max-w-xs mx-auto mb-10 flex items-center gap-3 px-4">
           <div className="flex-1 h-px bg-gradient-to-r from-transparent to-border-subtle" />
-          <span className="text-[10px] uppercase tracking-widest text-text-muted font-medium">Gold &amp; Silver</span>
+          <span className="text-[10px] uppercase tracking-widest text-text-muted font-medium whitespace-nowrap">
+            Gold &amp; Silver
+          </span>
           <div className="flex-1 h-px bg-gradient-to-l from-transparent to-border-subtle" />
         </div>
       )}
 
-      {/* Gold + Silver + Community — marquee scroll */}
-      {marqueeSponsors.length > 0 && (
-        <div className="relative flex overflow-x-hidden group">
-          <div className="absolute top-0 left-0 h-full w-16 md:w-32 bg-gradient-to-r from-bg-primary to-transparent z-10 pointer-events-none" />
-
-          {marqueeSponsors.length <= 3 ? (
+      {/* Gold + Silver — marquee scroll */}
+      {goldSilverSponsors.length > 0 && (
+        <div
+          className="relative flex overflow-x-hidden group mb-10"
+          style={{
+            maskImage:
+              "linear-gradient(to right, transparent, black 15%, black 85%, transparent)",
+            WebkitMaskImage:
+              "linear-gradient(to right, transparent, black 15%, black 85%, transparent)",
+          }}
+        >
+          {goldSilverSponsors.length <= 3 ? (
             <div className="flex items-center justify-center gap-8 md:gap-12 px-8 w-full flex-wrap">
-              {marqueeSponsors.map((s) => (
+              {goldSilverSponsors.map((s) => (
                 <SponsorCard key={s.id} sponsor={s} />
               ))}
             </div>
           ) : (
             <div className="animate-marquee flex items-center gap-8 md:gap-12 px-8 w-max group-hover:[animation-play-state:paused]">
-              {marqueeItems.map((s, idx) => (
+              {goldSilverItems.map((s, idx) => (
                 <SponsorCard key={`${s.id}-${idx}`} sponsor={s} />
               ))}
             </div>
           )}
+        </div>
+      )}
 
-          <div className="absolute top-0 right-0 h-full w-16 md:w-32 bg-gradient-to-l from-bg-primary to-transparent z-10 pointer-events-none" />
+      {/* Tier divider line for Community Partners */}
+      {(titleSponsors.length > 0 || goldSilverSponsors.length > 0) &&
+        communitySponsors.length > 0 && (
+          <div className="max-w-xs mx-auto mb-10 flex items-center gap-3 px-4">
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent to-border-subtle" />
+            <span className="text-[10px] uppercase tracking-widest text-text-muted font-medium whitespace-nowrap">
+              Community Partners
+            </span>
+            <div className="flex-1 h-px bg-gradient-to-l from-transparent to-border-subtle" />
+          </div>
+        )}
+
+      {/* Community Partners — marquee scroll */}
+      {communitySponsors.length > 0 && (
+        <div
+          className="relative flex overflow-x-hidden group"
+          style={{
+            maskImage:
+              "linear-gradient(to right, transparent, black 15%, black 85%, transparent)",
+            WebkitMaskImage:
+              "linear-gradient(to right, transparent, black 15%, black 85%, transparent)",
+          }}
+        >
+          {communitySponsors.length <= 3 ? (
+            <div className="flex items-center justify-center gap-8 md:gap-12 px-8 w-full flex-wrap">
+              {communitySponsors.map((s) => (
+                <SponsorCard key={s.id} sponsor={s} />
+              ))}
+            </div>
+          ) : (
+            <div
+              className="animate-marquee flex items-center gap-8 md:gap-12 px-8 w-max group-hover:[animation-play-state:paused]"
+              style={{ animationDirection: "reverse" }}
+            >
+              {communityItems.map((s, idx) => (
+                <SponsorCard key={`${s.id}-${idx}`} sponsor={s} />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </section>

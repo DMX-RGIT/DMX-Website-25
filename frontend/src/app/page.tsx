@@ -68,7 +68,7 @@ export default function Home() {
       <GameBanner />
 
       {/* Sponsors */}
-      <div className="py-20 border-t border-border-subtle bg-bg-secondary/50">
+      <div className="py-10">
         <SponsorMarquee />
       </div>
     </div>
