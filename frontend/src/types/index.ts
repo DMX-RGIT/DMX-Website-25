@@ -14,6 +14,7 @@ export interface Event {
   is_flagship: boolean;
   is_upcoming: boolean;
   interest_count: number;
+  sponsors: Sponsor[];  // Sponsors linked specifically to this event
   created_at: string;
   updated_at: string | null;
 }
@@ -74,6 +75,7 @@ export interface Sponsor {
   website_url: string | null;
   tier: "title" | "gold" | "silver" | "community";
   display_order: number;
+  is_active: boolean;
 }
 
 export interface Stats {

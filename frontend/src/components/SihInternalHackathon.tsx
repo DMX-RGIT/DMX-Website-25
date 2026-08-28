@@ -2206,14 +2206,14 @@ export default function SihInternalHackathon() {
                 <Link2 size={16} />
                 <span>
                   Need the full set?{" "}
-                  <a
+                  <Link
                     href="https://drive.google.com/drive/folders/1KFoSoMhActRnlmjN-dxeUTiZs4ThaCKV?usp=drive_link"
                     target="_blank"
                     rel="noreferrer"
                   >
                     Open all {problems.length} mock statements{" "}
                     <ExternalLink size={13} />
-                  </a>
+                  </Link>
                 </span>
               </>
             )}

@@ -1,12 +1,13 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.database import get_db
-from app.models import Event
-from app.schemas import EventResponse
+from app.models import Event, Sponsor
+from app.schemas import EventResponse, EventBase
 
 router = APIRouter(prefix="/events", tags=["events"])
 
@@ -17,7 +18,7 @@ async def list_events(
     upcoming: bool | None = Query(None, description="Filter upcoming or past"),
     db: AsyncSession = Depends(get_db),
 ):
-    query = select(Event).order_by(Event.date.desc())
+    query = select(Event).options(selectinload(Event.sponsors)).order_by(Event.date.desc())
 
     if category:
         query = query.where(func.lower(Event.category) == category.lower())
@@ -33,10 +34,11 @@ async def list_events(
 
 @router.get("/{event_id}", response_model=EventResponse)
 async def get_event(event_id: UUID, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Event).where(Event.id == event_id))
+    result = await db.execute(
+        select(Event).options(selectinload(Event.sponsors)).where(Event.id == event_id)
+    )
     event = result.scalar_one_or_none()
     if not event:
-        from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="Event not found")
     return event
 
@@ -46,9 +48,8 @@ async def register_interest(event_id: UUID, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Event).where(Event.id == event_id))
     event = result.scalar_one_or_none()
     if not event:
-        from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="Event not found")
-    
+
     event.interest_count = (event.interest_count or 0) + 1
     await db.commit()
     await db.refresh(event)

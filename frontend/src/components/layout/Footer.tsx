@@ -73,7 +73,7 @@ export function Footer() {
             </h3>
             <div className="flex gap-3">
               {socialLinks.map((social) => (
-                <a
+                <Link
                   key={social.label}
                   href={social.href}
                   target="_blank"
@@ -82,7 +82,7 @@ export function Footer() {
                   aria-label={social.label}
                 >
                   <social.icon size={18} />
-                </a>
+                </Link>
               ))}
             </div>
             <button

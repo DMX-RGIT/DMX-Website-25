@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DMX Game Leaderboard — Anti-Cheat Solution</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.65;
+      color: #1a1a2e;
+      background: #ffffff;
+    }
+
+    .page {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 48px 56px 64px;
+    }
+
+    /* ── Header ── */
+    .header {
+      text-align: center;
+      padding-bottom: 28px;
+      margin-bottom: 36px;
+      border-bottom: 3px solid transparent;
+      background:
+        linear-gradient(white, white) padding-box,
+        linear-gradient(90deg, #1E3A8A 0%, #34D9A6 100%) border-box;
+    }
+
+    .header-badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.5pt;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #34D9A6;
+      background: #0a0d1a;
+      padding: 4px 12px;
+      border-radius: 4px;
+      margin-bottom: 14px;
+    }
+
+    .header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22pt;
+      font-weight: 700;
+      color: #1E3A8A;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .header h1 span { color: #34D9A6; }
+
+    .header .subtitle {
+      font-size: 10pt;
+      color: #64748b;
+    }
+
+    /* ── Section headings ── */
+    h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12pt;
+      font-weight: 700;
+      color: #1E3A8A;
+      margin: 28px 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h2 .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      background: linear-gradient(135deg, #1E3A8A, #2B4C9B);
+      color: #fff;
+      font-size: 8pt;
+      font-weight: 700;
+      border-radius: 50%;
+    }
+
+    /* ── Body text ── */
+    p { color: #334155; margin-bottom: 9px; }
+    strong { color: #1a1a2e; font-weight: 600; }
+    em { color: #475569; }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8.5pt;
+      background: #f1f5f9;
+      color: #1E3A8A;
+      padding: 1px 5px;
+      border-radius: 3px;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* ── Callout boxes ── */
+    .callout {
+      border-left: 3px solid #34D9A6;
+      background: #f0fdf9;
+      padding: 11px 16px;
+      border-radius: 0 6px 6px 0;
+      margin: 12px 0;
+    }
+    .callout p { margin: 0; color: #134e4a; }
+
+    .callout.warning {
+      border-left-color: #f59e0b;
+      background: #fffbeb;
+    }
+    .callout.warning p { color: #78350f; }
+
+    /* ── Bullet lists ── */
+    ul { list-style: none; margin: 8px 0 12px; padding: 0; }
+    ul li {
+      position: relative;
+      padding-left: 18px;
+      color: #334155;
+      margin-bottom: 5px;
+    }
+    ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 7px;
+      width: 6px;
+      height: 6px;
+      background: #34D9A6;
+      border-radius: 50%;
+    }
+
+    /* ── Case table ── */
+    .case-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 6px;
+      font-size: 9.5pt;
+    }
+
+    .case-table thead tr {
+      background: linear-gradient(90deg, #1E3A8A, #2B4C9B);
+    }
+
+    .case-table thead th {
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 9pt;
+      padding: 9px 14px;
+      text-align: left;
+      letter-spacing: 0.03em;
+    }
+
+    .case-table thead th:first-child { border-radius: 6px 0 0 0; }
+    .case-table thead th:last-child  { border-radius: 0 6px 0 0; }
+
+    .case-table tbody tr:nth-child(even) { background: #f8fafc; }
+
+    .case-table td {
+      padding: 8px 14px;
+      border-bottom: 1px solid #e2e8f0;
+      color: #334155;
+    }
+    .case-table td:first-child { font-weight: 500; color: #1a1a2e; }
+
+    .badge {
+      display: inline-block;
+      font-size: 8pt;
+      font-weight: 600;
+      padding: 2px 9px;
+      border-radius: 999px;
+    }
+    .badge-reject { background: #fee2e2; color: #991b1b; }
+    .badge-accept { background: #dcfce7; color: #166534; }
+    .badge-hybrid { background: #fef3c7; color: #92400e; }
+    .badge-rate   { background: #e0e7ff; color: #3730a3; }
+
+    /* ── Two-tone section divider ── */
+    .divider {
+      display: flex;
+      margin: 26px 0 4px;
+      height: 2px;
+    }
+    .divider-navy { flex: 1; background: #1E3A8A; }
+    .divider-teal { flex: 1; background: #34D9A6; }
+
+    /* ── Footer ── */
+    .footer {
+      margin-top: 40px;
+      padding-top: 14px;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 8pt;
+      color: #94a3b8;
+    }
+
+    .footer-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 10pt;
+      color: #1E3A8A;
+    }
+    .footer-logo span { color: #34D9A6; }
+
+    /* ── Print ── */
+    @media print {
+      .page { padding: 0; max-width: 100%; }
+      h2 { page-break-after: avoid; }
+      .case-table, .callout { page-break-inside: avoid; }
+      @page { size: A4; margin: 14mm 16mm; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-badge">Security Design Document</div>
+    <h1>DMX Game Leaderboard<br /><span>Anti-Cheat Solution</span></h1>
+    <p class="subtitle">What is happening, why it happens, and how we can stop it.</p>
+  </div>
+
+  <!-- 1 -->
+  <h2><span class="num">1</span> The Problem</h2>
+  <p>
+    Our Snake game runs in the browser and the leaderboard is public. The browser calculates the
+    <strong>score</strong> and <strong>level</strong> locally and then sends them to
+    <code>POST /api/v1/gamescores</code>. The backend currently accepts those values and stores them.
+  </p>
+  <p>
+    This means someone does not even need to play the game. They can use cURL, Postman, Thunder Client
+    or a Python script and simply send a fake score.
+  </p>
+  <div class="callout warning">
+    <p><strong>Bottom line:</strong> The browser says "I got 999999" — and the database says "okay ✓".</p>
+  </div>
+
+  <div class="divider"><div class="divider-navy"></div><div class="divider-teal"></div></div>
+
+  <!-- 2 -->
+  <h2><span class="num">2</span> Where It Happens in the Code</h2>
+  <ul>
+    <li>The frontend calculates the score and level during the game.</li>
+    <li>The frontend sends those values in the score submission request.</li>
+    <li><code>gamescores.py</code> creates a database object directly from the received score and level.</li>
+  </ul>
+  <p>There is no server-side replay or gameplay verification before the values are stored.</p>
+
+  <div class="divider"><div class="divider-navy"></div><div class="divider-teal"></div></div>
+
+  <!-- 3 -->
+  <h2><span class="num">3</span> CORS: Source ≠ Intent</h2>
+  <p>
+    CORS is already present in <code>main.py</code>. It can restrict which <strong>website origin</strong>
+    is allowed to make browser requests — helping verify the <em>source</em> of a request.
+  </p>
+  <div class="callout">
+    <p>
+      But CORS cannot verify <strong>intent</strong>. It can tell us "this came from our website",
+      but not "this score was actually earned by playing". cURL, Postman and Python scripts can call
+      the API without touching browser CORS at all.
+    </p>
+  </div>
+
+  <div class="divider"><div class="divider-navy"></div><div class="divider-teal"></div></div>
+
+  <!-- 4 -->
+  <h2><span class="num">4</span> Why Encryption / HMAC Is Not Enough</h2>
+  <p>
+    Encrypting the score or adding an HMAC in the browser does not solve the root problem.
+    The browser is still where the score is calculated, and the browser is controlled by the player.
+  </p>
+  <p>
+    We can authenticate the <strong>user</strong> and verify who sent the request, but that does not
+    make the <strong>score</strong> trustworthy. Any secret shipped in client-side JavaScript can be
+    discovered via DevTools and reproduced.
+  </p>
+  <div class="callout warning">
+    <p><strong>In simple words:</strong> we can catch the user, but we still cannot trust the number he sends.</p>
+  </div>
+
+  <div class="divider"><div class="divider-navy"></div><div class="divider-teal"></div></div>
+
+  <!-- 5 -->
+  <h2><span class="num">5</span> Our Solution: "We Simply Mimic the Game"</h2>
+  <p>
+    Instead of trusting the score, we let the server mimic the same game. The server creates a game
+    session and a <strong>deterministic seed</strong>. The client records the player's inputs and timing.
+  </p>
+  <p>
+    When the game ends, the server replays the game itself — same starting state, same food positions,
+    same movement rules, same collision rules, and same scoring rules.
+  </p>
+  <div class="callout">
+    <p>
+      <strong>The client does not decide the final score.</strong> The server calculates the score
+      from the replay and stores only that result.
+    </p>
+  </div>
+
+  <div class="divider"><div class="divider-navy"></div><div class="divider-teal"></div></div>
+
+  <!-- 6 -->
+  <h2><span class="num">6</span> What the Server Checks</h2>
+  <ul>
+    <li>Where the snake started and where the food appeared.</li>
+    <li>What direction was pressed and when.</li>
+    <li>Whether every movement was valid.</li>
+    <li>Whether the snake actually reached the food.</li>
+    <li>Whether collisions, level progression and speed changes happened correctly.</li>
+    <li>What score those actions actually produce.</li>
+  </ul>
+
+  <div class="divider"><div class="divider-navy"></div><div class="divider-teal"></div></div>
+
+  <!-- 7 -->
+  <h2><span class="num">7</span> The Important Part: Deterministic Food</h2>
+  <p>
+    The current game uses <code>Math.random()</code> for food placement. A server replay cannot
+    reliably reproduce the exact same sequence from that random source.
+  </p>
+  <p>
+    We replace it with a <strong>seeded deterministic random generator</strong>. Then the server
+    and client can produce the same food sequence from the same seed.
+  </p>
+  <div class="callout">
+    <p><strong>Same seed + same rules + same inputs = same game.</strong></p>
+  </div>
+
+  <div class="divider"><div class="divider-navy"></div><div class="divider-teal"></div></div>
+
+  <!-- 8 -->
+  <h2><span class="num">8</span> What About a Python Bot That Actually Plays?</h2>
+  <p>
+    A simple fake-score script is easy to stop. A more advanced Python script could actually play Snake,
+    send valid inputs and produce a valid replay. Replay verification alone cannot prove a human
+    was holding the keyboard.
+  </p>
+  <p>
+    For that case, we add a <strong>bot-detection layer</strong> — either Google reCAPTCHA or
+    our own lightweight checks based on timing, reaction speed, game duration and suspicious input patterns.
+  </p>
+  <p>
+    The goal is not to mathematically prove "human". The goal is to stop simple automation and flag
+    behaviour that looks obviously scripted.
+  </p>
+
+  <div class="divider"><div class="divider-navy"></div><div class="divider-teal"></div></div>
+
+  <!-- 9 -->
+  <h2><span class="num">9</span> Cases We Cover</h2>
+  <table class="case-table">
+    <thead>
+      <tr>
+        <th>Case</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Fake cURL / Postman score</td>
+        <td><span class="badge badge-reject">Reject</span></td>
+      </tr>
+      <tr>
+        <td>Fake score + level values</td>
+        <td><span class="badge badge-reject">Reject</span></td>
+      </tr>
+      <tr>
+        <td>Fabricated input sequence</td>
+        <td><span class="badge badge-reject">Reject if replay fails</span></td>
+      </tr>
+      <tr>
+        <td>Normal human player</td>
+        <td><span class="badge badge-accept">Accept if replay is valid</span></td>
+      </tr>
+      <tr>
+        <td>Bot that actually plays</td>
+        <td><span class="badge badge-hybrid">Replay + bot checks</span></td>
+      </tr>
+      <tr>
+        <td>Same session submitted twice</td>
+        <td><span class="badge badge-reject">Reject</span></td>
+      </tr>
+      <tr>
+        <td>Too many submissions</td>
+        <td><span class="badge badge-rate">Rate limit</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="divider"><div class="divider-navy"></div><div class="divider-teal"></div></div>
+
+  <!-- 10 -->
+  <h2><span class="num">10</span> Why Public Ranking Games Need This</h2>
+  <p>
+    A public leaderboard gives meaning to the final number. If the browser can simply choose that
+    number, the leaderboard is effectively asking the player to grade their own exam.
+  </p>
+  <p>
+    Competitive games therefore use authentication and <strong>server-authoritative game state</strong>.
+    For our Snake game, <strong>server replay + basic anti-bot checks</strong> is a practical middle
+    ground that covers the vast majority of abuse without requiring a full game server.
+  </p>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-logo">DM<span>X</span></div>
+    <div>AI &amp; ML Student Committee · RGIT Mumbai</div>
+    <div>Confidential · Internal Use Only</div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { AdminCrudPage } from "@/components/admin/AdminCrudPage";
 
 export default function AdminSponsorsPage() {
@@ -20,6 +21,11 @@ export default function AdminSponsorsPage() {
     { name: "logo_url", label: "Logo URL", type: "url" as const, required: true },
     { name: "website_url", label: "Website URL", type: "url" as const },
     { name: "display_order", label: "Display Order (lower is first)", type: "number" as const },
+    {
+      name: "is_active",
+      label: "Active (show in global marquee on Home page)",
+      type: "boolean" as const,
+    },
   ];
 
   const columns = [
@@ -28,12 +34,25 @@ export default function AdminSponsorsPage() {
       label: "Logo",
       render: (item: any) => (
         <div className="h-10 px-2 py-1 rounded bg-white flex items-center justify-center w-fit border border-border-default">
-          <img src={item.logo_url} alt={item.name} className="h-full object-contain" />
+          {item.logo_url ? (
+            <Image src={item.logo_url} alt={item.name} width={80} height={40} className="h-full object-contain" unoptimized />
+          ) : (
+            <div className="h-full w-20 bg-bg-surface rounded" />
+          )}
         </div>
       ),
     },
     { key: "name", label: "Name" },
     { key: "tier", label: "Tier" },
+    {
+      key: "is_active",
+      label: "Global",
+      render: (item: any) => (
+        <span className={item.is_active ? "text-brand-teal text-xs font-semibold" : "text-text-muted text-xs"}>
+          {item.is_active ? "Active" : "Hidden"}
+        </span>
+      ),
+    },
   ];
 
   return (

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Code2, ExternalLink, Users } from "lucide-react";
 import { Project } from "@/types";
@@ -48,14 +49,14 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
           </div>
           <div className="flex items-center gap-2 text-text-secondary">
             {project.github_url && (
-              <a href={project.github_url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="hover:text-text-primary transition-colors">
+              <Link href={project.github_url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="hover:text-text-primary transition-colors">
                 <Code2 className="w-4 h-4" />
-              </a>
+              </Link>
             )}
             {project.demo_url && (
-              <a href={project.demo_url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="hover:text-text-primary transition-colors">
+              <Link href={project.demo_url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="hover:text-text-primary transition-colors">
                 <ExternalLink className="w-4 h-4" />
-              </a>
+              </Link>
             )}
           </div>
         </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
 import { Plus, Pencil, Trash2, X, Upload, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -44,7 +45,7 @@ async function adminFetch(path: string, options?: RequestInit) {
 interface Field {
   name: string;
   label: string;
-  type: "text" | "textarea" | "select" | "url" | "datetime" | "number" | "boolean" | "tags" | "json" | "social_links" | "color";
+  type: "text" | "textarea" | "select" | "multi-select" | "url" | "datetime" | "number" | "boolean" | "tags" | "json" | "social_links" | "color";
   required?: boolean;
   options?: { label: string; value: string }[];
   placeholder?: string;
@@ -95,6 +96,7 @@ export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns, 
       if (f.type === "boolean") defaults[f.name] = false;
       else if (f.type === "number") defaults[f.name] = 0;
       else if (f.type === "tags") defaults[f.name] = [];
+      else if (f.type === "multi-select") defaults[f.name] = [];
       else if (f.type === "json") defaults[f.name] = f.name.includes("link") ? {} : [];
       else if (f.type === "social_links") defaults[f.name] = [];
       else defaults[f.name] = "";
@@ -111,6 +113,13 @@ export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns, 
       if (f.type === "social_links") {
         const raw = item[f.name] || {};
         data[f.name] = Object.entries(raw).map(([k, v]) => ({ key: k, value: v }));
+      } else if (f.type === "multi-select") {
+        // For events, sponsor_ids comes from event.sponsors[].id
+        if (f.name === "sponsor_ids") {
+          data[f.name] = (item.sponsors || []).map((s: any) => s.id);
+        } else {
+          data[f.name] = item[f.name] || [];
+        }
       } else if (f.type === "tags" || f.type === "json") {
         data[f.name] = item[f.name] || [];
       } else if (f.type === "datetime") {
@@ -349,7 +358,7 @@ export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns, 
                               "overflow-hidden rounded-lg border border-border-default bg-bg-surface",
                               field.name.includes("poster") ? "w-24 h-36" : "w-36 h-24"
                             )}>
-                              <img src={formData[field.name]} alt="Preview" className="w-full h-full object-cover" />
+                              <Image src={formData[field.name]} alt="Preview" width={40} height={40} className="w-full h-full object-cover" unoptimized />
                             </div>
                           )}
                         </div>
@@ -362,6 +371,32 @@ export function AdminCrudPage({ title, endpoint, listEndpoint, fields, columns, 
                       onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
                       placeholder="Comma separated values"
                     />
+                  ) : field.type === "multi-select" ? (
+                    <div className="border border-border-default rounded-lg bg-bg-surface max-h-48 overflow-y-auto p-3 space-y-2">
+                      {(field.options || []).length === 0 ? (
+                        <p className="text-xs text-text-muted">No options available</p>
+                      ) : (
+                        (field.options || []).map((opt) => {
+                          const selected: string[] = formData[field.name] || [];
+                          const isChecked = selected.includes(opt.value);
+                          return (
+                            <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
+                              <Checkbox
+                                checked={isChecked}
+                                onCheckedChange={(checked) => {
+                                  const current: string[] = formData[field.name] || [];
+                                  const updated = checked
+                                    ? [...current, opt.value]
+                                    : current.filter((v) => v !== opt.value);
+                                  setFormData({ ...formData, [field.name]: updated });
+                                }}
+                              />
+                              <span className="text-sm text-text-primary group-hover:text-brand-teal transition-colors">{opt.label}</span>
+                            </label>
+                          );
+                        })
+                      )}
+                    </div>
                   ) : field.type === "social_links" ? (
                     <div className="space-y-3">
                       {(formData[field.name] || []).map((social: any, idx: number) => (

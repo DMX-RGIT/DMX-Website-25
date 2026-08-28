@@ -18,6 +18,7 @@ from app.schemas import (
     SiteContentBase, SiteContentResponse
 )
 from app.routers.auth import get_current_admin, require_events_or_super_admin
+from sqlalchemy.orm import selectinload
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -26,24 +27,40 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 
 @router.post("/events", response_model=EventResponse)
 async def create_event(event: EventBase, db: AsyncSession = Depends(get_db), _: str = Depends(require_events_or_super_admin)):
-    db_event = Event(**event.model_dump())
+    data = event.model_dump(exclude={"sponsor_ids"})
+    db_event = Event(**data)
     db.add(db_event)
+    await db.flush()  # get the ID before linking sponsors
+
+    if event.sponsor_ids:
+        sponsors = (await db.execute(select(Sponsor).where(Sponsor.id.in_(event.sponsor_ids)))).scalars().all()
+        db_event.sponsors = list(sponsors)
+
     await db.commit()
-    await db.refresh(db_event)
-    return db_event
+    result = await db.execute(select(Event).options(selectinload(Event.sponsors)).where(Event.id == db_event.id))
+    return result.scalar_one()
 
 
 @router.put("/events/{event_id}", response_model=EventResponse)
 async def update_event(event_id: UUID, event: EventBase, db: AsyncSession = Depends(get_db), _: str = Depends(require_events_or_super_admin)):
-    result = await db.execute(select(Event).where(Event.id == event_id))
+    result = await db.execute(select(Event).options(selectinload(Event.sponsors)).where(Event.id == event_id))
     db_event = result.scalar_one_or_none()
     if not db_event:
         raise HTTPException(status_code=404, detail="Event not found")
-    for key, value in event.model_dump().items():
+
+    data = event.model_dump(exclude={"sponsor_ids"})
+    for key, value in data.items():
         setattr(db_event, key, value)
+
+    # Update sponsors — replace the whole list
+    if event.sponsor_ids is not None:
+        sponsors = (await db.execute(select(Sponsor).where(Sponsor.id.in_(event.sponsor_ids)))).scalars().all()
+        db_event.sponsors = list(sponsors)
+    # If sponsor_ids is None (not sent), leave existing sponsors intact
+
     await db.commit()
-    await db.refresh(db_event)
-    return db_event
+    result = await db.execute(select(Event).options(selectinload(Event.sponsors)).where(Event.id == event_id))
+    return result.scalar_one()
 
 
 @router.delete("/events/{event_id}")

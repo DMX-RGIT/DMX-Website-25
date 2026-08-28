@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { AdminCrudPage } from "@/components/admin/AdminCrudPage";
 import { Info } from "lucide-react";
 
@@ -55,7 +56,7 @@ export default function AdminTeamPage() {
       render: (item: any) => (
         <div className="w-8 h-8 rounded-full overflow-hidden bg-bg-surface border border-border-default">
           {item.photo_url ? (
-            <img src={item.photo_url} alt={item.name} className="w-full h-full object-cover" />
+            <Image src={item.photo_url} alt={item.name} width={40} height={40} className="w-full h-full object-cover" unoptimized />
           ) : (
             <div className="w-full h-full bg-brand-navy/20" />
           )}

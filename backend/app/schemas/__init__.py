@@ -18,6 +18,7 @@ class EventBase(BaseModel):
     poster_url: str | None = None
     is_flagship: bool = False
     is_upcoming: bool = True  # Kept for admin form; overridden in response
+    sponsor_ids: list[UUID] | None = None  # IDs of sponsors linked to this event
 
 
 class EventResponse(EventBase):
@@ -25,6 +26,7 @@ class EventResponse(EventBase):
     interest_count: int
     created_at: datetime
     updated_at: datetime | None = None
+    sponsors: list["SponsorResponse"] = []  # Sponsors linked to this event
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -109,6 +111,7 @@ class SponsorBase(BaseModel):
     website_url: str | None = None
     tier: str
     display_order: int = 0
+    is_active: bool = True
 
 
 class SponsorResponse(SponsorBase):

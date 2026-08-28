@@ -3,13 +3,23 @@
 import { AdminCrudPage } from "@/components/admin/AdminCrudPage";
 import { Info } from "lucide-react";
 import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
+import type { Sponsor } from "@/types";
 
 export default function AdminEventsPage() {
   const [isEventsAdmin, setIsEventsAdmin] = useState(false);
+  const [sponsors, setSponsors] = useState<Sponsor[]>([]);
 
   useEffect(() => {
     setIsEventsAdmin(localStorage.getItem("dmx_admin_role") === "events");
+    api.sponsors.list().then(setSponsors).catch(console.error);
   }, []);
+
+  const sponsorOptions = sponsors.map((s) => ({
+    label: `${s.name} (${s.tier})`,
+    value: s.id,
+  }));
+
   const fields = [
     { name: "title", label: "Title", type: "text" as const, required: true },
     { name: "description", label: "Description (supports Markdown)", type: "textarea" as const, required: true },
@@ -19,10 +29,12 @@ export default function AdminEventsPage() {
       type: "select" as const,
       required: true,
       options: [
-        { label: "Hackathon", value: "Hackathon" },
-        { label: "Workshop", value: "Workshop" },
-        { label: "Seminar", value: "Seminar" },
-        { label: "Webinar", value: "Webinar" },
+        { label: "Hackathon", value: "hackathon" },
+        { label: "Workshop", value: "workshop" },
+        { label: "Seminar", value: "seminar" },
+        { label: "Webinar", value: "webinar" },
+        { label: "LAN", value: "lan" },
+        { label: "Campus Fest", value: "campus-fest" },
       ],
     },
     { name: "date", label: "Date", type: "datetime" as const, required: true },
@@ -33,6 +45,12 @@ export default function AdminEventsPage() {
     { name: "poster_url", label: "Poster Image (portrait)", type: "url" as const },
     { name: "is_flagship", label: "Is Flagship?", type: "boolean" as const },
     { name: "is_upcoming", label: "Is Upcoming?", type: "boolean" as const },
+    {
+      name: "sponsor_ids",
+      label: "Sponsors (select which sponsors to show on this event page)",
+      type: "multi-select" as const,
+      options: sponsorOptions,
+    },
   ];
 
   const columns = [
@@ -52,6 +70,17 @@ export default function AdminEventsPage() {
         </span>
       ),
     },
+    {
+      key: "sponsors",
+      label: "Sponsors",
+      render: (item: any) => (
+        <span className="text-text-secondary text-xs">
+          {(item.sponsors || []).length > 0
+            ? (item.sponsors as any[]).map((s: any) => s.name).join(", ")
+            : <span className="text-text-muted italic">None</span>}
+        </span>
+      ),
+    },
   ];
 
   return (
@@ -68,6 +97,7 @@ export default function AdminEventsPage() {
               <li>If only one image is provided, it will expand to fill the entire space automatically.</li>
               <li><strong>Description</strong> supports full Markdown — use headings, lists, code blocks, and bold text.</li>
               <li>Mark an event as <strong>Flagship</strong> to feature it on the homepage with a countdown timer.</li>
+              <li><strong>Sponsors:</strong> Only selected sponsors appear on that event&apos;s page. Global sponsors (marquee) are managed separately.</li>
             </ul>
           </div>
         </div>

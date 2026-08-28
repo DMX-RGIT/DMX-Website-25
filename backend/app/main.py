@@ -1,8 +1,6 @@
 from contextlib import asynccontextmanager
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from app.config import get_settings
 from app.database import engine, Base
 from app.routers import events, projects, team, gallery, sponsors, content, auth, admin, join, gamescores
@@ -12,7 +10,6 @@ settings = get_settings()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Create tables on startup (use Alembic migrations in production)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
@@ -21,7 +18,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="DMX API",
-    description="Backend API for DMX (DataMatrix) — RGIT Mumbai's AI & ML Committee",
+    description="Backend API for DMX (DataMatrix) — RGIT Mumbai's Computer Engineering Committee",
     version="1.0.0",
     lifespan=lifespan,
 )

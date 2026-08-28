@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Globe, Maximize2 } from "lucide-react";
@@ -44,12 +46,7 @@ export function FlipCard({ member, index, onImageClick }: MemberCardProps) {
         {/* ── Front ── */}
         <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] glass-card border border-border-default transition-all duration-300 rounded-xl overflow-hidden shadow-lg">
           {member.photo_url ? (
-            <img 
-              src={member.photo_url} 
-              alt={member.name} 
-              className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-              draggable={false}
-            />
+            <Image src={member.photo_url} alt={member.name} fill className="absolute inset-0 w-full h-full object-cover pointer-events-none" sizes="(max-width: 768px) 100vw, 33vw" draggable={false} />
           ) : (
             <div className="absolute inset-0 bg-brand-navy/10 flex items-center justify-center text-6xl font-display font-bold text-brand-teal/40">
               {member.name.charAt(0)}
@@ -96,7 +93,7 @@ export function FlipCard({ member, index, onImageClick }: MemberCardProps) {
             {/* Social links */}
             <div className="flex items-center gap-2">
               {visibleSocials.map(([key, url]) => (
-                <a
+                <Link
                   key={key}
                   href={url as string}
                   target="_blank"
@@ -106,7 +103,7 @@ export function FlipCard({ member, index, onImageClick }: MemberCardProps) {
                   className="p-2.5 bg-bg-surface hover:bg-brand-navy hover:text-brand-teal rounded-full text-text-secondary transition-all hover:scale-110 border border-border-subtle"
                 >
                   {getSocialIcon(url as string)}
-                </a>
+                </Link>
               ))}
             </div>
 

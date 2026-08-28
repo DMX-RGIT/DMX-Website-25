@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Maximize2 } from "lucide-react";
 import { TeamMember, GalleryImage } from "@/types";

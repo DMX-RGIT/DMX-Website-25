@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -143,18 +144,18 @@ export default function ProjectDetailPage() {
 
             <div className="flex items-center gap-3 shrink-0 flex-wrap">
               {project.github_url && (
-                <a href={project.github_url} target="_blank" rel="noreferrer"
+                <Link href={project.github_url} target="_blank" rel="noreferrer"
                   className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-bg-surface border border-border-subtle hover:border-brand-navy-light text-text-secondary hover:text-text-primary transition-all text-sm font-medium">
                   <GitBranch className="w-4 h-4" />
                   GitHub
-                </a>
+                </Link>
               )}
               {project.demo_url && (
-                <a href={project.demo_url} target="_blank" rel="noreferrer"
+                <Link href={project.demo_url} target="_blank" rel="noreferrer"
                   className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-brand-navy text-white hover:bg-brand-navy-light transition-all text-sm font-medium shadow-[0_0_20px_rgba(30,58,138,0.4)]">
                   <ExternalLink className="w-4 h-4" />
                   Live Demo
-                </a>
+                </Link>
               )}
             </div>
           </div>

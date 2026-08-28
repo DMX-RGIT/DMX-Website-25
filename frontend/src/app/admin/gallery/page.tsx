@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Plus, Trash2, X, Upload, Save, Info } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -222,7 +223,7 @@ export default function AdminGalleryPage() {
               onClick={(e) => selectMode ? toggleImageSelection(img.id, idx, e.shiftKey) : undefined}
               className={`relative group bg-bg-surface border rounded-xl overflow-hidden aspect-video ${selectMode ? "cursor-pointer" : ""} ${selectedImages.has(img.id) ? "border-red-500 border-2" : "border-border-default"}`}
             >
-              <img src={img.image_url} alt={img.caption || ""} className="w-full h-full object-cover" />
+              {img.image_url ? <Image src={img.image_url} alt={img.caption || ""} width={60} height={60} className="w-full h-full object-cover" unoptimized /> : <div className="w-full h-full object-cover bg-bg-surface" />}
               <div className={`absolute inset-0 bg-black/60 transition-opacity flex flex-col items-center justify-center p-2 text-center ${selectedImages.has(img.id) ? "opacity-50" : "opacity-0 group-hover:opacity-100"}`}>
                 <span className="text-xs text-white mb-2">{img.caption || img.category}</span>
                 {!selectMode && (

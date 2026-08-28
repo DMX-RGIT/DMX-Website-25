@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Save } from "lucide-react";
 
@@ -188,7 +189,7 @@ dmx deploy model
           <div className="space-y-4">
             {data.team_photo_url && (
               <div className="w-full max-w-lg h-48 bg-bg-surface border border-border-default rounded-lg overflow-hidden relative">
-                <img src={data.team_photo_url} alt="Team" className="w-full h-full object-cover" />
+                {data.team_photo_url ? <Image src={data.team_photo_url} alt="Team" width={60} height={40} className="w-full h-full object-cover" unoptimized /> : <div className="w-full h-full object-cover bg-bg-surface" />}
                 <button 
                   onClick={() => setData(prev => ({ ...prev, team_photo_url: "" }))}
                   className="absolute top-2 right-2 bg-red-500/80 hover:bg-red-500 text-white px-2 py-1 text-xs rounded transition-colors"

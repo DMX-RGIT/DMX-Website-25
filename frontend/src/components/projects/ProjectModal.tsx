@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Code2, ExternalLink, Users } from "lucide-react";
 import { Project } from "@/types";
@@ -88,7 +89,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
           {/* Footer Links */}
           <div className="p-6 border-t border-border-subtle bg-bg-secondary flex gap-4">
             {project.github_url && (
-              <a
+              <Link
                 href={project.github_url}
                 target="_blank"
                 rel="noreferrer"
@@ -96,10 +97,10 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
               >
                 <Code2 className="w-4 h-4" />
                 View Source
-              </a>
+              </Link>
             )}
             {project.demo_url && (
-              <a
+              <Link
                 href={project.demo_url}
                 target="_blank"
                 rel="noreferrer"
@@ -107,7 +108,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
               >
                 <ExternalLink className="w-4 h-4" />
                 Live Demo
-              </a>
+              </Link>
             )}
           </div>
         </motion.div>

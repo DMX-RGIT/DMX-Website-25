@@ -39,7 +39,7 @@ export const api = {
       fetchApi<GalleryImage[]>("/gallery", params),
   },
   sponsors: {
-    list: () => fetchApi<Sponsor[]>("/sponsors"),
+    list: (params?: { active_only?: string }) => fetchApi<Sponsor[]>("/sponsors", params),
   },
   stats: {
     get: () => fetchApi<any>("/content"),

@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     secret_key: str  # Required — must be set in .env
     cors_origins: str = "http://localhost:3000"
     debug: bool = True
+    # next_public_api_url: str 
+
 
     # JWT
     access_token_expire_minutes: int = 60 * 24  # 24 hours
@@ -24,7 +26,7 @@ class Settings(BaseSettings):
     cloudinary_api_key: str = ""
     cloudinary_api_secret: str = ""
 
-    model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
+    model_config = {"env_file": ".env", "env_file_encoding": "utf-8","extra":"ignore"}
 
     @property
     def cors_origin_list(self) -> list[str]:

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, MapPin, Calendar as CalendarIcon } from "lucide-react";
@@ -62,9 +63,9 @@ export function FeaturedEvent() {
               </p>
               <div className="pt-4">
                 <MagneticButton>
-                  <a href="/events" className="flex items-center gap-2">
+                  <Link href="/events" className="flex items-center gap-2">
                     View Past Events <ArrowRight className="w-4 h-4" />
-                  </a>
+                  </Link>
                 </MagneticButton>
               </div>
             </div>
@@ -120,21 +121,21 @@ export function FeaturedEvent() {
             <div className="flex items-center gap-4">
               <MagneticButton>
                 {event.registration_url ? (
-                  <a href={event.registration_url} target="_blank" rel="noreferrer" className="flex items-center gap-2">
+                  <Link href={event.registration_url} target="_blank" rel="noreferrer" className="flex items-center gap-2">
                     Register Now <ArrowRight className="w-4 h-4" />
-                  </a>
+                  </Link>
                 ) : (
                   <span className="flex items-center gap-2">
                     Coming Soon <ArrowRight className="w-4 h-4" />
                   </span>
                 )}
               </MagneticButton>
-              <a 
+              <Link 
                 href={`/events/${event.id}`} 
                 className="px-6 py-3 rounded-lg border border-border-default text-text-primary font-bold hover:bg-bg-surface transition-all text-sm"
               >
                 Know More
-              </a>
+              </Link>
             </div>
           </div>
 

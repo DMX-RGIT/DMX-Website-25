@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Calendar, MapPin, Heart } from "lucide-react";
@@ -68,8 +70,8 @@ export function EventCard({ event, index, onClick }: EventCardProps) {
 
         {/* Image / Thumbnail placeholder */}
         <div className="relative h-48 w-full bg-bg-surface overflow-hidden border-b border-border-default" style={{ transform: "translateZ(20px)" }}>
-          {event.image_url ? (
-            <img src={event.image_url} alt={event.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300 grayscale group-hover:grayscale-0" />
+          {event.image_url || event.poster_url ? (
+            <Image src={(event.image_url || event.poster_url)!} alt={event.title} fill className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300 grayscale group-hover:grayscale-0" sizes="(max-width: 768px) 100vw, 33vw" />
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-brand-navy/10 to-brand-teal/10 group-hover:from-brand-navy/20 group-hover:to-brand-teal/20 transition-colors duration-300" />
           )}
@@ -115,8 +117,7 @@ export function EventCard({ event, index, onClick }: EventCardProps) {
 
           {/* Action Link & Interest */}
           <div className="mt-auto pt-4 border-t border-border-subtle flex items-center justify-between" style={{ transform: "translateZ(40px)" }}>
-            <a
-              href={event.registration_url || "#"}
+            <Link href={event.registration_url || "#"}
               target="_blank"
               rel="noreferrer"
               onClick={(e) => e.stopPropagation()}
@@ -124,7 +125,7 @@ export function EventCard({ event, index, onClick }: EventCardProps) {
             >
               {event.is_upcoming ? "Register Now" : "View Details"}
               <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </a>
+            </Link>
 
             <button
               onClick={(e) => { 

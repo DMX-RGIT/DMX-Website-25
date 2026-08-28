@@ -23,6 +23,8 @@ export function EventFilterBar({
     { label: "Workshops", value: "workshop" as EventCategory },
     { label: "Seminars", value: "seminar" as EventCategory },
     { label: "Webinars", value: "webinar" as EventCategory },
+    { label: "LAN", value: "lan" as EventCategory },
+    { label: "Campus Fest", value: "campus-fest" as EventCategory },
   ];
 
   return (

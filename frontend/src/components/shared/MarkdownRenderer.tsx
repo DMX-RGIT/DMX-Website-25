@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -64,7 +65,7 @@ export function MarkdownRenderer({ content }: { content: string }) {
           ol: ({ node, ...props }) => <ol className="list-decimal pl-6 mb-5 space-y-1.5 text-text-secondary" {...props} />,
           li: ({ node, children, ...props }) => <li className="leading-6 pl-1" {...props}>{children}</li>,
           input: ({ node, ...props }) => <input {...props} className="mr-2 mt-0.5 accent-brand-teal w-3.5 h-3.5 rounded" disabled />,
-          a: ({ node, ...props }) => <a className="text-brand-teal hover:text-brand-teal-light underline underline-offset-2 font-medium transition-colors break-all" target="_blank" rel="noopener noreferrer" {...props} />,
+          a: ({ node, href, ...props }: any) => <Link href={href || "#"} className="text-brand-teal hover:text-brand-teal-light underline underline-offset-2 font-medium transition-colors break-all" target="_blank" rel="noopener noreferrer" {...props} />,
           strong: ({ node, ...props }) => <strong className="font-bold text-text-primary" {...props} />,
           em: ({ node, ...props }) => <em className="italic text-text-secondary" {...props} />,
           hr: ({ node }) => (

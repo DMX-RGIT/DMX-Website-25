@@ -21,7 +21,7 @@ M887.000061,359.630249 C894.648193,359.831116 901.802063,359.417328 908.936523,3
     <svg
       viewBox="80 340 860 290"
       className={className}
-      aria-label="DMX Logo"
+      aria-label="DMX_Logo"
       fill="currentColor"
     >
       {animated ? (

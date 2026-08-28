@@ -10,6 +10,7 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     String,
+    Table,
     Text,
     func,
 )
@@ -17,6 +18,16 @@ from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import relationship
 
 from app.database import Base
+
+
+# --- Association Table ---
+
+event_sponsors = Table(
+    "event_sponsors",
+    Base.metadata,
+    Column("event_id", UUID(as_uuid=True), ForeignKey("events.id", ondelete="CASCADE"), primary_key=True),
+    Column("sponsor_id", UUID(as_uuid=True), ForeignKey("sponsors.id", ondelete="CASCADE"), primary_key=True),
+)
 
 
 # --- Enums ---
@@ -56,6 +67,7 @@ class Event(Base):
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     gallery_images = relationship("GalleryImage", back_populates="event")
+    sponsors = relationship("Sponsor", secondary="event_sponsors", back_populates="events")
 
 
 class Project(Base):
@@ -120,6 +132,9 @@ class Sponsor(Base):
     website_url = Column(String(500), nullable=True)
     tier = Column(Enum(SponsorTier), nullable=False)
     display_order = Column(Integer, default=0)
+    is_active = Column(Boolean, default=True, server_default="true")
+
+    events = relationship("Event", secondary="event_sponsors", back_populates="sponsors")
 
 
 class JoinRequest(Base):
