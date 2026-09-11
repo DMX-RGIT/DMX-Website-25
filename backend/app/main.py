@@ -47,3 +47,8 @@ app.include_router(gamescores.router, prefix="/api/v1")
 @app.get("/")
 async def root():
     return {"message": "DMX API", "docs": "/docs"}
+
+
+@app.get("/health")
+async def health():   # Intentionally no Db check to avoid waking neon on every hit
+    return {"status": "ok"}
