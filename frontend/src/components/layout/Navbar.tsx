@@ -15,7 +15,6 @@ const navLinks: { href: string; label: string; badge?: boolean }[] = [
   { href: "/projects", label: "Projects" },
   { href: "/team", label: "Team" },
   { href: "/gallery", label: "Gallery" },
-  { href: "/sih", label: "SIH 2026", badge: true },
 ];
 
 export function Navbar() {
