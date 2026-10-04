@@ -65,6 +65,7 @@ export interface GalleryImage {
   caption: string | null;
   category: string;
   event_id: string | null;
+  date?: string | null;
   created_at: string;
 }
 

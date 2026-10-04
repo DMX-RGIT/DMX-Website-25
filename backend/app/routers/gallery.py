@@ -17,7 +17,7 @@ async def list_gallery(
     event_id: UUID | None = Query(None, description="Filter by event"),
     db: AsyncSession = Depends(get_db),
 ):
-    query = select(GalleryImage).order_by(GalleryImage.created_at.desc())
+    query = select(GalleryImage).order_by(GalleryImage.date.desc().nulls_last(), GalleryImage.created_at.desc())
 
     if category:
         query = query.where(GalleryImage.category == category)

@@ -94,6 +94,7 @@ class GalleryImageBase(BaseModel):
     caption: str | None = None
     category: str
     event_id: UUID | None = None
+    date: datetime | None = None
 
 
 class GalleryImageResponse(GalleryImageBase):

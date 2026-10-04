@@ -15,6 +15,10 @@ MIGRATIONS = [
     "ALTER TABLE team_members ADD COLUMN batch_year VARCHAR(20) DEFAULT NULL",
     # SiteContent: show_timeline
     "ALTER TABLE site_content ADD COLUMN show_timeline BOOLEAN NOT NULL DEFAULT false",
+    # GalleryImage: date
+    "ALTER TABLE gallery_images ADD COLUMN date TIMESTAMP WITH TIME ZONE DEFAULT NULL",
+    # Backfill gallery_images date from linked events
+    "UPDATE gallery_images SET date = events.date FROM events WHERE gallery_images.event_id = events.id AND gallery_images.date IS NULL",
 ]
 
 async def migrate():

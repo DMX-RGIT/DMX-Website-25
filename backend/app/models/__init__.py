@@ -118,6 +118,7 @@ class GalleryImage(Base):
     caption = Column(String(500), nullable=True)
     category = Column(String(255), nullable=False)
     event_id = Column(UUID(as_uuid=True), ForeignKey("events.id"), nullable=True)
+    date = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     event = relationship("Event", back_populates="gallery_images")

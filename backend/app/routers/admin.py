@@ -149,6 +149,11 @@ async def delete_member(member_id: UUID, db: AsyncSession = Depends(get_db), _: 
 @router.post("/gallery", response_model=GalleryImageResponse)
 async def create_gallery_image(image: GalleryImageBase, db: AsyncSession = Depends(get_db), _: str = Depends(require_events_or_super_admin)):
     db_image = GalleryImage(**image.model_dump())
+    if db_image.date is None and db_image.event_id:
+        result = await db.execute(select(Event).where(Event.id == db_image.event_id))
+        event = result.scalar_one_or_none()
+        if event and event.date:
+            db_image.date = event.date
     db.add(db_image)
     await db.commit()
     await db.refresh(db_image)

@@ -42,6 +42,20 @@ async def run_migration():
     """)
     print("DONE: Created event_sponsors association table")
 
+    await conn.execute("""
+        ALTER TABLE gallery_images
+        ADD COLUMN IF NOT EXISTS date TIMESTAMP WITH TIME ZONE DEFAULT NULL;
+    """)
+    print("DONE: Added date column to gallery_images table")
+
+    await conn.execute("""
+        UPDATE gallery_images
+        SET date = events.date
+        FROM events
+        WHERE gallery_images.event_id = events.id AND gallery_images.date IS NULL;
+    """)
+    print("DONE: Backfilled existing gallery image dates from linked events")
+
     await conn.close()
     print("Migration complete!")
 

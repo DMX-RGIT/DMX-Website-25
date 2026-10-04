@@ -24,6 +24,7 @@ export default function AdminGalleryPage() {
   const [caption, setCaption] = useState("");
   const [category, setCategory] = useState("hackathon");
   const [eventId, setEventId] = useState("");
+  const [date, setDate] = useState("");
 
   // Bulk Delete State
   const [selectMode, setSelectMode] = useState(false);
@@ -140,7 +141,8 @@ export default function AdminGalleryPage() {
             image_url: url,
             caption: caption || undefined,
             category,
-            event_id: eventId || undefined,
+            event_id: eventId && eventId !== "none" ? eventId : undefined,
+            date: date ? new Date(date).toISOString() : undefined,
           }),
         });
       }
@@ -149,6 +151,7 @@ export default function AdminGalleryPage() {
       setSelectedFiles([]);
       setCaption("");
       setEventId("");
+      setDate("");
       fetchData();
     } catch (err: any) {
       console.error("Bulk upload error", err);
@@ -225,7 +228,12 @@ export default function AdminGalleryPage() {
             >
               {img.image_url ? <Image src={img.image_url} alt={img.caption || ""} width={60} height={60} className="w-full h-full object-cover" unoptimized /> : <div className="w-full h-full object-cover bg-bg-surface" />}
               <div className={`absolute inset-0 bg-black/60 transition-opacity flex flex-col items-center justify-center p-2 text-center ${selectedImages.has(img.id) ? "opacity-50" : "opacity-0 group-hover:opacity-100"}`}>
-                <span className="text-xs text-white mb-2">{img.caption || img.category}</span>
+                <span className="text-xs text-white mb-1 line-clamp-1">{img.caption || img.category}</span>
+                {img.date && (
+                  <span className="text-[10px] text-brand-teal mb-2 font-mono">
+                    {new Date(img.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                  </span>
+                )}
                 {!selectMode && (
                   <button
                     onClick={(e) => { e.stopPropagation(); handleDelete(img.id); }}
@@ -297,17 +305,47 @@ export default function AdminGalleryPage() {
 
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-text-secondary">Link to Event (Optional)</label>
-                <Select value={eventId} onValueChange={(v) => setEventId(v || "")}>
+                <Select
+                  value={eventId}
+                  onValueChange={(v) => {
+                    const val = v || "";
+                    setEventId(val);
+                    if (val && val !== "none") {
+                      const selectedEvent = events.find((e) => e.id === val);
+                      if (selectedEvent?.date) {
+                        const parsedDate = new Date(selectedEvent.date);
+                        if (!isNaN(parsedDate.getTime())) {
+                          setDate(parsedDate.toISOString().split("T")[0]);
+                        }
+                      }
+                    }
+                  }}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="None" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">None</SelectItem>
-                    {events.map(e => (
-                      <SelectItem key={e.id} value={e.id}>{e.title}</SelectItem>
+                    {events.map((e) => (
+                      <SelectItem key={e.id} value={e.id}>
+                        {e.title}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-text-secondary">Date (Optional)</label>
+                <Input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="bg-bg-surface"
+                />
+                <p className="text-xs text-text-secondary">
+                  Auto-filled when linking an event. Determines date-wise order in the gallery.
+                </p>
               </div>
             </div>
 
