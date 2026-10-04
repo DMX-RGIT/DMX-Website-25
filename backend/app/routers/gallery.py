@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -17,7 +17,7 @@ async def list_gallery(
     event_id: UUID | None = Query(None, description="Filter by event"),
     db: AsyncSession = Depends(get_db),
 ):
-    query = select(GalleryImage).order_by(GalleryImage.date.desc().nulls_last(), GalleryImage.created_at.desc())
+    query = select(GalleryImage).order_by(func.coalesce(GalleryImage.date, GalleryImage.created_at).desc())
 
     if category:
         query = query.where(GalleryImage.category == category)
