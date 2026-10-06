@@ -101,15 +101,9 @@ export function Lightbox({ images = [], initialIndex = 0, isOpen, onClose }: Lig
             alt={image.caption || "Gallery image"}
             className="w-full h-full object-contain max-h-[80vh] rounded-lg shadow-2xl select-none"
           />
-          {(image.caption || image.date) && (
-            <div className="mt-4 text-white/90 text-center text-sm max-w-2xl bg-black/40 px-4 py-2 rounded-full backdrop-blur-md flex items-center justify-center gap-2">
-              {image.caption && <span>{image.caption}</span>}
-              {image.caption && image.date && <span className="opacity-40">•</span>}
-              {image.date && (
-                <span className="text-brand-teal text-xs font-mono">
-                  {new Date(image.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                </span>
-              )}
+          {image.caption && (
+            <div className="mt-4 text-white/90 text-center text-sm max-w-2xl bg-black/40 px-4 py-2 rounded-full backdrop-blur-md">
+              {image.caption}
             </div>
           )}
         </motion.div>
